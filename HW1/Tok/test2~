@@ -1,0 +1,49 @@
+
+Computational Linguistics and Text Mining
+
+By Frank Jennings, September 19, 2013
+
+7 Comments
+A method to fingerprint the structure of English sentences and compute the grammatical distance between fragments.
+
+Sentences in English have patterns that can be identified and extracted through Natural Language Processing (NLP) and computational linguistic techniques. Imagine the immense power a machine would have if it could construct simple or complex sentences by precisely comprehending the technique to construct meaningful sentences. Computational linguistics is a field that has long fascinated me and made me build various NLP-based systems for text extraction and mining. In this article, I explain algorithmically how various text fragments differ from each other.
+
+POS Tagging and Learning
+
+A few months back, I had this interesting idea of prototyping English constructs so that random well-formed sentences can be framed by bots/machines using predefined constructs. One way to achieve this is through computational linguistics and machine learning. I started my journey by analyzing all the "good" sentences in the "world" to build a system that identifies the grammatical structures of these sentences. Every sentence has a grammatical signature, which is not unique, but definitely evident. I've termed this grammatical signature "POSTALS Print." POSTALS (Part of Speech Tagging and Learning System) is an NLP system that I am building that identifies and learns these grammatical signatures. POSTALS Print is just like a fingerprint, with the notable difference that it is not unique.
+
+For instance, consider this sentence:
+
+"Happiness is but an occasional episode in the general drama of pain."
+
+Let us explode this sentence to reveal its structure. I rely on the Penn Treebank bracketing guidelines:
+
+(ROOT (S (NP (NN Happiness)) (VP (VBZ is) (ADVP (CC but)) (NP (NP (DT an) (JJ occasional) (NN episode)) (PP (IN in) (NP (NP (DT the) (JJ general) (NN drama)) (PP (IN of) (NP (NN pain))))))) (. .)))
+
+Where:
+
+    S = Simple declarative cause
+    NP = Noun Phrase
+    NNS = Plural Noun
+    VP = Verb Phrase
+    VBZ = Third person singular present verb
+    ADVP = Adverb Phrase
+    CC = Coordinating conjunction
+    NP = Noun Phrase
+    DT = Determiner
+    JJ = Adjective
+    NN = Singular Noun
+    PP = Prepositional Phrase
+    IN = Subordinating conjunction
+
+As you can see, English sentences can be easily prototyped into a POS tree. Now, let me further flatten the tree to get the POSTALS Print, which is the grammatical signature of the sentence:
+
+S+NP+NN+VP+VBZ+ADVP+CC+NP+NP+DT+JJ+NN+PP+IN+NP+NP+DT+JJ+NN+PP+IN+NP+NN+.
+
+Change any one of the words while maintaining the same word categories and you can create many different sentences that have the same fingerprint.
+
+Web Crawling and Text Mining
+
+To enable the software to construct and validate text fragments, I need to train it with a reasonably accurate and massive text data mined from reliable text corpora on the Web. What is so massive and almost reliable? Wikipedia! If I can successfully extract all possible POSTALS Prints from all the Wikipedia articles, I will have the ability to analyze them and use them as a feed to train the system.
+
+To do this and even extend it farther, I setup a cluster of 8 quad-core dedicated servers to extract and analyze some of the top eBooks from Project Gutenberg, popular Web pages, Wikipedia, and other artifacts from various literature sites. My clustered system, POSTALS, kept analyzing sentences and "learned" the usages of these sentences (Figure 1). I used a combination of Stanford's POS tagger and the LEX Parser.

@@ -1,0 +1,8 @@
+{'1': [['a', '1'], ['b', 'f']], '0': [['a', '1']], 'not accepted': [], 'f': [['b', 'f']]}
+0
+f
+aab => yes
+aa => no
+b => no
+aba => no
+ac => no
