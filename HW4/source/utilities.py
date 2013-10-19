@@ -5,6 +5,28 @@ class Utilities:
 	def __init__(self):
 		self.what = 'what'
 
+	def readLexicon(self, strVal):
+		# first, split the string into many lines
+		strLines = re.split("\n", strVal.strip())
+
+		lexiconItems = {}
+
+		# second, go through each line
+		for i in range(0, len(strLines)):
+			# next, split this line by white space
+			wordsInLine = re.split("\s+", strLines[i].strip())
+
+			if(len(wordsInLine) != 2):
+				continue
+
+			if(lexiconItems.has_key(wordsInLine[1])):
+				wordsList = lexiconItems[wordsInLine[1]]
+				wordsList.append(wordsInLine[0])
+			else:
+				lexiconItems[wordsInLine[1]] = [ wordsInLine[0]]
+
+		return lexiconItems
+
 	def cleanseInput(self, strVal):
 		return re.sub(r'\"', '', re.sub(r'\'', '', strVal))
 
