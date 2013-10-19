@@ -75,6 +75,35 @@ s          3sg
 		self.assertTrue(actualResult['pres_part'][0] == 'ing')
 		self.assertTrue(actualResult['3sg'][0] == 's')
 
+class FsaTests(unittest.TestCase):
+
+	def test_canReadMorphologyFile(self):
+		testStr = """q3
+(q0 (q3 irreg_past_verb_form))
+(q0 (q1 reg_verb_stem))
+(q1 (q3 past))
+(q1 (q3 past_participle))
+(q0 (q2 reg_verb_stem))
+(q0 (q2 irreg_verb_stem))
+(q2 (q3 pres_part))
+(q2 (q3 3sg))
+(q1 (q3 *e*))
+(q2 (q3 *e*))"""
+
+		fsaObj = fsa.Fsa()
+		fsaObj.parse(testStr)
+
+		self.assertTrue(fsaObj.endState == "q3")
+		self.assertTrue(fsaObj.startState == "q0")
+
+		self.assertTrue(fsaObj.transitionStates[0].value == "irreg_past_verb_form")
+		self.assertTrue(fsaObj.transitionStates[0].fromState == "q0")
+		self.assertTrue(fsaObj.transitionStates[0].toState == "q3")
+
+		self.assertTrue(fsaObj.transitionStates[9].value == fsaObj.epsilonState)
+		self.assertTrue(fsaObj.transitionStates[9].fromState == "q2")
+		self.assertTrue(fsaObj.transitionStates[9].toState == "q3")
+
 def main():
 	unittest.main()
 
