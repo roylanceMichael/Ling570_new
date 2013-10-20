@@ -125,13 +125,26 @@ spoke
 sang
 spoke
 """
-    testWord1 = "sing"
+    testWord1 = "spoke"
     
     trieObj = trie.Trie()
     ourtrie = trieObj.make_trie(testStr)
     actualResult = trieObj.in_trie(ourtrie, testWord1)
 #    print actualResult
     self.assertTrue(actualResult == True)
+
+
+  def test_makeFsa(self):
+    testStr = """sing
+sang
+spoke
+"""
+
+#    trieObj = trie.Trie()
+#    ourtrie = trieObj.make_trie(testStr)
+#    actualResult = trieObj.in_trie(ourtrie, testWord1)
+#    print actualResult
+#    self.assertTrue(actualResult == True)
 
 
 
