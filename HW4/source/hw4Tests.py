@@ -2,6 +2,7 @@ import unittest
 import transitionState
 import utilities
 import fsa
+import trie
 
 # homework 4 tests
 class LexiconReadingTest(unittest.TestCase):
@@ -103,6 +104,38 @@ class FsaTests(unittest.TestCase):
 		self.assertTrue(fsaObj.transitionStates[9].value == fsaObj.epsilonState)
 		self.assertTrue(fsaObj.transitionStates[9].fromState == "q2")
 		self.assertTrue(fsaObj.transitionStates[9].toState == "q3")
+
+
+class TrieTests(unittest.TestCase):
+
+  def test_fillTrie_small(self):
+    testStr = """sing
+sang
+spoke
+"""
+
+    trieObj = trie.Trie()
+    actualResult = trieObj.make_trie(testStr)
+    print actualResult
+    self.assertTrue(actualResult == {'s': {'i': {'n': {'g': {'#': '#'}}}, 'a': {'n': {'g': {'#': '#'}}}, 'p': {'o': {'k': {'e': {'#': '#'}}}}}})
+
+
+  def test_isinTrie(self):
+    testStr = """sing
+sang
+spoke
+"""
+    testWord1 = "sing"
+    
+    trieObj = trie.Trie()
+    ourtrie = trieObj.make_trie(testStr)
+    actualResult = trieObj.in_trie(ourtrie, testWord1)
+#    print actualResult
+    self.assertTrue(actualResult == True)
+
+
+
+
 
 def main():
 	unittest.main()
