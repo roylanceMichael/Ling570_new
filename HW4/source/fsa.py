@@ -47,7 +47,12 @@ class Fsa:
 		self.internalTransitionStateIndex = 0
 		self.transitionStates = []
 
+		internalEndStateCounter = 0
+		internalEndStates = []
+
 		for key, value in lexiconVals.iteritems():
+
+			internalEndStateCounter = internalEndStateCounter + 1
 
 			for wordIdx in range(0, len(value)):
 				currentWord = value[wordIdx]
@@ -82,6 +87,7 @@ class Fsa:
 						if(transitionState == None or 
 							transitionState.toState != self.endState or 
 							haveBuiltNewState):
+
 
 							self.buildInternalTransitionState(fromState, self.endState, currentChar)
 							haveBuiltNewState = True
