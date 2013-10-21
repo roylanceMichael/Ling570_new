@@ -11,6 +11,93 @@ class Fsa:
 		self.epsilonState = "*e*"
 		self.transitionStates = []
 		self.utilities = utilities.Utilities()
+		self.internalTransitionStateIndex = 1
+
+	def returnTranState(self, value, fromState):
+		for tranStateIdx in range(0, len(self.transitionStates)):
+			tranState = self.transitionStates[tranStateIdx]
+
+			if(tranState.value == value and 
+				tranState.fromState == fromState):
+				return self.transitionStates[tranStateIdx]
+
+		return None
+
+	def currentInternalTransitionState(self):
+		state = "st" + str(self.internalTransitionStateIndex)
+		return state
+
+	def buildInternalTransitionState(self, fromState, toState, value):
+		newToState = ''
+		
+		if(toState == None):
+			self.internalTransitionStateIndex = self.internalTransitionStateIndex + 1
+			newToState = self.currentInternalTransitionState()
+		else:
+			newToState = self.endState
+
+		newTranState = transitionState.TransitionState(fromState, newToState, value, [])
+
+		self.transitionStates.append(newTranState)
+
+	def parseLexicon(self, lexiconVals):
+		# always set our start state to q0
+		self.startState = "q0"
+		self.endState = "q1"
+		self.internalTransitionStateIndex = 0
+		self.transitionStates = []
+
+		for key, value in lexiconVals.iteritems():
+
+			for wordIdx in range(0, len(value)):
+				currentWord = value[wordIdx]
+
+				transitionStateHistory = []
+				haveBuiltNewState = False
+
+				for charIdx in range(0, len(currentWord)):
+					currentChar = currentWord[charIdx]
+
+					# start state?
+					if(charIdx == 0):
+						# does a transition exist already with our current character?
+						transitionState = self.returnTranState(currentChar, self.startState)
+
+						if(transitionState == None or 
+							haveBuiltNewState):
+
+							self.buildInternalTransitionState(self.startState, None, currentChar)
+							transitionStateHistory.append(self.currentInternalTransitionState())
+							haveBuiltNewState = True
+
+						else:
+							transitionStateHistory.append(transitionState.toState)
+						
+					elif(charIdx == len(currentWord)-1):
+						fromState = transitionStateHistory[len(transitionStateHistory)-1]
+						
+						# does a transition exist already with our current character?
+						transitionState = self.returnTranState(currentChar, fromState)
+
+						if(transitionState == None or 
+							transitionState.toState != self.endState or 
+							haveBuiltNewState):
+
+							self.buildInternalTransitionState(fromState, self.endState, currentChar)
+							haveBuiltNewState = True
+
+					else: 
+						fromState = transitionStateHistory[len(transitionStateHistory)-1]
+						
+						transitionState = self.returnTranState(currentChar, fromState)
+
+						if(transitionState == None or 
+							haveBuiltNewState):
+
+							self.buildInternalTransitionState(fromState, None, currentChar)
+							haveBuiltNewState = True
+
+						transitionStateHistory.append(self.currentInternalTransitionState())
 
 	def parse(self, strVal):
 		splitStrVal = re.split("\n", strVal)

@@ -5,6 +5,153 @@ import fsa
 import trie
 
 # homework 4 tests
+class ExpandedFsmTest(unittest.TestCase): 
+	def test_readInSingleLexiconValueAndBuildTransitionState(self):
+		utils = utilities.Utilities()
+		testStr = """walk       reg_verb_stem"""
+
+		lexicon = utils.readLexicon(testStr)
+
+		fsaObj = fsa.Fsa()
+
+		fsaObj.parseLexicon(lexicon)
+
+		transitionStates = fsaObj.transitionStates
+
+		self.assertTrue(len(transitionStates) == 4)
+		
+		self.assertTrue(fsaObj.startState == "q0")
+		self.assertTrue(fsaObj.endState == "q1")
+
+		self.assertTrue(transitionStates[0].fromState == "q0")
+		self.assertTrue(transitionStates[0].toState == "st1")
+		self.assertTrue(transitionStates[0].value == "w")
+
+		self.assertTrue(transitionStates[1].fromState == "st1", transitionStates[1].fromState + " " + transitionStates[1].toState)
+		self.assertTrue(transitionStates[1].toState == "st2")
+		self.assertTrue(transitionStates[1].value == "a")
+
+		self.assertTrue(transitionStates[2].fromState == "st2")
+		self.assertTrue(transitionStates[2].toState == "st3")
+		self.assertTrue(transitionStates[2].value == "l")
+
+		self.assertTrue(transitionStates[3].fromState == "st3")
+		self.assertTrue(transitionStates[3].toState == "q1")
+		self.assertTrue(transitionStates[3].value == "k")
+
+	def test_readInSingleLexiconValueAndBuildTransitionState(self):
+		utils = utilities.Utilities()
+		testStr = """sing       reg_verb_stem
+		sang	past_tense
+		spoke	reg_verb_stem"""
+
+		lexicon = utils.readLexicon(testStr)
+
+		fsaObj = fsa.Fsa()
+
+		fsaObj.parseLexicon(lexicon)
+
+		transitionStates = fsaObj.transitionStates
+
+		self.assertTrue(len(transitionStates) == 11, str(len(transitionStates)))
+
+		self.assertTrue(fsaObj.startState == "q0")
+		self.assertTrue(fsaObj.endState == "q1")
+
+		# from: q0 to: st1 value: s
+		# from: st1 to: st2 value: i
+		# from: st2 to: st3 value: n
+		# from: st3 to: q1 value: g
+		# from: st1 to: st4 value: p
+		# from: st4 to: st5 value: o
+		# from: st5 to: st6 value: k
+		# from: st6 to: q1 value: e
+		# from: st1 to: st7 value: a
+		# from: st7 to: st8 value: n
+		# from: st8 to: q1 value: g
+
+		self.assertTrue(transitionStates[0].fromState == "q0")
+		self.assertTrue(transitionStates[0].toState == "st1")
+		self.assertTrue(transitionStates[0].value == "s")
+
+		self.assertTrue(transitionStates[1].fromState == "st1")
+		self.assertTrue(transitionStates[1].toState == "st2")
+		self.assertTrue(transitionStates[1].value == "i")
+
+		self.assertTrue(transitionStates[2].fromState == "st2")
+		self.assertTrue(transitionStates[2].toState == "st3")
+		self.assertTrue(transitionStates[2].value == "n")
+
+		self.assertTrue(transitionStates[3].fromState == "st3")
+		self.assertTrue(transitionStates[3].toState == "q1")
+		self.assertTrue(transitionStates[3].value == "g")
+
+		self.assertTrue(transitionStates[4].fromState == "st1")
+		self.assertTrue(transitionStates[4].toState == "st4")
+		self.assertTrue(transitionStates[4].value == "p")
+
+		self.assertTrue(transitionStates[5].fromState == "st4")
+		self.assertTrue(transitionStates[5].toState == "st5")
+		self.assertTrue(transitionStates[5].value == "o")
+
+		self.assertTrue(transitionStates[6].fromState == "st5")
+		self.assertTrue(transitionStates[6].toState == "st6")
+		self.assertTrue(transitionStates[6].value == "k")
+
+		self.assertTrue(transitionStates[7].fromState == "st6")
+		self.assertTrue(transitionStates[7].toState == "q1")
+		self.assertTrue(transitionStates[7].value == "e")
+
+		self.assertTrue(transitionStates[8].fromState == "st1")
+		self.assertTrue(transitionStates[8].toState == "st7")
+		self.assertTrue(transitionStates[8].value == "a")
+
+		self.assertTrue(transitionStates[9].fromState == "st7")
+		self.assertTrue(transitionStates[9].toState == "st8")
+		self.assertTrue(transitionStates[9].value == "n")
+
+		self.assertTrue(transitionStates[10].fromState == "st8")
+		self.assertTrue(transitionStates[10].toState == "q1")
+		self.assertTrue(transitionStates[10].value == "g")
+
+	def test_readInSingleLexiconValueAndBuildTransitionState(self):
+		utils = utilities.Utilities()
+		testStr = """geese	testing
+		fox       reg_verb_stem
+		cat 	past_tense
+		goose	reg_verb_stem
+		"""
+
+		lexicon = utils.readLexicon(testStr)
+
+		fsaObj = fsa.Fsa()
+
+		fsaObj.parseLexicon(lexicon)
+
+		transitionStates = fsaObj.transitionStates
+
+		for i in range(0, len(transitionStates)):
+			tranState = transitionStates[i]
+
+			print 'from:' + tranState.fromState + ' to:' + tranState.toState + ' value:' + tranState.value 
+
+		self.assertTrue(len(transitionStates) == 11, str(len(transitionStates)))
+
+		self.assertTrue(fsaObj.startState == "q0")
+		self.assertTrue(fsaObj.endState == "q1")
+
+		# from: q0 to: st1 value: f
+		# from: st1 to: st2 value: o
+		# from: st2 to: q1 value: x
+		# from: q0 to: st3 value: g
+		# from: st3 to: st4 value: o
+		# from: st4 to: st5 value: o
+		# from: st5 to: st6 value: s
+		# from: st6 to: q1 value: e
+		# from: q0 to: st7 value: c
+		# from: st7 to: st8 value: a
+		# from: st8 to: q1 value: t
+
 class LexiconReadingTest(unittest.TestCase):
 
 	def test_readInLexicon_simple(self):
@@ -116,7 +263,7 @@ spoke
 
     trieObj = trie.Trie()
     actualResult = trieObj.make_trie(testStr)
-    print actualResult
+    # print actualResult
     self.assertTrue(actualResult == {'s': {'i': {'n': {'g': {'#': '#'}}}, 'a': {'n': {'g': {'#': '#'}}}, 'p': {'o': {'k': {'e': {'#': '#'}}}}}})
 
 
@@ -130,7 +277,7 @@ spoke
     trieObj = trie.Trie()
     ourtrie = trieObj.make_trie(testStr)
     actualResult = trieObj.in_trie(ourtrie, testWord1)
-#    print actualResult
+	# print actualResult
     self.assertTrue(actualResult == True)
 
 
