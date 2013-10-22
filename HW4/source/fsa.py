@@ -14,6 +14,15 @@ class Fsa:
 		self.utilities = utilities.Utilities()
 		self.internalTransitionStateIndex = 1
 
+	def processCarmelFormatExpandedOutput(self):
+		outputStr = self.endState + '\n'
+		
+		for i in range(0, len(self.expandedTransitionStates)):
+			transition = self.expandedTransitionStates[i]
+			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' ' + transition.value + '))\n'
+
+		return outputStr
+
 	def returnExpandedTranState(self, value, fromState):
 		for tranStateIdx in range(0, len(self.expandedTransitionStates)):
 			tranState = self.expandedTransitionStates[tranStateIdx]
@@ -141,10 +150,22 @@ class Fsa:
 		self.internalTransitionStateIndex = 0
 		self.expandedTransitionStates = []
 
-		internalEndStates = []
-
 		for key, value in lexiconVals.iteritems():
 			self.handleLexiconKvp(key, value)
+
+		# clean up expanded state
+		tempStates = []
+
+		for i in range(0, len(self.expandedTransitionStates)):
+			if(self.expandedTransitionStates[i].fromState == self.startState):
+				tempStates.append(self.expandedTransitionStates[i])
+
+		for i in range(0, len(self.expandedTransitionStates)):
+			if(self.expandedTransitionStates[i].fromState != self.startState):
+				tempStates.append(self.expandedTransitionStates[i])
+
+		# reset to better filtered states
+		self.expandedTransitionStates = tempStates
 			
 	def parse(self, strVal):
 		splitStrVal = re.split("\n", strVal)
