@@ -14,12 +14,25 @@ class Fsa:
 		self.utilities = utilities.Utilities()
 		self.internalTransitionStateIndex = 1
 
+	def logToConsole(self, str):
+		res = (1 == 2)
+		# print str
+
 	def processCarmelFormatExpandedOutput(self):
 		outputStr = self.endState + '\n'
 		
 		for i in range(0, len(self.expandedTransitionStates)):
 			transition = self.expandedTransitionStates[i]
-			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' ' + transition.value + '))\n'
+			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' \"' + transition.value + '\"))\n'
+
+		return outputStr
+
+	def processCarmelFormatOutput(self):
+		outputStr = self.endState + '\n'
+		
+		for i in range(0, len(self.transitionStates)):
+			transition = self.transitionStates[i]
+			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' \"' + transition.value + '\"))\n'
 
 		return outputStr
 
@@ -40,6 +53,8 @@ class Fsa:
 
 			if(tranState.value == value):
 				allTranStates.append(self.transitionStates[tranStateIdx])
+			#elif(tranState.value == self.epsilonState):
+			#	resultTranStates = self.returnTranStatesByVal()
 
 		return allTranStates
 
@@ -67,6 +82,12 @@ class Fsa:
 		for i in range(0, len(word)):
 			currentChar = word[i]
 
+			lastState = ''
+			if(len(transitionStateHistory) > 0):
+				lastState = transitionStateHistory[len(transitionStateHistory)-1]
+
+			self.logToConsole('currentChar:' + currentChar + ' lastState:' + lastState)
+
 			if(i == 0 and len(word) == 1):
 				# does a transition exist already with our current character?
 				transitionState = self.returnExpandedTranState(currentChar, tmpFromState)
@@ -75,7 +96,7 @@ class Fsa:
 					transitionState.toState != tmpToState or 
 					haveBuiltNewState):
 
-					# print 'building len=1 from:' + tmpFromState + ' to:' + tmpToState + ' val:' + currentChar
+					self.logToConsole('building len=1 from:' + tmpFromState + ' to:' + tmpToState + ' val:' + currentChar)
 
 					self.buildInternalTransitionState(tmpFromState, tmpToState, currentChar)
 					haveBuiltNewState = True
@@ -92,7 +113,7 @@ class Fsa:
 					transitionStateHistory.append(self.currentInternalTransitionState())
 					haveBuiltNewState = True
 
-					# print 'building start from:' + tmpFromState + ' to:' + self.currentInternalTransitionState() + ' val:' + currentChar
+					self.logToConsole('building start from:' + tmpFromState + ' to:' + self.currentInternalTransitionState() + ' val:' + currentChar)
 				else:
 					transitionStateHistory.append(transitionState.toState)
 
@@ -106,7 +127,7 @@ class Fsa:
 					transitionState.toState != tmpToState or 
 					haveBuiltNewState):
 
-					# print 'building last from:' + fromState + ' to:' + tmpToState + ' val:' + currentChar
+					self.logToConsole('building last from:' + fromState + ' to:' + tmpToState + ' val:' + currentChar)
 
 					self.buildInternalTransitionState(fromState, tmpToState, currentChar)
 					haveBuiltNewState = True
@@ -117,22 +138,25 @@ class Fsa:
 				transitionState = self.returnExpandedTranState(currentChar, fromState)
 
 				if(transitionState == None or 
+					"q" in transitionState.toState or
 					haveBuiltNewState):
 
 					self.buildInternalTransitionState(fromState, None, currentChar)
 					haveBuiltNewState = True
 
-					# print 'building middle from:' + fromState + ' to:' + self.currentInternalTransitionState() + ' val:' + currentChar
-
-
-				transitionStateHistory.append(self.currentInternalTransitionState())			
+					self.logToConsole('building middle from:' + fromState + ' to:' + self.currentInternalTransitionState() + ' val:' + currentChar)
+					
+					transitionStateHistory.append(self.currentInternalTransitionState())
+				
+				else:
+					transitionStateHistory.append(transitionState.toState)			
 
 	def handleLexiconWithTranState(self, words, tranState):
 		# we want to cycle through each word and process a new state
 		tempFromState = tranState.fromState
 		tempToState = tranState.toState
 
-		# print 'cycling through ' + str(len(words)) + ' for ' + tranState.value + ' from:' + tempFromState + ' to:' + tempToState
+		print 'cycling through ' + str(len(words)) + ' for ' + tranState.value + ' from:' + tempFromState + ' to:' + tempToState
 
 		for i in range(0, len(words)):
 			self.handleWord(words[i], tempFromState, tempToState)
