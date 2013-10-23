@@ -114,10 +114,14 @@ s          3sg
 
 		stringsToTest = [ "c u t", "c u t s", "c u t t i n g"]
 
-		for i in range(0, len(stringsToTest)):
+		for i in range(0, 2):
 			str = stringsToTest[i]
 			res = fsaObj1.processInput(str)
 			self.assertTrue(res == True, str)
+
+		str = stringsToTest[2]
+		res = fsaObj1.processInput(str)
+		self.assertTrue(res == False, str)
 		
 
 # 	def test_readInFsmAndThenLexiconValue3(self):

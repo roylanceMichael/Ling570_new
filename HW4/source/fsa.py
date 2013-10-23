@@ -16,7 +16,7 @@ class Fsa:
 
 	def logToConsole(self, str):
 		res = (1 == 2)
-		# print str
+		print str
 
 	def processCarmelFormatExpandedOutput(self):
 		outputStr = self.endState + '\n'
@@ -69,7 +69,7 @@ class Fsa:
 			self.internalTransitionStateIndex = self.internalTransitionStateIndex + 1
 			newToState = self.currentInternalTransitionState()
 		else:
-			newToState = self.endState
+			newToState = toState
 
 		newTranState = transitionState.TransitionState(fromState, newToState, value, [])
 
@@ -156,7 +156,7 @@ class Fsa:
 		tempFromState = tranState.fromState
 		tempToState = tranState.toState
 
-		print 'cycling through ' + str(len(words)) + ' for ' + tranState.value + ' from:' + tempFromState + ' to:' + tempToState
+		print 'cycling through ' + str(len(words)) + ' words for ' + tranState.value + ' from:' + tempFromState + ' to:' + tempToState
 
 		for i in range(0, len(words)):
 			self.handleWord(words[i], tempFromState, tempToState)
@@ -176,6 +176,18 @@ class Fsa:
 
 		for key, value in lexiconVals.iteritems():
 			self.handleLexiconKvp(key, value)
+
+		# add in all epsilon states
+		epsilonStates = self.returnTranStatesByVal(self.epsilonState)
+
+		for i in range(0, len(epsilonStates)):
+			tempTranState = epsilonStates[i]
+			newTranState = transitionState.TransitionState(
+				tempTranState.fromState,
+				tempTranState.toState,
+				tempTranState.value,
+				[])
+			self.expandedTransitionStates.append(newTranState)
 
 		# clean up expanded state
 		tempStates = []
