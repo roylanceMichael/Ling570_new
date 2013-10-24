@@ -2,8 +2,11 @@ import re
 import transitionState
 
 class Utilities:
-	def __init__(self):
-		self.what = 'what'
+	def processYesNo(self, boolVal):
+		if(boolVal == True):
+			return 'Yes'
+		else:
+			return 'No'
 
 	def readLexicon(self, strVal):
 		# first, split the string into many lines
@@ -28,6 +31,8 @@ class Utilities:
 		return lexiconItems
 
 	def cleanseInput(self, strVal):
+		if(strVal == None):
+			return ''
 		return re.sub(r'\"', '', re.sub(r'\'', '', strVal))
 
 	def valsBeforeParen(self, strVal):

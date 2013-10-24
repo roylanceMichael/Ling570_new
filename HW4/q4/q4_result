@@ -1,10 +1,11 @@
-cut => yes
-cuts => no
-cuted => no
-cuting => no
-cutting => no
-speaks => no
-speaking => no
-spoke => yes
-speak => no
-speaked => no
+cut => Yes
+cuts => Yes
+cuted => No
+cuting => Yes
+cutting => No
+speaks => Yes
+speaking => Yes
+spoke => Yes
+speak => Yes
+speaked => No
+

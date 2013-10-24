@@ -16,14 +16,18 @@ class Fsa:
 
 	def logToConsole(self, str):
 		res = (1 == 2)
-		print str
+		# print str
 
 	def processCarmelFormatExpandedOutput(self):
 		outputStr = self.endState + '\n'
 		
 		for i in range(0, len(self.expandedTransitionStates)):
 			transition = self.expandedTransitionStates[i]
-			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' \"' + transition.value + '\"))\n'
+
+			if(transition.output != None):
+				outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' ' + transition.value + ' ' + transition.output + '))\n'
+			else:
+				outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' ' + transition.value + '))\n'
 
 		return outputStr
 
@@ -32,7 +36,7 @@ class Fsa:
 		
 		for i in range(0, len(self.transitionStates)):
 			transition = self.transitionStates[i]
-			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' \"' + transition.value + '\"))\n'
+			outputStr = outputStr + '(' + transition.fromState + ' (' + transition.toState + ' ' + transition.value + '))\n'
 
 		return outputStr
 
@@ -62,7 +66,7 @@ class Fsa:
 		state = "st" + str(self.internalTransitionStateIndex)
 		return state
 
-	def buildInternalTransitionState(self, fromState, toState, value):
+	def buildInternalTransitionState(self, fromState, toState, value, output):
 		newToState = ''
 		
 		if(toState == None):
@@ -71,11 +75,11 @@ class Fsa:
 		else:
 			newToState = toState
 
-		newTranState = transitionState.TransitionState(fromState, newToState, value, [])
+		newTranState = transitionState.TransitionState(fromState, newToState, value, [output])
 
 		self.expandedTransitionStates.append(newTranState)
 	
-	def handleWord(self, word, tmpFromState, tmpToState):
+	def handleWord(self, word, tmpFromState, tmpToState, output):
 		transitionStateHistory = []
 		haveBuiltNewState = False 
 
@@ -98,7 +102,7 @@ class Fsa:
 
 					self.logToConsole('building len=1 from:' + tmpFromState + ' to:' + tmpToState + ' val:' + currentChar)
 
-					self.buildInternalTransitionState(tmpFromState, tmpToState, currentChar)
+					self.buildInternalTransitionState(tmpFromState, tmpToState, currentChar, output)
 					haveBuiltNewState = True
 
 			elif(i == 0):
@@ -109,7 +113,7 @@ class Fsa:
 				if(transitionState == None or 
 					haveBuiltNewState):
 
-					self.buildInternalTransitionState(tmpFromState, None, currentChar)
+					self.buildInternalTransitionState(tmpFromState, None, currentChar, None)
 					transitionStateHistory.append(self.currentInternalTransitionState())
 					haveBuiltNewState = True
 
@@ -129,7 +133,7 @@ class Fsa:
 
 					self.logToConsole('building last from:' + fromState + ' to:' + tmpToState + ' val:' + currentChar)
 
-					self.buildInternalTransitionState(fromState, tmpToState, currentChar)
+					self.buildInternalTransitionState(fromState, tmpToState, currentChar, output)
 					haveBuiltNewState = True
 
 			else: 
@@ -141,7 +145,7 @@ class Fsa:
 					"q" in transitionState.toState or
 					haveBuiltNewState):
 
-					self.buildInternalTransitionState(fromState, None, currentChar)
+					self.buildInternalTransitionState(fromState, None, currentChar, None)
 					haveBuiltNewState = True
 
 					self.logToConsole('building middle from:' + fromState + ' to:' + self.currentInternalTransitionState() + ' val:' + currentChar)
@@ -151,15 +155,15 @@ class Fsa:
 				else:
 					transitionStateHistory.append(transitionState.toState)			
 
-	def handleLexiconWithTranState(self, words, tranState):
+	def handleLexiconWithTranState(self, words, tranState, output):
 		# we want to cycle through each word and process a new state
 		tempFromState = tranState.fromState
 		tempToState = tranState.toState
 
-		print 'cycling through ' + str(len(words)) + ' words for ' + tranState.value + ' from:' + tempFromState + ' to:' + tempToState
+		self.logToConsole('cycling through ' + str(len(words)) + ' words for ' + tranState.value + ' from:' + tempFromState + ' to:' + tempToState)
 
 		for i in range(0, len(words)):
-			self.handleWord(words[i], tempFromState, tempToState)
+			self.handleWord(words[i], tempFromState, tempToState, output)
 
 
 	def handleLexiconKvp(self, partOfSpeech, words):
@@ -167,7 +171,7 @@ class Fsa:
 		allTranStatesBelongTo = self.returnTranStatesByVal(partOfSpeech)
 
 		for i in range(0, len(allTranStatesBelongTo)):
-			self.handleLexiconWithTranState(words, allTranStatesBelongTo[i])
+			self.handleLexiconWithTranState(words, allTranStatesBelongTo[i], partOfSpeech)
 
 	def parseLexicon(self, lexiconVals):
 		# expecting that the fsm has already been read
@@ -277,11 +281,34 @@ class Fsa:
 		return (outputStr + " " + str(highestProbability.normalize())).strip()   # normalize() gets rid of extra zeros in Decimal
 
 
+	def returnMorphedOutput(self, userInput):
+		allAcceptableStates = self.processFst(userInput)
+
+		if(len(allAcceptableStates) == 0):
+			return '*none*'
+
+		acceptableStates = allAcceptableStates[0]
+
+		currentVals = ''
+		outputToUser = ''
+		
+		for i in range(len(acceptableStates)):
+			idx = len(acceptableStates) - i - 1
+			acceptableState = acceptableStates[idx]
+
+			currentVals = currentVals + acceptableState.value
+
+			if(acceptableState.output != '' and acceptableState.output != None):
+				outputToUser = outputToUser + ' ' + currentVals + '/' + acceptableState.output
+				currentVals = ''
+
+		return outputToUser.strip()
+
 	# fst and wfst function
 	def processFst(self, userInput):
 		# assuming the input is just in one line, the main file will split it for me...
 		# this function will simply return a yes or no
-		splitValues = re.split("\s+", userInput)
+		splitValues = re.split("\s+", userInput.strip())
 		listOfAcceptedStates = []
 
 		# if your FST has the same start and final state, it should accept an empty string. You can do this by giving it the empty-string symbol '*e*':
