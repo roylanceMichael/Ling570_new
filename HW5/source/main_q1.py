@@ -11,15 +11,14 @@ def main():
   
   NGramsObj = ngrams.NGrams()
 
-  for tup in NGramsObj.count_unigrams(t):  # slice of list
-    print tup[1], '\t', tup[0]    # print element by element 
+  for tup in NGramsObj.count_unigrams(t):  # unigrams
+    print tup[1], '\t', tup[0]    # print count and 1-gram 
 
-  for tup in NGramsObj.count_bigrams(t):  # slice of list
-    print tup[1], '\t', tup[0]    # print element by element 
+  for tup in NGramsObj.count_bigrams(t):  # bigrams
+    print tup[1], '\t', tup[0]    # print count and 2-gram 
 
-  for tup in NGramsObj.count_trigrams(t):  # slice of list
-    print tup[1], '\t', tup[0]    # print element by element
-
+  for tup in NGramsObj.count_trigrams(t):  # trigrams
+    print tup[1], '\t', tup[0]    # print count and 3-gram
 
   input_t.close()
 

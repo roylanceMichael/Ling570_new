@@ -33,10 +33,10 @@ Rudolph Agnew , 55 years old and former chairman of Consolidated Gold Fields PLC
 my cat loves me ."""
 
     NGramsObj = ngrams.NGrams()
-    print testSent
+#    print testSent
     actualResult = NGramsObj.count_bigrams(testSent)
-    print actualResult
-    self.assertTrue(actualResult == [('my cat', 2), ('. </s>', 2), ('cat loves', 1), ('cat .', 1), ('<s> I', 1), ('<s> my', 1), ('love my', 1), ('me .', 1), ('I love', 1), ('loves me', 1)])
+ #   print actualResult
+    self.assertTrue(actualResult == [('my cat', 2), ('. </s>', 1), ('cat loves', 1), ('cat .', 1), ('<s> I', 1), ('<s> my', 1), ('love my', 1), ('me .', 1), ('I love', 1), ('loves me', 1)])
 
 
   def test_trigrams(self):
@@ -44,10 +44,30 @@ my cat loves me ."""
 my cat loves me ."""
 
     NGramsObj = ngrams.NGrams()
-    print testSent
+#    print testSent
     actualResult = NGramsObj.count_trigrams(testSent)
-    print actualResult
+#    print actualResult
     self.assertTrue(actualResult == [('cat . </s>', 1), ('loves me .', 1), ('love my cat', 1), ('me . </s>', 1), ('my cat .', 1), ('my cat loves', 1), ('<s> my cat', 1), ('cat loves me', 1), ('<s> I love', 1), ('I love my', 1)])
+
+
+
+class Count_NGrams(unittest.TestCase):
+
+  def test_countTypesTokens(self):
+    testdict = {'a': 3, 'b': 2, 'c': 7}
+    
+    NGramsObj = ngrams.NGrams()
+    actualResult = NGramsObj.count_types_tokens(testdict)
+    self.assertTrue(actualResult == (3,12))
+
+
+  def test_calcProbs(self):
+    testdict = {'a': 3, 'b': 2, 'c': 7}
+    
+    NGramsObj = ngrams.NGrams()
+    actualResult = NGramsObj.calc_prob(testdict)
+    self.assertTrue(actualResult == ([3,0.25,-1.01010,'a'],[2,0.20202,-1.01010,'b'],[7,0.53030, -1.202020, 'c']))
+
 
 
 
