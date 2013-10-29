@@ -20,6 +20,8 @@ def main():
   for tup in NGramsObj.count_trigrams(t):  # trigrams
     print tup[1], '\t', tup[0]    # print count and 3-gram
 
+  
+
   input_t.close()
 
 
