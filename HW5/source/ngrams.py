@@ -20,18 +20,12 @@ class NGrams:
 
   def BOS_EOS(self, line):
 ### insert beginning and end of string tags
-#    text = re.sub(r'^', '<s> ', text, flags=re.MULTILINE)
-#    text = re.sub(r'$', ' </s>', text, flags=re.MULTILINE)
-#    if re.match(r'<s>\s*</s>', text):
- #     print "blank"
     line = "<s> " + line.strip() + " </s>" + '\n'
     return line
 
 
   def count_unigrams(self, text):
 ### get unigrams; stuff in the dictionary; count and sort 
-  #  list_all = self.BOS_EOS(text)
-#    uni_dict = {}
 #    print text
     for token in text.split(): #list_all.split():
     #  print token
@@ -45,11 +39,8 @@ class NGrams:
 
   def count_bigrams(self, text):
 ### get bigrams; stuff in the dictionary; count; sort
-   # list_all = self.BOS_EOS(text)
     t = text.split()   # list_all
 
-#    print t
-#    self.bi_dict = {} 
     for i in range(0, len(t)-1):
  #     print t[i] + ' ' + t[i+1]
       bigram = t[i] + ' ' + t[i+1]
@@ -66,12 +57,9 @@ class NGrams:
 
   def count_trigrams(self, text):
 ### count trigrams
-#    list_all = self.BOS_EOS(text)
     t = text.split()   #list_all
   #  print t
- #   tri_dict = {}
     for i in range(0, len(t)-2):
-#      print t[i] + ' ' + t[i+1] + ' ' + t[i+2]
       trigram = t[i] + ' ' + t[i+1] + ' ' + t[i+2]
       if not trigram in self.tri_dict and not (t[i] == '</s>' or t[i+1] == '</s>'):
         self.tri_dict[trigram] = 1
@@ -86,6 +74,7 @@ class NGrams:
 
   def read_into_dicts(self, line_of_input):
     ilist = re.split('\s+', line_of_input.strip())
+#    print ilist, len(ilist)
     if len(ilist) == 2:
       self.uni_dict[ilist[1]] = int(ilist[0])
     elif len(ilist) == 3:
@@ -100,12 +89,9 @@ class NGrams:
 ### count how many types and how many tokens
 #    print dictionary
     types = len(dictionary)
-#    print types
 #    print dictionary.values()
-#    tokens = sum([i for i in dictionary.values()])
     tokens = sum(dictionary.values())
 #    print tokens
-#    print (types, tokens)
     return (types, tokens)
  
 
@@ -115,7 +101,6 @@ class NGrams:
     for key in self.uni_dict:
       prob = self.uni_dict[key]/self.count_types_tokens(self.uni_dict)[1]
       logprob = math.log10(prob)     
-#      logprob = math.log(dictionary[key]) - math.log(self.count_types_tokens(dictionary)[1])
       ARPA.append([self.uni_dict[key], prob, logprob, key])
 #      print ARPA
     return sorted(ARPA, key = itemgetter(0), reverse = True)
@@ -127,7 +112,6 @@ class NGrams:
     for key in self.bi_dict:
       keyparts = key.split()
 #      print keyparts
-#      print self.uni_dict[keyparts[0]]
       prob = self.bi_dict[key]/self.uni_dict[keyparts[0]]
       logprob = math.log10(prob)
       ARPA.append([self.bi_dict[key], prob, logprob, key])
@@ -142,7 +126,6 @@ class NGrams:
       keyparts = key.split()
 #      print keyparts
       bigram = ' '.join(keyparts[0:2])
-#      print bigram
 #      print self.bi_dict[bigram]
       prob = self.tri_dict[key]/self.bi_dict[bigram]
       logprob = math.log10(prob)

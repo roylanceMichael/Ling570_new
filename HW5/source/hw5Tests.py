@@ -21,29 +21,30 @@ class CollectNGramsTest(unittest.TestCase):
 
 
   def test_unigrams(self):
-    testSent = """John likes Mary"""
+    testSent = """<s> John likes Mary </s>"""
 
     NGramsObj = ngrams.NGrams()
 #    print testSent
     actualResult = NGramsObj.count_unigrams(testSent)
-  #  print actualResult
+#    print actualResult
     self.assertTrue(actualResult == [('<s>', 1), ('John', 1), ('</s>', 1), ('likes', 1), ('Mary', 1)])
 
 
   def test_bigrams(self):
-    testSent = """I love my cat .
-my cat loves me ."""
+    testSent = """<s> I love my cat . </s>
+<s> my cat loves me . </s>
+"""
 
     NGramsObj = ngrams.NGrams()
-    print testSent
+#    print testSent
     actualResult = NGramsObj.count_bigrams(testSent)
-    print actualResult
-    self.assertTrue(actualResult == [('my cat', 2), ('. </s>', 1), ('cat loves', 1), ('cat .', 1), ('<s> I', 1), ('<s> my', 1), ('love my', 1), ('me .', 1), ('I love', 1), ('loves me', 1)])
+#    print actualResult
+    self.assertTrue(actualResult == [('my cat', 2), ('. </s>', 2), ('cat loves', 1), ('cat .', 1), ('<s> I', 1), ('<s> my', 1), ('love my', 1), ('me .', 1), ('I love', 1), ('loves me', 1)])
 
 
   def test_trigrams(self):
-    testSent = """I love my cat .
-my cat loves me ."""
+    testSent = """<s> I love my cat . </s>
+<s> my cat loves me . </s>"""
 
     NGramsObj = ngrams.NGrams()
 #    print testSent
@@ -69,7 +70,8 @@ class Count_NGrams(unittest.TestCase):
     NGramsObj = ngrams.NGrams()
     NGramsObj.uni_dict = testdict
     actualResult = NGramsObj.calc_uni_prob()
-    self.assertTrue(actualResult == [[3, 0.25, -0.6020599913279624, 'a'], [7, 0.5833333333333334, -0.23408320603336796, 'c'], [2, 0.16666666666666666, -0.7781512503836436, 'b']])
+    print actualResult
+    self.assertTrue(actualResult == [[7, 0.5833333333333334, -0.23408320603336796, 'c'], [3, 0.25, -0.6020599913279624, 'a'], [2, 0.16666666666666666, -0.7781512503836436, 'b']])
 
 
   def test_UnigramreadIntoDict(self):
@@ -77,7 +79,7 @@ class Count_NGrams(unittest.TestCase):
 
     NGramsObj = ngrams.NGrams()
     NGramsObj.read_into_dicts(teststr)
-    self.assertTrue(NGramsObj.uni_dict["but"] == "100")
+    self.assertTrue(NGramsObj.uni_dict["but"] == 100)
 
 
   def test_BigramReadIntoDict(self):
@@ -85,7 +87,7 @@ class Count_NGrams(unittest.TestCase):
 
     NGramsObj = ngrams.NGrams()
     NGramsObj.read_into_dicts(teststr)
-    self.assertTrue(NGramsObj.bi_dict["but if"] == "100")
+    self.assertTrue(NGramsObj.bi_dict["but if"] == 100)
 
 
   def test_TrigramReadIntoDict(self):
@@ -93,7 +95,7 @@ class Count_NGrams(unittest.TestCase):
 
     NGramsObj = ngrams.NGrams()
     NGramsObj.read_into_dicts(teststr)
-    self.assertTrue(NGramsObj.tri_dict["but what if"] == "100")
+    self.assertTrue(NGramsObj.tri_dict["but what if"] == 100)
 
 
   def test_readIntoDict(self):
@@ -105,9 +107,9 @@ class Count_NGrams(unittest.TestCase):
     NGramsObj.read_into_dicts(teststr1)
     NGramsObj.read_into_dicts(teststr2)
     NGramsObj.read_into_dicts(teststr3)
-    self.assertTrue(NGramsObj.uni_dict["but"] == "100")
-    self.assertTrue(NGramsObj.bi_dict["but if"] == "100")
-    self.assertTrue(NGramsObj.tri_dict["but what if"] == "100")
+    self.assertTrue(NGramsObj.uni_dict["but"] == 100)
+    self.assertTrue(NGramsObj.bi_dict["but if"] == 100)
+    self.assertTrue(NGramsObj.tri_dict["but what if"] == 100)
 
 
   def test_CalcBiProbs(self):
@@ -119,7 +121,8 @@ class Count_NGrams(unittest.TestCase):
     NGramsObj.bi_dict = testdict2
     NGramsObj.uni_dict = testdict1
     actualResult = NGramsObj.calc_bi_prob()
-    self.assertTrue(actualResult == [[2, 0.2222222222222222, -0.6532125137753437, 'bravo yankee'], [3, 0.5, -0.3010299956639812, 'alpha zulu'], [7, 0.5833333333333334, -0.23408320603336796, 'charlie xray']])
+#    print actualResult
+    self.assertTrue(actualResult == [[7, 0.5833333333333334, -0.23408320603336796, 'charlie xray'], [3, 0.5, -0.3010299956639812, 'alpha zulu'], [2, 0.2222222222222222, -0.6532125137753437, 'bravo yankee']])
 
 
   def test_CalcTriProbs(self):
@@ -133,7 +136,8 @@ class Count_NGrams(unittest.TestCase):
     NGramsObj.bi_dict = testdict2
     NGramsObj.uni_dict = testdict1
     actualResult = NGramsObj.calc_tri_prob()
-    self.assertTrue(actualResult == [[1, 0.3333333333333333, -0.47712125471966244, 'alpha zulu bravo'], [5, 0.7142857142857143, -0.146128035678238, 'charlie xray alpha'], [4, 2.0, 0.3010299956639812, 'bravo yankee charlie']])
+#    print actualResult
+    self.assertTrue(actualResult == [[5, 0.7142857142857143, -0.146128035678238, 'charlie xray alpha'], [4, 2.0, 0.3010299956639812, 'bravo yankee charlie'], [1, 0.3333333333333333, -0.47712125471966244, 'alpha zulu bravo']])
 
 
 
