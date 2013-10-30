@@ -70,7 +70,7 @@ class Count_NGrams(unittest.TestCase):
     NGramsObj = ngrams.NGrams()
     NGramsObj.uni_dict = testdict
     actualResult = NGramsObj.calc_uni_prob()
-    print actualResult
+   # print actualResult
     self.assertTrue(actualResult == [[7, 0.5833333333333334, -0.23408320603336796, 'c'], [3, 0.25, -0.6020599913279624, 'a'], [2, 0.16666666666666666, -0.7781512503836436, 'b']])
 
 
@@ -138,6 +138,26 @@ class Count_NGrams(unittest.TestCase):
     actualResult = NGramsObj.calc_tri_prob()
 #    print actualResult
     self.assertTrue(actualResult == [[5, 0.7142857142857143, -0.146128035678238, 'charlie xray alpha'], [4, 2.0, 0.3010299956639812, 'bravo yankee charlie'], [1, 0.3333333333333333, -0.47712125471966244, 'alpha zulu bravo']])
+
+
+  def test_readLMIntoDict(self):
+    teststr1 = "1000 0.0391374114516 -1.40740790197 <s>"
+    teststr2 = ""
+    teststr3 = "1 0.2 -0.698970004336 executives drooled"
+    teststr4 = "\\3-grams:" 
+    teststr5 = "1 0.333333333333 -0.47712125472 20 % and"
+
+    NGramsObj = ngrams.NGrams()
+    NGramsObj.read_lm_file_into_dicts(teststr1)
+    NGramsObj.read_lm_file_into_dicts(teststr2)
+    NGramsObj.read_lm_file_into_dicts(teststr3)
+    NGramsObj.read_lm_file_into_dicts(teststr4)
+    NGramsObj.read_lm_file_into_dicts(teststr5)
+    self.assertTrue(NGramsObj.uni_dict["<s>"] == "0.0391374114516")
+    self.assertTrue(NGramsObj.read_into_dicts(teststr2) == None)
+    self.assertTrue(NGramsObj.bi_dict["executives drooled"] == "0.2")
+    self.assertTrue(NGramsObj.read_into_dicts(teststr4) == None)
+    self.assertTrue(NGramsObj.tri_dict["20 % and"] == "0.333333333333")
 
 
 

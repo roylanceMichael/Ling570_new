@@ -73,6 +73,7 @@ class NGrams:
 
 
   def read_into_dicts(self, line_of_input):
+### reading ngram_count_file into a data structure line by line: ngram is key; frequency is value
     ilist = re.split('\s+', line_of_input.strip())
 #    print ilist, len(ilist)
     if len(ilist) == 2:
@@ -133,5 +134,43 @@ class NGrams:
 #      print ARPA
     return sorted(ARPA, key = itemgetter(0), reverse = True)
 
+
+  def read_lm_file_into_dicts(self, line_of_input):
+### reading lm_file into a dictionary line by line; have to start reading from line 6 of file; will have to be done in main()
+### out of four elements we need [1] - prob -- value in the dictionary
+### and [3] - ngram -- key in the dictionary
+    ilist = re.split('\s+', line_of_input.strip())
+#    print ilist, len(ilist)
+    if len(ilist) == 4:
+      self.uni_dict[ilist[3]] = ilist[1]
+    elif len(ilist) == 5:
+      key = ' '.join(ilist[3:])
+      self.bi_dict[key] = ilist[1]
+    elif len(ilist) == 6:
+      key = ' '.join(ilist[3:])
+#      print key
+      self.tri_dict[key] = ilist[1]
+    else:
+      return None
+
+
+  def Perplexity(self, sentence, l1, l2, l3):   
+# how to write a test for this?
+### l1, l2, l3 - for interpolation; passed from main
+
+    s = sentence.split()
+
+### the first bigram
+    P1 = 0
+    first_bi = ' '.join(s[0:2])
+    if first_bi in self.bi_dict:
+      P1 = l2 * int(self.bi_dict[first_bi])
+    else:
+      continue
+    if s[1] in self.uni_dict:
+      P1 = P1 + l1 * int(self.uni_dict[s[1]])
+    else:
+      continue
+ #   for i in range(1, len(s)-2):
 
 
