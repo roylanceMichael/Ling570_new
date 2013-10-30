@@ -1,4 +1,5 @@
 from __future__ import division
+from operator import itemgetter
 import sys
 import re
 import math
@@ -114,7 +115,7 @@ class NGrams:
 #      logprob = math.log(dictionary[key]) - math.log(self.count_types_tokens(dictionary)[1])
       ARPA.append([self.uni_dict[key], prob, logprob, key])
 #      print ARPA
-    return ARPA
+    return sorted(ARPA, key = itemgetter(0), reverse = True)
 
 
   def calc_bi_prob(self):
@@ -128,7 +129,7 @@ class NGrams:
       logprob = math.log10(prob)
       ARPA.append([self.bi_dict[key], prob, logprob, key])
 #      print ARPA
-    return ARPA
+    return sorted(ARPA, key = itemgetter(0), reverse = True)
 
 
   def calc_tri_prob(self):
@@ -136,15 +137,15 @@ class NGrams:
     ARPA = []
     for key in self.tri_dict:
       keyparts = key.split()
-      print keyparts
+#      print keyparts
       bigram = ' '.join(keyparts[0:2])
-      print bigram
-      print self.bi_dict[bigram]
+#      print bigram
+#      print self.bi_dict[bigram]
       prob = self.tri_dict[key]/self.bi_dict[bigram]
       logprob = math.log10(prob)
       ARPA.append([self.tri_dict[key], prob, logprob, key])
-      print ARPA
-    return ARPA
+#      print ARPA
+    return sorted(ARPA, key = itemgetter(0), reverse = True)
 
 
 

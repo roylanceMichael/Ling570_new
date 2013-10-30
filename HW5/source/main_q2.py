@@ -17,19 +17,19 @@ def main():
 
 
   print "\data\\"  
-  print "\\ngram 1: type=", NGramsObj.count_types_tokens(NGramsObj.uni_dict)[0], " token=", NGramsObj.count_types_tokens(NGramsObj.uni_dict)[1]
-  print "\\ngram 2: type=", NGramsObj.count_types_tokens(NGramsObj.bi_dict)[0], " token=", NGramsObj.count_types_tokens(NGramsObj.bi_dict)[1]
-  print "\\ngram 3: type=", NGramsObj.count_types_tokens(NGramsObj.tri_dict)[0], " token=", NGramsObj.count_types_tokens(NGramsObj.tri_dict)[1]
+  print "ngram 1: type=", NGramsObj.count_types_tokens(NGramsObj.uni_dict)[0], "token=", NGramsObj.count_types_tokens(NGramsObj.uni_dict)[1]
+  print "ngram 2: type=", NGramsObj.count_types_tokens(NGramsObj.bi_dict)[0], "token=", NGramsObj.count_types_tokens(NGramsObj.bi_dict)[1]
+  print "ngram 3: type=", NGramsObj.count_types_tokens(NGramsObj.tri_dict)[0], "token=", NGramsObj.count_types_tokens(NGramsObj.tri_dict)[1]
  
-  print "\\1-grams:"
+  print '\n', "\\1-grams:"
   for tup in NGramsObj.calc_uni_prob():  
     print tup[0], ' ', tup[1], ' ', tup[2], ' ', tup[3]     
 
-  print "\\2-grams:"
+  print '\n', "\\2-grams:"
   for tup in NGramsObj.calc_bi_prob():  
     print tup[0], ' ', tup[1], ' ', tup[2], ' ', tup[3]     
 
-  print "\\3-grams:"
+  print '\n', "\\3-grams:"
   for tup in NGramsObj.calc_tri_prob(): 
     print tup[0], ' ', tup[1], ' ', tup[2], ' ', tup[3]     
 
