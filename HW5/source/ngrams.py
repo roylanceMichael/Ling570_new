@@ -18,19 +18,22 @@ class NGrams:
     self.tritokens = 0
 
 
-  def BOS_EOS(self, text):
+  def BOS_EOS(self, line):
 ### insert beginning and end of string tags
-    text = re.sub(r'^', '<s> ', text, flags=re.MULTILINE)
-    text = re.sub(r'$', ' </s>', text, flags=re.MULTILINE)
-    
-    return text
+#    text = re.sub(r'^', '<s> ', text, flags=re.MULTILINE)
+#    text = re.sub(r'$', ' </s>', text, flags=re.MULTILINE)
+#    if re.match(r'<s>\s*</s>', text):
+ #     print "blank"
+    line = "<s> " + line.strip() + " </s>" + '\n'
+    return line
 
 
   def count_unigrams(self, text):
 ### get unigrams; stuff in the dictionary; count and sort 
-    list_all = self.BOS_EOS(text)
+  #  list_all = self.BOS_EOS(text)
 #    uni_dict = {}
-    for token in list_all.split():
+#    print text
+    for token in text.split(): #list_all.split():
     #  print token
       if not token in self.uni_dict:
         self.uni_dict[token] = 1
@@ -42,12 +45,12 @@ class NGrams:
 
   def count_bigrams(self, text):
 ### get bigrams; stuff in the dictionary; count; sort
-    list_all = self.BOS_EOS(text)
-    t = list_all.split()
+   # list_all = self.BOS_EOS(text)
+    t = text.split()   # list_all
 
 #    print t
 #    self.bi_dict = {} 
-    for i in range(0, len(t)-2):
+    for i in range(0, len(t)-1):
  #     print t[i] + ' ' + t[i+1]
       bigram = t[i] + ' ' + t[i+1]
       if not bigram in self.bi_dict and not t[i] == '</s>':
@@ -63,8 +66,8 @@ class NGrams:
 
   def count_trigrams(self, text):
 ### count trigrams
-    list_all = self.BOS_EOS(text)
-    t = list_all.split()
+#    list_all = self.BOS_EOS(text)
+    t = text.split()   #list_all
   #  print t
  #   tri_dict = {}
     for i in range(0, len(t)-2):

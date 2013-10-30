@@ -5,17 +5,19 @@ import ngrams
 class CollectNGramsTest(unittest.TestCase):
 
   def test_BOS_EOS(self):
-    testSent = """Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 .
-Mr. Vinken is chairman of Elsevier N.V. , the Dutch publishing group .
-Rudolph Agnew , 55 years old and former chairman of Consolidated Gold Fields PLC , was named a nonexecutive director of this British industrial conglomerate ."""
+    testSent1 = "Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 ."
+    testSent2 = "Mr. Vinken is chairman of Elsevier N.V. , the Dutch publishing group ."
+    testSent3 = "Rudolph Agnew , 55 years old and former chairman of Consolidated Gold Fields PLC , was named a nonexecutive director of this British industrial conglomerate ."""
 
     NGramsObj = ngrams.NGrams()
 #    print testSent
-    actualResult = NGramsObj.BOS_EOS(testSent)
-#    print actualResult
-    self.assertTrue(actualResult == """<s> Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 . </s>
-<s> Mr. Vinken is chairman of Elsevier N.V. , the Dutch publishing group . </s>
-<s> Rudolph Agnew , 55 years old and former chairman of Consolidated Gold Fields PLC , was named a nonexecutive director of this British industrial conglomerate . </s>""")
+    actualResult1 = NGramsObj.BOS_EOS(testSent1)
+#    print actualResult1
+    self.assertTrue(actualResult1 == "<s> Pierre Vinken , 61 years old , will join the board as a nonexecutive director Nov. 29 . </s>" + '\n')
+    actualResult2 = NGramsObj.BOS_EOS(testSent2)
+    self.assertTrue(actualResult2 == "<s> Mr. Vinken is chairman of Elsevier N.V. , the Dutch publishing group . </s>" + '\n')
+    actualResult3 = NGramsObj.BOS_EOS(testSent3)
+    self.assertTrue(actualResult3 == "<s> Rudolph Agnew , 55 years old and former chairman of Consolidated Gold Fields PLC , was named a nonexecutive director of this British industrial conglomerate . </s>" + '\n')
 
 
   def test_unigrams(self):
@@ -33,9 +35,9 @@ Rudolph Agnew , 55 years old and former chairman of Consolidated Gold Fields PLC
 my cat loves me ."""
 
     NGramsObj = ngrams.NGrams()
-#    print testSent
+    print testSent
     actualResult = NGramsObj.count_bigrams(testSent)
-#    print actualResult
+    print actualResult
     self.assertTrue(actualResult == [('my cat', 2), ('. </s>', 1), ('cat loves', 1), ('cat .', 1), ('<s> I', 1), ('<s> my', 1), ('love my', 1), ('me .', 1), ('I love', 1), ('loves me', 1)])
 
 
