@@ -160,6 +160,28 @@ class Count_NGrams(unittest.TestCase):
     self.assertTrue(NGramsObj.tri_dict["20 % and"] == "0.333333333333")
 
 
+  def test_readLMIntoDict_1(self):
+    teststr = "<s> Influential members of the House Ways and Means Committee introduced legislation that would restrict how the new savings-and-loan bailout agency can raise capital , creating another potential obstacle to the government 's sale of sick thrifts . </s>"
+    l1 = 0.2
+    l2 = 0.3
+    l3 = 0.5
+
+    NGramsObj = ngrams.NGrams()
+
+    idx = 0
+    fileStream = open("../examples/lm_ex")
+    t = fileStream.readline() 
+    while t:
+      idx += 1
+      if idx < 6:
+        t = fileStream.readline()
+        continue
+      NGramsObj.read_lm_file_into_dicts(t)
+      t = fileStream.readline()
+
+    perp = NGramsObj.Perplexity(teststr, l1, l2, l3)
+    print perp
+    self.assertTrue(perp == (-82.8860891791949, 37) )
 
 
 

@@ -159,6 +159,8 @@ class NGrams:
 ### l1, l2, l3 - for interpolation; passed from main
 
     s = sentence.split()
+    sumP = 0
+    OOV = 0
 
 ### the first bigram
     P1 = 0
@@ -166,11 +168,53 @@ class NGrams:
     if first_bi in self.bi_dict:
       P1 = l2 * int(self.bi_dict[first_bi])
     else:
-      continue
+      P1 = (0)
+    print s[1]
     if s[1] in self.uni_dict:
-      P1 = P1 + l1 * int(self.uni_dict[s[1]])
+      P1 = P1 + l1 * float(self.uni_dict[s[1]])
     else:
-      continue
-    for i in range(1, len(s)-2):
+      P1 = (0)
+      OOV += 1
+    print P1
+    if not P1 == 0:
+      sumP = sumP + math.log10(P1)
+
+    wordcount = 0
+    for i in range(0, len(s)-2):
+      P = (0)
+      tri = ' '.join([s[i], s[i+1], s[i+2]])
+      if tri in self.tri_dict:
+        P = l3 * float(self.tri_dict[tri])
+      else:
+        P = (0)
+      bi = ' '.join([s[i+1], s[i+2]])
+      if bi in self.bi_dict:
+        P = P + l2 * float(self.bi_dict[bi])
+      else:
+        P = P + 0
+      uni = s[i+2]
+      print uni
+      if uni in self.uni_dict:
+#        print 'yes'
+        P = P + l1 * float(self.uni_dict[uni])
+      else:
+        P = P + 0
+        OOV += 1
+      print P 
+      if not P == 0:
+        sumP += math.log10(P)  
+      
+      wordcount += 1
+
+    print (sumP, wordcount)
+    total = -sumP / wordcount
+    ppl = math.pow(10, total) 
+    print ppl
+
+    return ppl
+
+
+
+
 
 
