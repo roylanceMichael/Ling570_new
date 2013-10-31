@@ -26,7 +26,6 @@ class NGrams:
 
   def count_unigrams(self, text):
 ### get unigrams; stuff in the dictionary; count and sort 
-#    print text
     for token in text.split(): #list_all.split():
     #  print token
       if not token in self.uni_dict:
@@ -45,6 +44,7 @@ class NGrams:
     for i in range(0, len(t)-1):
  #     print t[i] + ' ' + t[i+1]
       bigram = t[i] + ' ' + t[i+1]
+### adding bigrams to dict if the first element is not </s>
       if not bigram in self.bi_dict and not t[i] == '</s>':
         self.bi_dict[bigram] = 1
       elif t[i] == '</s>':
@@ -58,8 +58,7 @@ class NGrams:
 
   def count_trigrams(self, text):
 ### count trigrams
-    t = text.split()   #list_all
-  #  print t
+    t = text.split()   
     for i in range(0, len(t)-2):
       trigram = t[i] + ' ' + t[i+1] + ' ' + t[i+2]
       if not trigram in self.tri_dict and not (t[i] == '</s>' or t[i+1] == '</s>'):
@@ -91,7 +90,6 @@ class NGrams:
 ### count how many types and how many tokens
 #    print dictionary
     types = len(dictionary)
-#    print dictionary.values()
     tokens = sum(dictionary.values())
 #    print tokens
     return (types, tokens)
@@ -113,7 +111,6 @@ class NGrams:
     ARPA = []
     for key in self.bi_dict:
       keyparts = key.split()
-#      print keyparts
       prob = self.bi_dict[key]/self.uni_dict[keyparts[0]]
       logprob = math.log10(prob)
       ARPA.append([self.bi_dict[key], prob, logprob, key])
@@ -128,7 +125,6 @@ class NGrams:
       keyparts = key.split()
 #      print keyparts
       bigram = ' '.join(keyparts[0:2])
-#      print self.bi_dict[bigram]
       prob = self.tri_dict[key]/self.bi_dict[bigram]
       logprob = math.log10(prob)
       ARPA.append([self.tri_dict[key], prob, logprob, key])
@@ -149,7 +145,6 @@ class NGrams:
       self.bi_dict[key] = ilist[1]
     elif len(ilist) == 6:
       key = ' '.join(ilist[3:])
-#      print key
       self.tri_dict[key] = ilist[1]
     else:
       return None
@@ -158,11 +153,11 @@ class NGrams:
   def Perplexity(self, sentence, l1, l2, l3, j):   
 ### l1, l2, l3 - for interpolation; passed from main
     
-    print 'Sent #' + str(j) + ': ' + sentence
+    print '\nSent #' + str(j) + ': ' + sentence
 
     notfound = False
  
-    s = sentence.split()  #  self.BOS_EOS(sentence)
+    s = sentence.split()
  #   print s
     sumP = 0
     OOV = 0
@@ -176,27 +171,29 @@ class NGrams:
       P1 = (0)
       notfound = True
     #print s[1]
+### is the unigram s[1] in the language model?
     if s[1] in self.uni_dict:
       P1 = P1 + l1 * float(self.uni_dict[s[1]])
+      logP1 = math.log10(P1)
       if notfound == True:
-        print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(P1) + ' (unseen ngrams)'
+        print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(logP1) + ' (unseen ngrams)'
       else:
-        print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(P1)
+        print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(logP1)
         
     else:
       P1 = (0)
       OOV += 1
       print '1: lg P(' + s[1] + ' | ' + s[0] + ') = -inf (unknown word)'
-    #print P1
     if not P1 == 0:
-      sumP = sumP + math.log10(P1)
+      sumP = sumP + logP1 
 
     wordcount = 0
-    trigramNumber = 1     
+    trigramNumber = 2     
 
     for i in range(0, len(s)-2):
  
       P = (0)
+      notfound = False
       tri = ' '.join([s[i], s[i+1], s[i+2]])
     
       if tri in self.tri_dict:
@@ -217,15 +214,15 @@ class NGrams:
       if uni in self.uni_dict:
 #        print 'yes'
         P = P + l1 * float(self.uni_dict[uni])
+        logP = math.log10(P)
         if notfound == True:
-          print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(P) + ' (unseen ngrams)'
+          print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(logP) + ' (unseen ngrams)'
         else:
-          print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(P)
+          print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(logP)
       else:
         P = P + 0
         OOV += 1
         print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = -inf (unknown word)'
-      #print P 
     
       if not P == 0:
         sumP += math.log10(P)  
@@ -234,15 +231,12 @@ class NGrams:
       trigramNumber += 1     
 
     # print (sumP, wordcount)
-    print OOV
+    print '1 sentence, ' + str(wordcount) + ' words, ' + str(OOV) + ' OOVs'
     total = -sumP / wordcount
     ppl = math.pow(10, total) 
-    # print ppl
+    print 'lgprob=' + str(sumP) + ' ppl=' + str(ppl) + '\n\n'
 
     return ppl
-
-
-
 
 
 

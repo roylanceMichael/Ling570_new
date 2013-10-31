@@ -38,7 +38,7 @@ def main():
   while trainingLine:
     perplexity = NGramsObj.Perplexity(buildLine(trainingLine), l1, l2, l3, i)
 
-    print ' : ' + str(perplexity) + '\n' + '\n' + '\n'
+  #  print trainingLine + ' : ' + str(perplexity)
 
     trainingLine = training_input.readline()
 
