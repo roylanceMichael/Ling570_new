@@ -171,6 +171,6 @@ class NGrams:
       P1 = P1 + l1 * int(self.uni_dict[s[1]])
     else:
       continue
- #   for i in range(1, len(s)-2):
+    for i in range(1, len(s)-2):
 
 
