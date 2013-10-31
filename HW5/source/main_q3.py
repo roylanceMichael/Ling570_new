@@ -34,12 +34,15 @@ def main():
   training_input = open(training_file)
 
   trainingLine = training_input.readline()
+  i = 1
   while trainingLine:
-    perplexity = NGramsObj.Perplexity(buildLine(trainingLine), l1, l2, l3)
+    perplexity = NGramsObj.Perplexity(buildLine(trainingLine), l1, l2, l3, i)
 
-    print trainingLine + ' : ' + str(perplexity)
+    print ' : ' + str(perplexity) + '\n' + '\n' + '\n'
 
     trainingLine = training_input.readline()
+
+    i += 1
 
   training_input.close()
 

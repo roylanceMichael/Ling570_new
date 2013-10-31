@@ -33,6 +33,7 @@ class NGrams:
         self.uni_dict[token] = 1
       else:
         self.uni_dict[token] = self.uni_dict[token] + 1
+### reverse sort by frequency
     self.uni_dict = sorted(self.uni_dict.items(), key = lambda a: -a[1])
     return self.uni_dict
    
@@ -154,59 +155,86 @@ class NGrams:
       return None
 
 
-  def Perplexity(self, sentence, l1, l2, l3):   
-# how to write a test for this?
+  def Perplexity(self, sentence, l1, l2, l3, j):   
 ### l1, l2, l3 - for interpolation; passed from main
+    
+    print 'Sent #' + str(j) + ': ' + sentence
 
-    s = sentence.split()
+    notfound = False
+ 
+    s = sentence.split()  #  self.BOS_EOS(sentence)
+ #   print s
     sumP = 0
     OOV = 0
 
-### the first bigram
+### processing the first bigram
     P1 = 0
     first_bi = ' '.join(s[0:2])
     if first_bi in self.bi_dict:
       P1 = l2 * float(self.bi_dict[first_bi])
     else:
       P1 = (0)
+      notfound = True
     #print s[1]
     if s[1] in self.uni_dict:
       P1 = P1 + l1 * float(self.uni_dict[s[1]])
+      if notfound == True:
+        print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(P1) + ' (unseen ngrams)'
+      else:
+        print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(P1)
+        
     else:
       P1 = (0)
       OOV += 1
+      print '1: lg P(' + s[1] + ' | ' + s[0] + ') = -inf (unknown word)'
     #print P1
     if not P1 == 0:
       sumP = sumP + math.log10(P1)
 
     wordcount = 0
+    trigramNumber = 1     
+
     for i in range(0, len(s)-2):
+ 
       P = (0)
       tri = ' '.join([s[i], s[i+1], s[i+2]])
+    
       if tri in self.tri_dict:
         P = l3 * float(self.tri_dict[tri])
       else:
         P = (0)
+        notfound = True
+      
       bi = ' '.join([s[i+1], s[i+2]])
       if bi in self.bi_dict:
         P = P + l2 * float(self.bi_dict[bi])
       else:
         P = P + 0
+        notfound = True
+      
       uni = s[i+2]
       #print uni
       if uni in self.uni_dict:
 #        print 'yes'
         P = P + l1 * float(self.uni_dict[uni])
+        if notfound == True:
+          print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(P) + ' (unseen ngrams)'
+        else:
+          print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(P)
       else:
         P = P + 0
         OOV += 1
+        print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = -inf (unknown word)'
       #print P 
+    
       if not P == 0:
         sumP += math.log10(P)  
       
       wordcount += 1
+      trigramNumber += 1     
 
     # print (sumP, wordcount)
+    print OOV
     total = -sumP / wordcount
     ppl = math.pow(10, total) 
     # print ppl
