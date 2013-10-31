@@ -166,16 +166,16 @@ class NGrams:
     P1 = 0
     first_bi = ' '.join(s[0:2])
     if first_bi in self.bi_dict:
-      P1 = l2 * int(self.bi_dict[first_bi])
+      P1 = l2 * float(self.bi_dict[first_bi])
     else:
       P1 = (0)
-    print s[1]
+    #print s[1]
     if s[1] in self.uni_dict:
       P1 = P1 + l1 * float(self.uni_dict[s[1]])
     else:
       P1 = (0)
       OOV += 1
-    print P1
+    #print P1
     if not P1 == 0:
       sumP = sumP + math.log10(P1)
 
@@ -193,23 +193,23 @@ class NGrams:
       else:
         P = P + 0
       uni = s[i+2]
-      print uni
+      #print uni
       if uni in self.uni_dict:
 #        print 'yes'
         P = P + l1 * float(self.uni_dict[uni])
       else:
         P = P + 0
         OOV += 1
-      print P 
+      #print P 
       if not P == 0:
         sumP += math.log10(P)  
       
       wordcount += 1
 
-    print (sumP, wordcount)
+    # print (sumP, wordcount)
     total = -sumP / wordcount
     ppl = math.pow(10, total) 
-    print ppl
+    # print ppl
 
     return ppl
 
