@@ -17,6 +17,18 @@ class NGrams:
     self.tritypes = 0
     self.tritokens = 0
 
+    self.logProbs = 0
+    self.sentNum = 0
+    self.wordNum = 0
+    self.oovBag = {}
+    self.oovNum = 0
+    self.pplNum = 0
+
+  def avg_lgprob(self):
+    return self.logProbs / (self.wordNum + self.sentNum - len(self.oovBag))
+
+  def ppl_calc(self):
+    return self.pplNum / len(self.oovBag)
 
   def BOS_EOS(self, line):
 ### insert beginning and end of string tags
@@ -183,6 +195,10 @@ class NGrams:
     else:
       P1 = (0)
       OOV += 1
+      
+      if self.oovBag.has_key(s[1]) == False:
+        self.oovBag[s[1]] = 1
+      
       print '1: lg P(' + s[1] + ' | ' + s[0] + ') = -inf (unknown word)'
     if not P1 == 0:
       sumP = sumP + logP1 
@@ -221,6 +237,10 @@ class NGrams:
           print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = ' + str(logP)
       else:
         P = P + 0
+        
+        if self.oovBag.has_key(uni) == False:
+          self.oovBag[uni] = 1
+
         OOV += 1
         print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = -inf (unknown word)'
     
@@ -234,7 +254,14 @@ class NGrams:
     print '1 sentence, ' + str(wordcount) + ' words, ' + str(OOV) + ' OOVs'
     total = -sumP / wordcount
     ppl = math.pow(10, total) 
+
     print 'lgprob=' + str(sumP) + ' ppl=' + str(ppl) + '\n\n'
+
+    self.logProbs += sumP
+    self.sentNum += 1
+    self.wordNum += wordcount
+    self.pplNum += ppl
+    self.oovNum += OOV
 
     return ppl
 

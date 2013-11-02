@@ -46,5 +46,10 @@ def main():
 
   training_input.close()
 
+  print '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%'
+
+  print 'sent_num=' + str(NGramsObj.sentNum) + ' word_num=' + str(NGramsObj.wordNum) + ' oov_num=' + str(NGramsObj.oovNum) 
+  print 'lgprob=' + str(NGramsObj.logProbs) + ' ave_lgprob=' + str(NGramsObj.avg_lgprob()) + ' ppl=' + str(NGramsObj.ppl_calc())
+
 if __name__ == '__main__':
   main()
