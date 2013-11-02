@@ -20,15 +20,19 @@ class NGrams:
     self.logProbs = 0
     self.sentNum = 0
     self.wordNum = 0
-    self.oovBag = {}
     self.oovNum = 0
     self.pplNum = 0
 
+
   def avg_lgprob(self):
-    return self.logProbs / (self.wordNum + self.sentNum - len(self.oovBag))
+### average logprob = number of sentences + total number of words - number of out of vocabulary words
+    return self.logProbs / (self.wordNum + self.sentNum - self.oovNum)
+
 
   def ppl_calc(self):
-    return self.pplNum / len(self.oovBag)
+### perplexity of the text = 10 to the power of negative average logprob
+    return math.pow(10, -self.avg_lgprob())
+
 
   def BOS_EOS(self, line):
 ### insert beginning and end of string tags
@@ -39,7 +43,6 @@ class NGrams:
   def count_unigrams(self, text):
 ### get unigrams; stuff in the dictionary; count and sort 
     for token in text.split(): #list_all.split():
-    #  print token
       if not token in self.uni_dict:
         self.uni_dict[token] = 1
       else:
@@ -100,7 +103,6 @@ class NGrams:
 
   def count_types_tokens(self, dictionary):
 ### count how many types and how many tokens
-#    print dictionary
     types = len(dictionary)
     tokens = sum(dictionary.values())
 #    print tokens
@@ -126,7 +128,6 @@ class NGrams:
       prob = self.bi_dict[key]/self.uni_dict[keyparts[0]]
       logprob = math.log10(prob)
       ARPA.append([self.bi_dict[key], prob, logprob, key])
-#      print ARPA
     return sorted(ARPA, key = itemgetter(0), reverse = True)
 
 
@@ -149,7 +150,6 @@ class NGrams:
 ### out of four elements we need [1] - prob -- value in the dictionary
 ### and [3] - ngram -- key in the dictionary
     ilist = re.split('\s+', line_of_input.strip())
-#    print ilist, len(ilist)
     if len(ilist) == 4:
       self.uni_dict[ilist[3]] = ilist[1]
     elif len(ilist) == 5:
@@ -191,18 +191,16 @@ class NGrams:
         print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(logP1) + ' (unseen ngrams)'
       else:
         print '1: lg P(' + s[1] + ' | ' + s[0] + ') = ' + str(logP1)
-        
+### if not in lm, then the probability is zero and out of vocabulary count is incremented        
     else:
       P1 = (0)
       OOV += 1
-      
-      if self.oovBag.has_key(s[1]) == False:
-        self.oovBag[s[1]] = 1
       
       print '1: lg P(' + s[1] + ' | ' + s[0] + ') = -inf (unknown word)'
     if not P1 == 0:
       sumP = sumP + logP1 
 
+### repeating the same procedure - now for all the trigrams in the sentence
     wordcount = 0
     trigramNumber = 2     
 
@@ -217,16 +215,15 @@ class NGrams:
       else:
         P = (0)
         notfound = True
-      
+### checking if the bigram is in the language model      
       bi = ' '.join([s[i+1], s[i+2]])
       if bi in self.bi_dict:
         P = P + l2 * float(self.bi_dict[bi])
       else:
         P = P + 0
         notfound = True
-      
+### checking if the unigram is in the language model       
       uni = s[i+2]
-      #print uni
       if uni in self.uni_dict:
 #        print 'yes'
         P = P + l1 * float(self.uni_dict[uni])
@@ -238,12 +235,9 @@ class NGrams:
       else:
         P = P + 0
         
-        if self.oovBag.has_key(uni) == False:
-          self.oovBag[uni] = 1
-
         OOV += 1
         print str(trigramNumber) + ': lg P(' + s[i+2] + ' | ' + s[i] + ' ' + s[i+1] + ') = -inf (unknown word)'
-    
+### taking the logprob of the non-zero probability of the n-gram and adding to the probability of the sentence    
       if not P == 0:
         sumP += math.log10(P)  
       
@@ -256,7 +250,7 @@ class NGrams:
     ppl = math.pow(10, total) 
 
     print 'lgprob=' + str(sumP) + ' ppl=' + str(ppl) + '\n\n'
-
+### summary counts for the output
     self.logProbs += sumP
     self.sentNum += 1
     self.wordNum += wordcount
