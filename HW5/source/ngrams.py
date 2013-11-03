@@ -57,7 +57,7 @@ class NGrams:
     t = text.split()   # list_all
 
     for i in range(0, len(t)-1):
- #     print t[i] + ' ' + t[i+1]
+
       bigram = t[i] + ' ' + t[i+1]
 ### adding bigrams to dict if the first element is not </s>
       if not bigram in self.bi_dict and not t[i] == '</s>':
@@ -90,7 +90,7 @@ class NGrams:
   def read_into_dicts(self, line_of_input):
 ### reading ngram_count_file into a data structure line by line: ngram is key; frequency is value
     ilist = re.split('\s+', line_of_input.strip())
-#    print ilist, len(ilist)
+
     if len(ilist) == 2:
       self.uni_dict[ilist[1]] = int(ilist[0])
     elif len(ilist) == 3:
@@ -105,7 +105,7 @@ class NGrams:
 ### count how many types and how many tokens
     types = len(dictionary)
     tokens = sum(dictionary.values())
-#    print tokens
+
     return (types, tokens)
  
 
@@ -116,7 +116,7 @@ class NGrams:
       prob = self.uni_dict[key]/self.count_types_tokens(self.uni_dict)[1]
       logprob = math.log10(prob)     
       ARPA.append([self.uni_dict[key], prob, logprob, key])
-#      print ARPA
+
     return sorted(ARPA, key = itemgetter(0), reverse = True)
 
 
@@ -136,12 +136,12 @@ class NGrams:
     ARPA = []
     for key in self.tri_dict:
       keyparts = key.split()
-#      print keyparts
+
       bigram = ' '.join(keyparts[0:2])
       prob = self.tri_dict[key]/self.bi_dict[bigram]
       logprob = math.log10(prob)
       ARPA.append([self.tri_dict[key], prob, logprob, key])
-#      print ARPA
+
     return sorted(ARPA, key = itemgetter(0), reverse = True)
 
 
@@ -170,7 +170,6 @@ class NGrams:
     notfound = False
  
     s = sentence.split()
- #   print s
     sumP = 0
     OOV = 0
 
@@ -182,7 +181,7 @@ class NGrams:
     else:
       P1 = (0)
       notfound = True
-    #print s[1]
+
 ### is the unigram s[1] in the language model?
     if s[1] in self.uni_dict:
       P1 = P1 + l1 * float(self.uni_dict[s[1]])
@@ -224,8 +223,8 @@ class NGrams:
         notfound = True
 ### checking if the unigram is in the language model       
       uni = s[i+2]
+
       if uni in self.uni_dict:
-#        print 'yes'
         P = P + l1 * float(self.uni_dict[uni])
         logP = math.log10(P)
         if notfound == True:
@@ -244,7 +243,6 @@ class NGrams:
       wordcount += 1
       trigramNumber += 1     
 
-    # print (sumP, wordcount)
     print '1 sentence, ' + str(wordcount) + ' words, ' + str(OOV) + ' OOVs'
     total = -sumP / wordcount
     ppl = math.pow(10, total) 
