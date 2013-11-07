@@ -14,14 +14,13 @@ def main():
   t = input_t.readline()
 #  print t
   while t:
-#    t = utils.BOS_EOS(t)
 #    print utils.createBigramTuplesFromStr(t)
     tup = utils.createEmissionTuplesFromStr(t) 
-    print tup
-    print utils.EmissionDictFromStr(tup)
+    d = utils.EmissionDictFromStr(tup)
 
     t = input_t.readline()
-#  print ed
+
+  utils.ProbsFromDict(d)   # counts emission probabilities from the dictionary of dictionaries
 
   input_t.close()
 

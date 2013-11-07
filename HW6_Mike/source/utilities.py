@@ -1,8 +1,10 @@
+from __future__ import division
 import re
+
 
 class Utilities:
 	def __init__(self):
-		self.POS_Word_Count_Dict = {'BOS':{'<s>':1}, 'EOS':{'</s>':1}}
+		self.POS_Word_Count_Dict = {'BOS':{'<s>':0}, 'EOS':{'</s>':0}}
 #                self.POS_Word_Count_dict = { }
 
 
@@ -44,7 +46,7 @@ class Utilities:
 		emissionTuples = []
 
 		for i in splitVals:
-			print i
+#			print i
 			match = re.search(posRegex, i)
 			if match:
 				# append the bigram tuple
@@ -53,20 +55,22 @@ class Utilities:
 
 
 	def EmissionDictFromStr(self, emissionTuples):
-		
-		self.POS_Word_Count_dict = {'BOS':{'<s>':1}, 'EOS':{'</s>':1}}
+	### creating a dict of dicts: {POS1 : {word1 : count1, word2 : count2},
+	###			       POS2 : {word1 : count1, word2 : count2}}		
+#		self.POS_Word_Count_dict = {'BOS':{'<s>':1}, 'EOS':{'</s>':1}}
 
 		for tup in emissionTuples:
-			print tup
+#			print tup
+#			print tup[0]
+#			print self.POS_Word_Count_Dict
 			if not tup[0] in self.POS_Word_Count_Dict:
-				#self.POS_Word_Count_Dict[tup[0]] = {self.POS_Word_Count_Dict[tup[1]]:1}
+				self.POS_Word_Count_Dict[tup[0]] = {}
 				self.POS_Word_Count_Dict[tup[0]][tup[1]] = 1
-			else: #tup[0] in POS_Word_Count_Dict:
-				for keys in self.POS_Word_Count_Dict[tup[0]]:
-					if tup[1] not in keys:
-						self.POS_Word_Count_Dict[tup[0]][tup[1]] = 1
-					else:
-						self.POS_Word_Count_Dict[tup[0]][tup[1]] += 1
+			else: 
+				if tup[1] not in self.POS_Word_Count_Dict[tup[0]]:
+					self.POS_Word_Count_Dict[tup[0]][tup[1]] = 1
+				else:
+					self.POS_Word_Count_Dict[tup[0]][tup[1]] += 1
 
 		self.POS_Word_Count_Dict['BOS']['<s>'] += 1
 		self.POS_Word_Count_Dict['EOS']['</s>'] += 1
@@ -74,3 +78,12 @@ class Utilities:
 		return self.POS_Word_Count_Dict
 		
 
+	def ProbsFromDict(self, POS_Word_Count_Dict):
+	### get emission probability out of the dictionary: count/sum(counts) 
+		for key in self.POS_Word_Count_Dict:
+		#	print self.POS_Word_Count_Dict[key]
+			s = sum(self.POS_Word_Count_Dict[key].values())
+			for subkey in self.POS_Word_Count_Dict[key]:
+		#		print self.POS_Word_Count_Dict[key][subkey]
+				print key, '\t', subkey, '\t', float(self.POS_Word_Count_Dict[key][subkey]/s)
+		return 1
