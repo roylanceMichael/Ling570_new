@@ -3,91 +3,85 @@ import utilities
 import bigramDictionary
 
 class UtilitiesTest(unittest.TestCase):
+    def test_createsBigramTuplesFromStr(self):
+        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
 
+        utils = utilities.Utilities()
 
+        result = utils.createBigramTuplesFromStr(testSent)
 
-	def test_createsBigramTuplesFromStr(self):
-		testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+        self.assertTrue(4, len(result))
 
-		utils = utilities.Utilities()
+        self.assertTrue(result[0][0] == "BOS", result[0][0])
+        self.assertTrue(result[0][1] == "N")
 
-		result = utils.createBigramTuplesFromStr(testSent)
-                print result
+        self.assertTrue(result[1][0] == "N")
+        self.assertTrue(result[1][1] == "V")
 
-		self.assertTrue(4, len(result))
+        self.assertTrue(result[2][0] == "V")
+        self.assertTrue(result[2][1] == "N")
 
-		self.assertTrue(result[0][0] == "BOS", result[0][0])
-		self.assertTrue(result[0][1] == "N")
+        self.assertTrue(result[3][0] == "N")
+        self.assertTrue(result[3][1] == "EOS", result[3][1])
 
-		self.assertTrue(result[1][0] == "N")
-		self.assertTrue(result[1][1] == "V")
+    def test_createsEmissionTuplesFromStr(self):
+        testSent = "John/N likes/V Mary/N"
 
-		self.assertTrue(result[2][0] == "V")
-		self.assertTrue(result[2][1] == "N")
+        utils = utilities.Utilities()
 
-		self.assertTrue(result[3][0] == "N")
-		self.assertTrue(result[3][1] == "EOS", result[3][1])
+        result = utils.createEmissionTuplesFromStr(testSent)
+        # print result
 
+        self.assertTrue(4, len(result))
 
-	def test_createsEmissionTuplesFromStr(self):
-                testSent = "John/N likes/V Mary/N"
+        #                self.assertTrue(result[0][0] == "BOS", result[0][0])
+        #                self.assertTrue(result[0][1] == "<s>")
 
-                utils = utilities.Utilities()
+        self.assertTrue(result[0][0] == "N")
+        self.assertTrue(result[0][1] == "John")
 
-                result = utils.createEmissionTuplesFromStr(testSent)
-                print result
+        self.assertTrue(result[1][0] == "V")
+        self.assertTrue(result[1][1] == "likes")
 
-                self.assertTrue(4, len(result))
+        self.assertTrue(result[2][0] == "N")
+        self.assertTrue(result[2][1] == "Mary", result[2][1])
 
-#                self.assertTrue(result[0][0] == "BOS", result[0][0])
-#                self.assertTrue(result[0][1] == "<s>")
+        #                self.assertTrue(result[4][0] == "EOS")
+        #                self.assertTrue(result[4][1] == "</s>", result[4][1])
 
-                self.assertTrue(result[0][0] == "N")
-                self.assertTrue(result[0][1] == "John")
+    def test_makeBigDict(self):
+        testtup = [['N', 'John'], ['V', 'likes'], ['N', 'Mary']]
 
-                self.assertTrue(result[1][0] == "V")
-                self.assertTrue(result[1][1] == "likes")
+        utils = utilities.Utilities()
 
-                self.assertTrue(result[2][0] == "N")
-                self.assertTrue(result[2][1] == "Mary", result[2][1])
+        result = utils.EmissionDictFromStr(testtup)
+        # print result
 
-#                self.assertTrue(result[4][0] == "EOS")
-#                self.assertTrue(result[4][1] == "</s>", result[4][1])
+        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
 
+    def test_Prob(self):
+        ### test not working
+        testdict = {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}}
 
-	def test_makeBigDict(self):
-                testtup = [['N', 'John'], ['V', 'likes'], ['N', 'Mary']]
+        utils = utilities.Utilities()
 
-                utils = utilities.Utilities()
+        result = utils.ProbsFromDict(testdict)
+        # print result
 
-                result = utils.EmissionDictFromStr(testtup)
-                print result
-
-                self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
-
-
-	def test_Prob(self):
-	### test not working
-                testdict = {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}}
-
-                utils = utilities.Utilities()
-
-                result = utils.ProbsFromDict(testdict)
-                print result
-
-                self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
-
+        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
 
 class NgramDictionaryTest(unittest.TestCase):
-	def test_unigrams(self):
-		testSent = """<s>/BOS John/N likes/V Mary/N </s>/EOS"""
+    def test_dictReportingCorrectResultWithSingleBigram(self):
+        bigramDict = bigramDictionary.BigramDictionary()
 
-		# print actualResult
-    	# self.assertTrue(actualResult == [('<s>', 1), ('John', 1), ('</s>', 1), ('likes', 1), ('Mary', 1)])
+        bigramDict.addPos("N", "V")
 
+        result = bigramDict.getPosResult("N", "V")
+
+        self.assertTrue(1 == result)
 
 def main():
-	unittest.main()
+    unittest.main()
 
 if __name__ == '__main__':
 	main()

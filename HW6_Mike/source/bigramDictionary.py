@@ -1,12 +1,31 @@
 class BigramDictionary:
-### I think we want a hash of hashes here
-### the first key will represent what bigram we're looking for
-### IE if we have the sentence she walked to the store
-### walked | she => we want walked to be the key
-### then walked would have a list of hashes that would contain
-### the keys and the counts
 	def __init__(self):
 		self.dictionary = { }
+		self.totalBigramCount = 0
 
-	def buildKeyAndSetItem(self, word, pos):
-		key = word + "~" + pos
+	def addPos(self, pos, precedingPos):
+		if(self.dictionary.has_key(pos)):
+			posDict = self.dictionary[pos]
+
+			if(posDict.has_key(precedingPos)):
+				posDict[precedingPos] = posDict[precedingPos] + 1
+			else:
+				posDict[precedingPos] = 1
+
+		else:
+			self.dictionary[pos] = { precedingPos: 1 }
+
+	def getPosResults(self, pos):
+		if(self.dictionary.has_key(pos)):
+			return self.dictionary[pos]
+		return None
+
+	def getPosResult(self, pos, precedingPos):
+		posDict = self.getPosResults(pos)
+
+		if(posDict != None and posDict.has_key(precedingPos)):
+			return posDict[precedingPos]
+
+		return None
+
+
