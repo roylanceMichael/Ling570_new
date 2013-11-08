@@ -4,8 +4,8 @@ import re
 
 class Utilities:
 	def __init__(self):
-		self.POS_Word_Count_Dict = {'BOS':{'<s>':0}, 'EOS':{'</s>':0}}
-#                self.POS_Word_Count_dict = { }
+		self.POS_Word_Count_Dict = {}  #'BOS':{'<s>':0}, 'EOS':{'</s>':0}}
+                self.POS_POS_Count_Dict = {}
 
 
 	def BOS_EOS(self, line):
@@ -34,6 +34,8 @@ class Utilities:
 				# append the bigram tuple
 				bigramTuples.append([ firstPos, secondPos ])
 
+		bigramTuples.insert(0, ['BOS', bigramTuples[0][0]])
+
 		return bigramTuples
 
 
@@ -54,36 +56,38 @@ class Utilities:
 		return emissionTuples
 
 
-	def EmissionDictFromStr(self, emissionTuples):
+	def EmissionDictFromStr(self, emissionTuples, dic):
 	### creating a dict of dicts: {POS1 : {word1 : count1, word2 : count2},
 	###			       POS2 : {word1 : count1, word2 : count2}}		
 #		self.POS_Word_Count_dict = {'BOS':{'<s>':1}, 'EOS':{'</s>':1}}
-
+		dictionary = dic
 		for tup in emissionTuples:
 #			print tup
 #			print tup[0]
-#			print self.POS_Word_Count_Dict
-			if not tup[0] in self.POS_Word_Count_Dict:
-				self.POS_Word_Count_Dict[tup[0]] = {}
-				self.POS_Word_Count_Dict[tup[0]][tup[1]] = 1
+			if not tup[0] in dictionary:
+				dictionary[tup[0]] = {}
+				dictionary[tup[0]][tup[1]] = 1
 			else: 
-				if tup[1] not in self.POS_Word_Count_Dict[tup[0]]:
-					self.POS_Word_Count_Dict[tup[0]][tup[1]] = 1
+				if tup[1] not in dictionary[tup[0]]:
+					dictionary[tup[0]][tup[1]] = 1
 				else:
-					self.POS_Word_Count_Dict[tup[0]][tup[1]] += 1
+					dictionary[tup[0]][tup[1]] += 1
 
-		self.POS_Word_Count_Dict['BOS']['<s>'] += 1
-		self.POS_Word_Count_Dict['EOS']['</s>'] += 1
+#		if 'BOS' in dictionary:
+#			dictionary['BOS']['<s>'] += 1
+#		if 'EOS' in dictionary:
+#			dictionary['EOS']['</s>'] += 1
  
-		return self.POS_Word_Count_Dict
+		return dictionary
 		
 
-	def ProbsFromDict(self, POS_Word_Count_Dict):
+	def ProbsFromDict(self, dic):
 	### get emission probability out of the dictionary: count/sum(counts) 
-		for key in self.POS_Word_Count_Dict:
+		dictionary = dic
+		for key in dictionary:
 		#	print self.POS_Word_Count_Dict[key]
-			s = sum(self.POS_Word_Count_Dict[key].values())
-			for subkey in self.POS_Word_Count_Dict[key]:
+			s = sum(dictionary[key].values())
+			for subkey in dictionary[key]:
 		#		print self.POS_Word_Count_Dict[key][subkey]
-				print key, '\t', subkey, '\t', float(self.POS_Word_Count_Dict[key][subkey]/s)
+				print key, '\t', subkey, '\t', float(dictionary[key][subkey]/s)
 		return 1

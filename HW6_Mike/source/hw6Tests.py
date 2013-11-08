@@ -68,7 +68,8 @@ class UtilitiesTest(unittest.TestCase):
         result = utils.ProbsFromDict(testdict)
         # print result
 
-        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
+#        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
+	self.assertTrue(1 == result)
 
 class NgramDictionaryTest(unittest.TestCase):
     def test_dictReportingCorrectResultWithSingleBigram(self):

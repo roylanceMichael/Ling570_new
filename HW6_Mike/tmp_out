@@ -1,0 +1,43 @@
+state_num=6
+sym_num=17
+init_line_num=
+trans_line_num=
+emiss_line_num=
+
+\init
+BOS	1.0
+
+
+ 
+
+\transition
+PR 	V 	1.0
+BOS 	PR 	0.4
+BOS 	DT 	0.2
+BOS 	N 	0.4
+N 	V 	1.0
+V 	DT 	0.166666666667
+V 	Adj 	0.5
+V 	N 	0.333333333333
+DT 	N 	1.0
+Adj 	N 	1.0
+
+
+\emission
+PR 	She 	0.5
+PR 	They 	0.5
+DT 	a 	0.5
+DT 	The 	0.5
+V 	is 	0.333333333333
+V 	drink 	0.166666666667
+V 	says 	0.166666666667
+V 	likes 	0.333333333333
+Adj 	tall 	0.333333333333
+Adj 	kind 	0.333333333333
+Adj 	cold 	0.333333333333
+N 	bore 	0.125
+N 	soda 	0.125
+N 	Paul 	0.125
+N 	John 	0.25
+N 	Mary 	0.25
+N 	man 	0.125
