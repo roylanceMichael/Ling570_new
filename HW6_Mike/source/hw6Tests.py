@@ -1,6 +1,6 @@
 import unittest
 import utilities
-import hiddenMarkov
+import hiddenMarkovBigram
 
 class UtilitiesTest(unittest.TestCase):
     def test_createsBigramTuplesFromStr(self):
@@ -60,7 +60,7 @@ class HiddenMarkovModelTest(unittest.TestCase):
         utils = utilities.Utilities()
         sentence1 = utils.createBigramTuplesFromStr("Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ ,/, will/MD join/VB the/DT board/NN as/IN a/DT nonexecutive/JJ director/NN Nov./NNP 29/CD ./.")
 
-        hmm = hiddenMarkov.HiddenMarkov()
+        hmm = hiddenMarkovBigram.HiddenMarkovBigram()
 
         # act
         hmm.addParsedLine(sentence1)
@@ -81,7 +81,7 @@ class HiddenMarkovModelTest(unittest.TestCase):
         sentence2 = utils.createBigramTuplesFromStr("Mr./NNP Vinken/NNP is/VBZ chairman/NN of/IN Elsevier/NNP N.V./NNP ,/, the/DT Dutch/NNP publishing/VBG group/NN ./.")
         sentence3 = utils.createBigramTuplesFromStr("Rudolph/NNP Agnew/NNP ,/, 55/CD years/NNS old/JJ and/CC former/JJ chairman/NN of/IN Consolidated/NNP Gold/NNP Fields/NNP PLC/NNP ,/, was/VBD named/VBN a/DT nonexecutive/JJ director/NN of/IN this/DT British/JJ industrial/JJ conglomerate/NN ./.")   
 
-        hmm = hiddenMarkov.HiddenMarkov()
+        hmm = hiddenMarkovBigram.HiddenMarkovBigram()
         
         # act
         hmm.addParsedLine(sentence1)
@@ -104,7 +104,7 @@ class HiddenMarkovModelTest(unittest.TestCase):
 
 
     def test_dictReportingCorrectResultWithSingleBigram(self):
-        hmm = hiddenMarkov.HiddenMarkov()
+        hmm = hiddenMarkovBigram.HiddenMarkovBigram()
 
         hmm.addTransition("N", "V")
 
@@ -119,7 +119,7 @@ class HiddenMarkovModelTest(unittest.TestCase):
         utils = utilities.Utilities()
 
         result = utils.createBigramTuplesFromStr(testSent)
-        hmm = hiddenMarkov.HiddenMarkov()
+        hmm = hiddenMarkovBigram.HiddenMarkovBigram()
 
         # act
         hmm.addParsedLine(result)
@@ -138,7 +138,7 @@ class HiddenMarkovModelTest(unittest.TestCase):
         utils = utilities.Utilities()
 
         result = utils.createBigramTuplesFromStr(testSent)
-        hmm = hiddenMarkov.HiddenMarkov()
+        hmm = hiddenMarkovBigram.HiddenMarkovBigram()
         hmm.addParsedLine(result)
 
         # act
@@ -151,17 +151,17 @@ init_line_num=1
 trans_line_num=3
 emiss_line_num=3
 \init
-BOS\t1.0
+BOS\t1.0\t0.0
 
 \\transition
-V\tN\t1.0
-BOS\tN\t1.0
-N\tV\t1.0
+V\tN\t1.0\t0.0
+BOS\tN\t1.0\t0.0
+N\tV\t1.0\t0.0
 
 \emissions
-V\tlikes\t1.0
-N\tJohn\t0.5
-N\tMary\t0.5
+V\tlikes\t1.0\t0.0
+N\tJohn\t0.5\t-0.301029995664
+N\tMary\t0.5\t-0.301029995664
 """
         self.assertTrue(str(len(printStr)) == str(len(expectedResult)), str(len(printStr)) + "-" + str(len(expectedResult)))
 

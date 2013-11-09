@@ -1,6 +1,6 @@
 import math
 
-class HiddenMarkov:
+class HiddenMarkovBigram:
 	def __init__(self):
 		self.transitionDictionary = {}
 		self.emissionDictionary = {}

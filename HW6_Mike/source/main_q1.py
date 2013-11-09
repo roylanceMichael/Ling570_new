@@ -1,9 +1,8 @@
 #!/usr/bin/python
-import hiddenMarkov
+import hiddenMarkovBigram
 import utilities
 import sys
 
-### it's not supposed to be a good main yet - I'm just using it for testing methods
 def main():
   input_file = sys.argv[1]
   input_t = open(input_file)
@@ -11,7 +10,7 @@ def main():
   utils = utilities.Utilities()
   t = input_t.readline()
 
-  hmm = hiddenMarkov.HiddenMarkov()
+  hmm = hiddenMarkovBigram.HiddenMarkovBigram()
 
   while t:
     tr = utils.createBigramTuplesFromStr(t)
