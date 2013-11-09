@@ -12,17 +12,46 @@ class UtilitiesTest(unittest.TestCase):
 
         self.assertTrue(4, len(result))
 
-        self.assertTrue(result[0][0] == "BOS", result[0][0])
-        self.assertTrue(result[0][1] == "N")
+        self.assertTrue(result[0][0].pos == "BOS", result[0][0].pos)
+        self.assertTrue(result[0][1].pos == "N")
 
-        self.assertTrue(result[1][0] == "N")
-        self.assertTrue(result[1][1] == "V")
+        self.assertTrue(result[1][0].pos == "N")
+        self.assertTrue(result[1][1].pos == "V")
 
-        self.assertTrue(result[2][0] == "V")
-        self.assertTrue(result[2][1] == "N")
+        self.assertTrue(result[2][0].pos == "V")
+        self.assertTrue(result[2][1].pos == "N")
 
-        self.assertTrue(result[3][0] == "N")
-        self.assertTrue(result[3][1] == "EOS", result[3][1])
+        self.assertTrue(result[3][0].pos == "N")
+        self.assertTrue(result[3][1].pos == "EOS", result[3][1].pos)
+
+    def test_createsBigramTuplesEmissionsFromStr(self):
+        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+
+        utils = utilities.Utilities()
+
+        result = utils.createBigramTuplesFromStr(testSent)
+
+        self.assertTrue(4, len(result))
+
+        self.assertTrue(result[0][0].pos == "BOS", result[0][0].pos)
+        self.assertTrue(result[0][1].pos == "N")
+        self.assertTrue(result[0][0].word == "<s>", result[0][0].pos)
+        self.assertTrue(result[0][1].word == "John")
+
+        self.assertTrue(result[1][0].pos == "N")
+        self.assertTrue(result[1][1].pos == "V")
+        self.assertTrue(result[1][0].pos == "John", result[0][0].pos)
+        self.assertTrue(result[1][1].pos == "likes")
+
+        self.assertTrue(result[2][0].pos == "V")
+        self.assertTrue(result[2][1].pos == "N")
+        self.assertTrue(result[2][0].pos == "likes", result[0][0].pos)
+        self.assertTrue(result[2][1].pos == "Mary")
+
+        self.assertTrue(result[3][0].pos == "N")
+        self.assertTrue(result[3][1].pos == "EOS", result[3][1].pos)
+        self.assertTrue(result[3][0].pos == "Mary", result[0][0].pos)
+        self.assertTrue(result[3][1].pos == "</s>")
 
     def test_createsEmissionTuplesFromStr(self):
         testSent = "John/N likes/V Mary/N"
@@ -71,7 +100,7 @@ class UtilitiesTest(unittest.TestCase):
 #        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
 	self.assertTrue(1 == result)
 
-class NgramDictionaryTest(unittest.TestCase):
+class HiddenMarkovModelTest(unittest.TestCase):
     def test_dictReportingCorrectResultWithSingleBigram(self):
         hmm = hiddenMarkov.HiddenMarkov()
 
@@ -80,6 +109,42 @@ class NgramDictionaryTest(unittest.TestCase):
         result = hmm.getTransition("N", "V")
 
         self.assertTrue(1 == result, str(result))
+
+    def test_addParsedLineResult(self):
+        # arrange
+        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+
+        utils = utilities.Utilities()
+
+        result = utils.createBigramTuplesFromStr(testSent)
+        hmm = hiddenMarkov.HiddenMarkov()
+
+        # act
+        hmm.addParsedLine(result)
+
+        # assert
+        self.assertTrue(hmm.init_line_num() == 1)
+        self.assertTrue(hmm.emiss_line_num() == 5)
+        self.assertTrue(hmm.trans_line_num() == 4)
+        self.assertTrue(hmm.state_num() == 3, str(hmm.state_num()))
+        self.assertTrue(hmm.sym_num() == 5)
+
+    def test_printOutFeature(self):
+        # arrange
+        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+
+        utils = utilities.Utilities()
+
+        result = utils.createBigramTuplesFromStr(testSent)
+        hmm = hiddenMarkov.HiddenMarkov()
+        hmm.addParsedLine(result)
+
+        # act
+        printStr = hmm.printHmmFormat()
+
+        # assert
+        self.assertTrue(printStr == '', printStr)
+        
 
 def main():
     unittest.main()

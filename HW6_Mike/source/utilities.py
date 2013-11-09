@@ -1,5 +1,6 @@
 from __future__ import division
 import re
+import wordTuple
 
 
 class Utilities:
@@ -28,17 +29,19 @@ class Utilities:
 
 			if(firstMatch != None and secondMatch != None):
 				# get the first and second pos
+				firstWord = splitVals[i-1][0:firstMatch.start()]
 				firstPos = splitVals[i-1][firstMatch.start()+1:firstMatch.end()]
+				firstTuple = wordTuple.WordTuple(firstWord, firstPos)
+
+				secondWord = splitVals[i][0:secondMatch.start()]
 				secondPos = splitVals[i][secondMatch.start()+1:secondMatch.end()]
+				secondTuple = wordTuple.WordTuple(secondWord, secondPos)
 
 				# append the bigram tuple
-				bigramTuples.append([ firstPos, secondPos ])
 
-		# bigramTuples.insert(0, ['BOS', bigramTuples[0][0]])
+				bigramTuples.append([ firstTuple, secondTuple ])
 
 		return bigramTuples
-
-
 
 	def createEmissionTuplesFromStr(self, strVal):
 		# first, let's split by whitespace
