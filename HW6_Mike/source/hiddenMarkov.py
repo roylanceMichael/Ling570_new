@@ -43,13 +43,15 @@ class HiddenMarkov:
 
 			self.addEmission(initTuple.word, initTuple.pos)
 
-			parseTuplesLen = len(parsedTuples)
+			# not including EOS here for now...
+			parseTuplesLen = len(parsedTuples) - 1
+			
 			for i in range(0, parseTuplesLen):
 				# add transitions for both
 				firstTuple = parsedTuples[i][0]
 				secondTuple = parsedTuples[i][1]
 
-				self.addTransition(firstTuple.pos, secondTuple.pos)
+				self.addTransition(secondTuple.pos, firstTuple.pos)
 
 				# only add emissions for first, we'll add in last one at the end...
 				self.addEmission(firstTuple.word, firstTuple.pos)
@@ -83,6 +85,13 @@ class HiddenMarkov:
 
 		return None
 
+	def getDictTotal(self, dictionary):
+		total = 0
+		for key in dictionary:
+			total = total + dictionary[key]
+
+		return total
+
 	def addEmission(self, symbol, state):
 		# we won't count <s> or </s>
 		if(symbol.strip() == "<s>" or symbol.strip() == "</s>"):
@@ -91,7 +100,7 @@ class HiddenMarkov:
 		self.addToDict(state, symbol, self.emissionDictionary)
 
 	def addTransition(self, to_state, from_state):
-		self.addToDict(to_state, from_state, self.transitionDictionary)
+		self.addToDict(from_state, to_state, self.transitionDictionary)
 
 	def getEmissions(self, symbol):
 		return self.getDicts(symbol, self.emissionDictionary)
@@ -99,11 +108,35 @@ class HiddenMarkov:
 	def getEmission(self, symbol, state):
 		return self.getDict(symbol, state, self.emissionDictionary)
 
+	def getEmissionTotal(self, symbol):
+		symbolDict = self.getDicts(symbol, self.emissionDictionary)
+
+		return self.getDictTotal(symbolDict)
+
+	def getEmissionProbability(self, state, symbol):
+		state_dict = self.getDicts(state, self.emissionDictionary)
+		state_total = self.getDictTotal(state_dict)
+		symbol_total = state_dict[symbol]
+
+		return float(symbol_total) / state_total
+
 	def getTransitions(self, to_state):
 		return self.getDicts(to_state, self.transitionDictionary)
 
 	def getTransition(self, to_state, from_state):
 		return self.getDict(to_state, from_state, self.transitionDictionary)
+
+	def getTransitionTotal(self, from_state):
+		from_dict = self.getDicts(from_state, self.transitionDictionary)
+
+		return self.getDictTotal(from_dict)
+
+	def getTransitionProbability(self, from_state, to_state):
+		from_dict = self.getDicts(from_state, self.transitionDictionary)
+		from_total = self.getDictTotal(from_dict)
+		to_total = from_dict[to_state]
+
+		return float(to_total) / from_total
 
 	def reportLineInfo(self, firstLabel, secondLabel, numerator, denominator):
 		# expecting denominator to be a float
@@ -118,10 +151,7 @@ class HiddenMarkov:
 		return strBuilder
 
 	def reportSubDictionaryValues(self, parentKey, subDictionary):
-		total = 0
-
-		for subKey in subDictionary:
-			total = total + subDictionary[subKey]
+		total = self.getDictTotal(subDictionary)
 
 		strBuilder = ''
 		for subKey in subDictionary:

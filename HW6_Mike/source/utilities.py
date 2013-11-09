@@ -15,10 +15,15 @@ class Utilities:
 		line = "<s> " + line.strip() + " </s>" + '\n'
 		return line
 
+	def BOS_EOS_pos(self, line):
+		return "<s>/BOS " + line + " </s>/EOS" 
+
 
 	def createBigramTuplesFromStr(self, strVal):
+		# let's always just append <s>\BOS and <\s>\EOS
+		newStrVal = self.BOS_EOS_pos(strVal)
 		# first, let's split by whitespace
-		splitVals = re.split("\s+", strVal)
+		splitVals = re.split("\s+", newStrVal)
 		posRegex = "/[^/]+$"
 
 		bigramTuples = []

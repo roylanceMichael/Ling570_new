@@ -4,7 +4,7 @@ import hiddenMarkov
 
 class UtilitiesTest(unittest.TestCase):
     def test_createsBigramTuplesFromStr(self):
-        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+        testSent = "John/N likes/V Mary/N"
 
         utils = utilities.Utilities()
 
@@ -25,7 +25,7 @@ class UtilitiesTest(unittest.TestCase):
         self.assertTrue(result[3][1].pos == "EOS", result[3][1].pos)
 
     def test_createsBigramTuplesEmissionsFromStr(self):
-        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+        testSent = "John/N likes/V Mary/N"
 
         utils = utilities.Utilities()
 
@@ -53,66 +53,68 @@ class UtilitiesTest(unittest.TestCase):
         self.assertTrue(result[3][0].word == "Mary", result[0][0].pos)
         self.assertTrue(result[3][1].word == "</s>")
 
-    def test_createsEmissionTuplesFromStr(self):
-        testSent = "John/N likes/V Mary/N"
-
-        utils = utilities.Utilities()
-
-        result = utils.createEmissionTuplesFromStr(testSent)
-        # print result
-
-        self.assertTrue(4, len(result))
-
-        #                self.assertTrue(result[0][0] == "BOS", result[0][0])
-        #                self.assertTrue(result[0][1] == "<s>")
-
-        self.assertTrue(result[0][0] == "N")
-        self.assertTrue(result[0][1] == "John")
-
-        self.assertTrue(result[1][0] == "V")
-        self.assertTrue(result[1][1] == "likes")
-
-        self.assertTrue(result[2][0] == "N")
-        self.assertTrue(result[2][1] == "Mary", result[2][1])
-
-        #                self.assertTrue(result[4][0] == "EOS")
-        #                self.assertTrue(result[4][1] == "</s>", result[4][1])
-
-    def test_makeBigDict(self):
-        testtup = [['N', 'John'], ['V', 'likes'], ['N', 'Mary']]
-
-        utils = utilities.Utilities()
-
-        result = utils.EmissionDictFromStr(testtup)
-        # print result
-
-        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
-
-    def test_Prob(self):
-        ### test not working
-        testdict = {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}}
-
-        utils = utilities.Utilities()
-
-        result = utils.ProbsFromDict(testdict)
-        # print result
-
-#        self.assertTrue(result == {'EOS': {'</s>': 1}, 'V': {'likes': 1}, 'BOS': {'<s>': 1}, 'N': {'John': 1, 'Mary': 1}})
-	self.assertTrue(1 == result)
 
 class HiddenMarkovModelTest(unittest.TestCase):
+    def test_firstSentence(self):
+        # arrange
+        utils = utilities.Utilities()
+        sentence1 = utils.createBigramTuplesFromStr("Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ ,/, will/MD join/VB the/DT board/NN as/IN a/DT nonexecutive/JJ director/NN Nov./NNP 29/CD ./.")
+
+        hmm = hiddenMarkov.HiddenMarkov()
+
+        # act
+        hmm.addParsedLine(sentence1)
+
+        # assert 
+        # print hmm.printHmmFormat()
+        nnpNovProb = hmm.getEmissionProbability("NNP", "Nov.")
+        self.assertTrue(nnpNovProb == float(1) / 3)
+
+        nnpCdProb = hmm.getTransitionProbability("NNP", "CD")
+        self.assertTrue(nnpCdProb == float(1) / 3)
+
+    def test_firstThreeSentences(self):
+        # arrange
+        utils = utilities.Utilities()
+
+        sentence1 = utils.createBigramTuplesFromStr("Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ ,/, will/MD join/VB the/DT board/NN as/IN a/DT nonexecutive/JJ director/NN Nov./NNP 29/CD ./.")
+        sentence2 = utils.createBigramTuplesFromStr("Mr./NNP Vinken/NNP is/VBZ chairman/NN of/IN Elsevier/NNP N.V./NNP ,/, the/DT Dutch/NNP publishing/VBG group/NN ./.")
+        sentence3 = utils.createBigramTuplesFromStr("Rudolph/NNP Agnew/NNP ,/, 55/CD years/NNS old/JJ and/CC former/JJ chairman/NN of/IN Consolidated/NNP Gold/NNP Fields/NNP PLC/NNP ,/, was/VBD named/VBN a/DT nonexecutive/JJ director/NN of/IN this/DT British/JJ industrial/JJ conglomerate/NN ./.")   
+
+        hmm = hiddenMarkov.HiddenMarkov()
+        
+        # act
+        hmm.addParsedLine(sentence1)
+        hmm.addParsedLine(sentence2)
+        hmm.addParsedLine(sentence3)
+
+        # assert emissions
+        # print hmm.printHmmFormat()
+
+        nnpDict = hmm.getEmissions("NNP")
+        inDict = hmm.getEmissions("IN")
+
+        nnpTotal = hmm.getDictTotal(nnpDict)
+        inTotal = hmm.getDictTotal(inDict)
+
+        self.assertTrue(nnpTotal == 14, str(nnpTotal))
+        self.assertTrue(inTotal == 4, str(inTotal))
+
+        # assert transitions
+
+
     def test_dictReportingCorrectResultWithSingleBigram(self):
         hmm = hiddenMarkov.HiddenMarkov()
 
         hmm.addTransition("N", "V")
 
-        result = hmm.getTransition("N", "V")
+        result = hmm.getTransition("V", "N")
 
         self.assertTrue(1 == result, str(result))
 
     def test_addParsedLineResult(self):
         # arrange
-        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+        testSent = "John/N likes/V Mary/N"
 
         utils = utilities.Utilities()
 
@@ -126,12 +128,12 @@ class HiddenMarkovModelTest(unittest.TestCase):
         self.assertTrue(hmm.init_line_num() == 1)
         self.assertTrue(hmm.emiss_line_num() == 3)
         self.assertTrue(hmm.trans_line_num() == 3)
-        self.assertTrue(hmm.state_num() == 2, str(hmm.state_num()))
-        self.assertTrue(hmm.sym_num() == 3)
+        self.assertTrue(hmm.state_num() == 3, str(hmm.state_num()))
+        self.assertTrue(hmm.sym_num() == 2)
 
     def test_printOutFeature(self):
         # arrange
-        testSent = "<s>/BOS John/N likes/V Mary/N </s>/EOS"
+        testSent = "John/N likes/V Mary/N"
 
         utils = utilities.Utilities()
 
@@ -143,8 +145,27 @@ class HiddenMarkovModelTest(unittest.TestCase):
         printStr = hmm.printHmmFormat()
 
         # assert
-        self.assertTrue(printStr == '', printStr)
-        
+        expectedResult = """state_num=3
+sym_num=2
+init_line_num=1
+trans_line_num=3
+emiss_line_num=3
+\init
+BOS\t1.0
+
+\\transition
+V\tN\t1.0
+BOS\tN\t1.0
+N\tV\t1.0
+
+\emissions
+V\tlikes\t1.0
+N\tJohn\t0.5
+N\tMary\t0.5
+"""
+        self.assertTrue(str(len(printStr)) == str(len(expectedResult)), str(len(printStr)) + "-" + str(len(expectedResult)))
+
+
 
 def main():
     unittest.main()
