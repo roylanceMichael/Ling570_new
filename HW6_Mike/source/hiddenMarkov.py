@@ -1,3 +1,5 @@
+import math
+
 class HiddenMarkov:
 	def __init__(self):
 		self.transitionDictionary = {}
@@ -140,7 +142,8 @@ class HiddenMarkov:
 
 	def reportLineInfo(self, firstLabel, secondLabel, numerator, denominator):
 		# expecting denominator to be a float
-		return (firstLabel + '\t' + secondLabel + '\t' + str(numerator / float(denominator))).strip() + '\n'
+		prob = numerator / float(denominator)
+		return (firstLabel + '\t' + secondLabel + '\t' + str(prob) + '\t' + str(math.log10(prob))).strip() + '\n'
 
 	def reportDictionaryValues(self, dictionary):
 		strBuilder = ''
