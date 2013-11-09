@@ -34,7 +34,7 @@ class Utilities:
 				# append the bigram tuple
 				bigramTuples.append([ firstPos, secondPos ])
 
-		bigramTuples.insert(0, ['BOS', bigramTuples[0][0]])
+		# bigramTuples.insert(0, ['BOS', bigramTuples[0][0]])
 
 		return bigramTuples
 

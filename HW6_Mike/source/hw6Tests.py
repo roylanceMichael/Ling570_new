@@ -1,6 +1,6 @@
 import unittest
 import utilities
-import bigramDictionary
+import hiddenMarkov
 
 class UtilitiesTest(unittest.TestCase):
     def test_createsBigramTuplesFromStr(self):
@@ -73,13 +73,13 @@ class UtilitiesTest(unittest.TestCase):
 
 class NgramDictionaryTest(unittest.TestCase):
     def test_dictReportingCorrectResultWithSingleBigram(self):
-        bigramDict = bigramDictionary.BigramDictionary()
+        hmm = hiddenMarkov.HiddenMarkov()
 
-        bigramDict.addPos("N", "V")
+        hmm.addTransition("N", "V")
 
-        result = bigramDict.getPosResult("N", "V")
+        result = hmm.getTransition("N", "V")
 
-        self.assertTrue(1 == result)
+        self.assertTrue(1 == result, str(result))
 
 def main():
     unittest.main()
