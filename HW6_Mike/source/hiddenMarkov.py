@@ -34,12 +34,14 @@ class HiddenMarkov:
 	def addParsedLine(self, parsedTuples):
 		# given in the format of [ wordTuple, wordTuple ]
 		if(len(parsedTuples) > 0):
-			initPos = parsedTuples[0][0].pos
+			initTuple = parsedTuples[0][0]
 
-			if(self.initDictionary.has_key(initPos)):
-				self.initDictionary[initPos] = self.initDictionary[initPos] + 1
+			if(self.initDictionary.has_key(initTuple.pos)):
+				self.initDictionary[initTuple.pos] = self.initDictionary[initTuple.pos] + 1
 			else:
-				self.initDictionary[initPos] = 1
+				self.initDictionary[initTuple.pos] = 1
+
+			self.addEmission(initTuple.word, initTuple.pos)
 
 			parseTuplesLen = len(parsedTuples)
 			for i in range(0, parseTuplesLen):
@@ -82,7 +84,11 @@ class HiddenMarkov:
 		return None
 
 	def addEmission(self, symbol, state):
-		self.addToDict(symbol, symbol, self.emissionDictionary)
+		# we won't count <s> or </s>
+		if(symbol.strip() == "<s>" or symbol.strip() == "</s>"):
+			return
+
+		self.addToDict(state, symbol, self.emissionDictionary)
 
 	def addTransition(self, to_state, from_state):
 		self.addToDict(to_state, from_state, self.transitionDictionary)
@@ -101,7 +107,7 @@ class HiddenMarkov:
 
 	def reportLineInfo(self, firstLabel, secondLabel, numerator, denominator):
 		# expecting denominator to be a float
-		return (firstLabel + '\t' + secondLabel + '\t' + str(numerator / denominator)).strip() + '\n'
+		return (firstLabel + '\t' + secondLabel + '\t' + str(numerator / float(denominator))).strip() + '\n'
 
 	def reportDictionaryValues(self, dictionary):
 		strBuilder = ''

@@ -40,18 +40,18 @@ class UtilitiesTest(unittest.TestCase):
 
         self.assertTrue(result[1][0].pos == "N")
         self.assertTrue(result[1][1].pos == "V")
-        self.assertTrue(result[1][0].pos == "John", result[0][0].pos)
-        self.assertTrue(result[1][1].pos == "likes")
+        self.assertTrue(result[1][0].word == "John", result[0][0].pos)
+        self.assertTrue(result[1][1].word == "likes")
 
         self.assertTrue(result[2][0].pos == "V")
         self.assertTrue(result[2][1].pos == "N")
-        self.assertTrue(result[2][0].pos == "likes", result[0][0].pos)
-        self.assertTrue(result[2][1].pos == "Mary")
+        self.assertTrue(result[2][0].word == "likes", result[0][0].pos)
+        self.assertTrue(result[2][1].word == "Mary")
 
         self.assertTrue(result[3][0].pos == "N")
         self.assertTrue(result[3][1].pos == "EOS", result[3][1].pos)
-        self.assertTrue(result[3][0].pos == "Mary", result[0][0].pos)
-        self.assertTrue(result[3][1].pos == "</s>")
+        self.assertTrue(result[3][0].word == "Mary", result[0][0].pos)
+        self.assertTrue(result[3][1].word == "</s>")
 
     def test_createsEmissionTuplesFromStr(self):
         testSent = "John/N likes/V Mary/N"
@@ -124,10 +124,10 @@ class HiddenMarkovModelTest(unittest.TestCase):
 
         # assert
         self.assertTrue(hmm.init_line_num() == 1)
-        self.assertTrue(hmm.emiss_line_num() == 5)
-        self.assertTrue(hmm.trans_line_num() == 4)
-        self.assertTrue(hmm.state_num() == 3, str(hmm.state_num()))
-        self.assertTrue(hmm.sym_num() == 5)
+        self.assertTrue(hmm.emiss_line_num() == 3)
+        self.assertTrue(hmm.trans_line_num() == 3)
+        self.assertTrue(hmm.state_num() == 2, str(hmm.state_num()))
+        self.assertTrue(hmm.sym_num() == 3)
 
     def test_printOutFeature(self):
         # arrange
