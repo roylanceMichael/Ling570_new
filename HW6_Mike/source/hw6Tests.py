@@ -89,7 +89,14 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         #self.assertTrue(nnpNovProb == float(1) / 3)
 
         #nnpCdProb = hmm.getTransitionProbability("NNP", "CD")
-        #self.assertTrue(nnpCdProb == float(1) / 3)        
+        #self.assertTrue(nnpCdProb == float(1) / 3)
+
+    def test_calculateProbabilityWithSmoothing(self):
+        # arrange
+        # act
+        # assert
+
+        print 'todo: add in this function...'      
 
 class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):
