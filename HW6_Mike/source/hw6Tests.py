@@ -72,31 +72,29 @@ class UtilitiesTest(unittest.TestCase):
         self.assertTrue(result[3][1].word == "</s>")
 
 class HiddenMarkovTrigramModelTest(unittest.TestCase):
-    def test_firstSentence(self):
+    def test_unigramExistWithCorrectProbabilities(self):
         # arrange
         utils = utilities.Utilities()
-        sentence1 = utils.createTrigramTuplesFromStr("Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ ,/, will/MD join/VB the/DT board/NN as/IN a/DT nonexecutive/JJ director/NN Nov./NNP 29/CD ./.")
+        rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
+        sentence = utils.createTrigramTuplesFromStr(rawSent)
 
         hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
 
         # act
-        hmm.addParsedLine(sentence1)
+        hmm.addParsedLine(sentence)
 
-        # assert 
-        print hmm.printHmmFormat()
-        
-        #nnpNovProb = hmm.getEmissionProbability("NNP", "Nov.")
-        #self.assertTrue(nnpNovProb == float(1) / 3)
+        # assert - make sure that items exist in the proper dictionaries
+        self.assertTrue(hmm.unigrams["NNP"] == 2)
+        self.assertTrue(hmm.unigrams[","] == 1)
+        self.assertTrue(hmm.unigrams["CD"] == 1)
+        self.assertTrue(hmm.unigrams["NNS"] == 1)
+        self.assertTrue(hmm.unigrams["JJ"] == 1)
 
-        #nnpCdProb = hmm.getTransitionProbability("NNP", "CD")
-        #self.assertTrue(nnpCdProb == float(1) / 3)
-
-    def test_calculateProbabilityWithSmoothing(self):
-        # arrange
-        # act
-        # assert
-
-        print 'todo: add in this function...'      
+        self.assertTrue(hmm.getUnigramProb("NNP") == 2 / float(6))
+        self.assertTrue(hmm.getUnigramProb(",") == 1 / float(6))
+        self.assertTrue(hmm.getUnigramProb("CD") == 1 / float(6))
+        self.assertTrue(hmm.getUnigramProb("NNS") == 1 / float(6))
+        self.assertTrue(hmm.getUnigramProb("JJ") == 1 / float(6))
 
 class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):
