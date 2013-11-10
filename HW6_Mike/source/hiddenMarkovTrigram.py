@@ -55,7 +55,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 				self.addTransition(secondTuple.pos, firstTuple.pos)
 
 				# add in the trigram
-				self.addtrigramTransitionDictionary(thirdTuple.pos, firstTuple.pos, secondTuple.pos)
+				self.addTrigramTransitionDictionary(thirdTuple.pos, firstTuple.pos, secondTuple.pos)
 
 				# only add emissions for first, we'll add in last one at the end...
 				self.addEmission(firstTuple.word, firstTuple.pos)
@@ -75,7 +75,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			self.addEmission(secondToLastTuple.word, secondToLastTuple.pos)
 			self.addEmission(lastTuple.word, lastTuple.pos)
 
-	def addtrigramTransitionDictionary(self, to_state, from_state1, from_state2):
+	def addTrigramTransitionDictionary(self, to_state, from_state1, from_state2):
 		from_state_key = from_state1 + "~" + from_state2
 		self.addToDict(from_state_key, to_state, self.trigramTransitionDictionary)
 
@@ -83,6 +83,6 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		key = from_state1 + "~" + from_state2
 		return self.getDicts(key, self.trigramTransitionDictionary)
 
-	def gettrigramTransitionDictionary(self, from_state1, from_state2, to_state):
+	def getTrigramTransitionDictionary(self, from_state1, from_state2, to_state):
 		key = from_state1 + "~" + from_state2
 		return self.getDict(key, to_state, self.trigramTransitionDictionary)
