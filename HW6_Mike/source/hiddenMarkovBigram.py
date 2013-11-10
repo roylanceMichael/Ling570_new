@@ -13,6 +13,9 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 		# calculating this the hard way for the time being...
 		return self.getDictLineCount(self.bigramTransitionDictionary)
 
+	def getBigramProb(self, from_state, to_state):
+		return self.getTransitionProbability(from_state, to_state)
+
 	def addParsedLine(self, parsedTuples):
 		# given in the format of [ wordTuple, wordTuple ]
 		if(len(parsedTuples) > 0):

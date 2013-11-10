@@ -108,7 +108,34 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         hmm.addParsedLine(sentence)
 
         # assert
-        
+        self.assertTrue(hmm.getBigramProb("NNP", "NNP") == .5)
+        self.assertTrue(hmm.getBigramProb("NNP", ",") == .5)
+
+        self.assertTrue(hmm.getBigramProb(",", "CD") == 1)
+
+        self.assertTrue(hmm.getBigramProb("CD", "NNS") == 1)
+
+        self.assertTrue(hmm.getBigramProb("NNS", "JJ") == 1)
+
+    def test_trigramExistsWithCorrectProbabilities(self):
+        # arranage
+        utils = utilities.Utilities()
+        rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
+        sentence = utils.createTrigramTuplesFromStr(rawSent)
+
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+
+        # act
+        hmm.addParsedLine(sentence)
+
+        # assert
+        self.assertTrue(hmm.getTrigramProb("NNP", "NNP", ",") == 1)
+
+        self.assertTrue(hmm.getTrigramProb("NNP", ",", "CD") == 1)
+
+        self.assertTrue(hmm.getTrigramProb(",", "CD", "NNS") == 1)
+
+        self.assertTrue(hmm.getTrigramProb("CD", "NNS", "JJ") == 1)
 
 class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):

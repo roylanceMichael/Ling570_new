@@ -17,6 +17,15 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		if(self.unigramTransitionDictionary.has_key(pos)):
 			return self.unigramTransitionDictionary[pos] / float(len(self.unigramTransitionDictionary))
 
+	def getTrigramProb(self, from_state1, from_state2, to_state):
+		key = from_state1 + "~" + from_state2
+
+		from_dict = self.getDicts(key, self.trigramTransitionDictionary)
+		from_total = self.getDictTotal(from_dict)
+		to_total = from_dict[to_state]
+
+		return float(to_total) / from_total
+
 	def addParsedLine(self, parsedTuples):
 		# given in the format of [ wordTuple, wordTuple, wordTuple ]
 		if(len(parsedTuples) > 0):
