@@ -1,8 +1,26 @@
 import unittest
 import utilities
 import hiddenMarkovBigram
+import hiddenMarkovTrigram
 
 class UtilitiesTest(unittest.TestCase):
+    def test_createsTrigramTuplesFromStr(self):
+        testSent = "John/N likes/V Mary/N"
+
+        utils = utilities.Utilities()
+
+        result = utils.createTrigramTuplesFromStr(testSent)
+
+        self.assertTrue(2, len(result))
+
+        self.assertTrue(result[0][0].pos == "BOS", result[0][0].pos)
+        self.assertTrue(result[0][1].pos == "N")
+        self.assertTrue(result[0][2].pos == "V")
+
+        self.assertTrue(result[1][0].pos == "N")
+        self.assertTrue(result[1][1].pos == "V")
+        self.assertTrue(result[1][2].pos == "N")
+
     def test_createsBigramTuplesFromStr(self):
         testSent = "John/N likes/V Mary/N"
 
@@ -53,8 +71,27 @@ class UtilitiesTest(unittest.TestCase):
         self.assertTrue(result[3][0].word == "Mary", result[0][0].pos)
         self.assertTrue(result[3][1].word == "</s>")
 
+class HiddenMarkovTrigramModelTest(unittest.TestCase):
+    def test_firstSentence(self):
+        # arrange
+        utils = utilities.Utilities()
+        sentence1 = utils.createTrigramTuplesFromStr("Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ ,/, will/MD join/VB the/DT board/NN as/IN a/DT nonexecutive/JJ director/NN Nov./NNP 29/CD ./.")
 
-class HiddenMarkovModelTest(unittest.TestCase):
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+
+        # act
+        hmm.addParsedLine(sentence1)
+
+        # assert 
+        print hmm.printHmmFormat()
+        
+        #nnpNovProb = hmm.getEmissionProbability("NNP", "Nov.")
+        #self.assertTrue(nnpNovProb == float(1) / 3)
+
+        #nnpCdProb = hmm.getTransitionProbability("NNP", "CD")
+        #self.assertTrue(nnpCdProb == float(1) / 3)        
+
+class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):
         # arrange
         utils = utilities.Utilities()

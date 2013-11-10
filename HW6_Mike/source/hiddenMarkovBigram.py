@@ -1,38 +1,7 @@
 import math
+import hiddenMarkov
 
-class HiddenMarkovBigram:
-	def __init__(self):
-		self.transitionDictionary = {}
-		self.emissionDictionary = {}
-		self.initDictionary = {}
-		self.totalBigramCount = 0
-
-	def state_num(self):
-		return len(self.transitionDictionary)
-
-	def sym_num(self):
-		return len(self.emissionDictionary)
-
-	def init_line_num(self):
-		return len(self.initDictionary)
-
-	def getDictLineCount(self, dictionary):
-		totalCount = 0
-		for key in dictionary:
-			subDict = dictionary[key]
-
-			for subKey in subDict:
-				totalCount = totalCount + subDict[subKey]
-
-		return totalCount
-
-	def trans_line_num(self):
-		# calculating this the hard way for the time being...
-		return self.getDictLineCount(self.transitionDictionary)
-
-	def emiss_line_num(self):
-		return self.getDictLineCount(self.emissionDictionary)
-
+class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 	def addParsedLine(self, parsedTuples):
 		# given in the format of [ wordTuple, wordTuple ]
 		if(len(parsedTuples) > 0):
@@ -63,52 +32,8 @@ class HiddenMarkovBigram:
 			self.addEmission(lastTuple.word, lastTuple.pos)
 
 
-	def addToDict(self, parent, child, dictionary):
-		if(dictionary.has_key(parent)):
-			childDict = dictionary[parent]
-
-			if(childDict.has_key(child)):
-				childDict[child] = childDict[child] + 1
-			else:
-				childDict[child] =  1
-		else:
-			 dictionary[parent] = { child: 1 }
-
-	def getDicts(self, parent, dictionary):
-		if(dictionary.has_key(parent)):
-			return dictionary[parent]
-		return None
-
-	def getDict(self, parent, child, dictionary):
-		dicts = self.getDicts(parent, dictionary)
-
-		if(dicts != None and dicts.has_key(child)):
-			return dicts[child]
-
-		return None
-
-	def getDictTotal(self, dictionary):
-		total = 0
-		for key in dictionary:
-			total = total + dictionary[key]
-
-		return total
-
-	def addEmission(self, symbol, state):
-		# we won't count <s> or </s>
-		if(symbol.strip() == "<s>" or symbol.strip() == "</s>"):
-			return
-
-		self.addToDict(state, symbol, self.emissionDictionary)
-
 	def addTransition(self, to_state, from_state):
 		self.addToDict(from_state, to_state, self.transitionDictionary)
-
-	def getEmissions(self, symbol):
-		return self.getDicts(symbol, self.emissionDictionary)
-
-	def getEmission(self, symbol, state):
-		return self.getDict(symbol, state, self.emissionDictionary)
 
 	def getEmissionTotal(self, symbol):
 		symbolDict = self.getDicts(symbol, self.emissionDictionary)
@@ -122,11 +47,11 @@ class HiddenMarkovBigram:
 
 		return float(symbol_total) / state_total
 
-	def getTransitions(self, to_state):
-		return self.getDicts(to_state, self.transitionDictionary)
+	def getTransitions(self, from_state):
+		return self.getDicts(from_state, self.transitionDictionary)
 
-	def getTransition(self, to_state, from_state):
-		return self.getDict(to_state, from_state, self.transitionDictionary)
+	def getTransition(self, from_state, to_state):
+		return self.getDict(from_state, to_state, self.transitionDictionary)
 
 	def getTransitionTotal(self, from_state):
 		from_dict = self.getDicts(from_state, self.transitionDictionary)

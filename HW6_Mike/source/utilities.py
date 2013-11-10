@@ -5,9 +5,9 @@ import wordTuple
 
 class Utilities:
 	def __init__(self):
-		self.POS_Word_Count_Dict = {}  #'BOS':{'<s>':0}, 'EOS':{'</s>':0}}
-                self.POS_POS_Count_Dict = {}
-
+		self.POS_Word_Count_Dict = {}
+		self.POS_POS_Count_Dict = {}
+		self.posRegex = "/[^/]+$"
 
 	def BOS_EOS(self, line):
 	### might not be needed
@@ -18,19 +18,52 @@ class Utilities:
 	def BOS_EOS_pos(self, line):
 		return "<s>/BOS " + line + " </s>/EOS" 
 
+	def createTrigramTuplesFromStr(self, strVal):
+		# let's always append <s>/BOS and </s>/EOS to the end
+		newStrVal = self.BOS_EOS_pos(strVal)
+
+		# first, let's split by whitespace
+		splitVals = re.split("\s+", newStrVal)
+		
+		trigramTuples = []
+
+		for i in range(2, len(splitVals)):
+			firstMatch = re.search(self.posRegex, splitVals[i-2])
+			secondMatch = re.search(self.posRegex, splitVals[i-1])
+			thirdMatch = re.search(self.posRegex, splitVals[i])
+
+			if(firstMatch != None and 
+				secondMatch != None and
+				thirdMatch != None):
+
+				# get the first, second and third tuples
+				firstWord = splitVals[i-2][0:firstMatch.start()]
+				firstPos = splitVals[i-2][firstMatch.start()+1:firstMatch.end()]
+				firstTuple = wordTuple.WordTuple(firstWord, firstPos)
+
+				secondWord = splitVals[i-1][0:secondMatch.start()]
+				secondPos = splitVals[i-1][secondMatch.start()+1:secondMatch.end()]
+				secondTuple = wordTuple.WordTuple(secondWord, secondPos)
+
+				thirdWord = splitVals[i][0:thirdMatch.start()]
+				thirdPos = splitVals[i][thirdMatch.start()+1:thirdMatch.end()]
+				thirdTuple = wordTuple.WordTuple(thirdWord, thirdPos)
+
+				trigramTuples.append([ firstTuple, secondTuple, thirdTuple ])
+
+		return trigramTuples
 
 	def createBigramTuplesFromStr(self, strVal):
 		# let's always just append <s>\BOS and <\s>\EOS
 		newStrVal = self.BOS_EOS_pos(strVal)
 		# first, let's split by whitespace
 		splitVals = re.split("\s+", newStrVal)
-		posRegex = "/[^/]+$"
 
 		bigramTuples = []
 
 		for i in range(1, len(splitVals)):
-			firstMatch = re.search(posRegex, splitVals[i-1])
-			secondMatch = re.search(posRegex, splitVals[i])
+			firstMatch = re.search(self.posRegex, splitVals[i-1])
+			secondMatch = re.search(self.posRegex, splitVals[i])
 
 			if(firstMatch != None and secondMatch != None):
 				# get the first and second pos
