@@ -2,12 +2,8 @@ import math
 
 class HiddenMarkov:
 	def __init__(self):
-		self.transitionDictionary = {}
 		self.emissionDictionary = {}
 		self.initDictionary = {}
-
-	def state_num(self):
-		return len(self.transitionDictionary)
 
 	def sym_num(self):
 		return len(self.emissionDictionary)
@@ -31,10 +27,6 @@ class HiddenMarkov:
 				totalCount = totalCount + subDict[subKey]
 
 		return totalCount
-
-	def trans_line_num(self):
-		# calculating this the hard way for the time being...
-		return self.getDictLineCount(self.transitionDictionary)
 
 	def emiss_line_num(self):
 		return self.getDictLineCount(self.emissionDictionary)
@@ -75,52 +67,3 @@ class HiddenMarkov:
 
 	def getEmission(self, symbol, state):
 		return self.getDict(symbol, state, self.emissionDictionary)
-
-	def reportLineInfo(self, firstLabel, secondLabel, numerator, denominator):
-		# expecting denominator to be a float
-		prob = numerator / float(denominator)
-		return (firstLabel + '\t' + secondLabel + '\t' + str(prob) + '\t' + str(math.log10(prob))).strip() + '\n'
-
-	def reportDictionaryValues(self, dictionary):
-		strBuilder = ''
-
-		for parentKey in dictionary:
-			strBuilder = strBuilder + self.reportSubDictionaryValues(parentKey, dictionary[parentKey])
-
-		return strBuilder
-
-	def reportSubDictionaryValues(self, parentKey, subDictionary):
-		total = self.getDictTotal(subDictionary)
-
-		strBuilder = ''
-		for subKey in subDictionary:
-			strBuilder = strBuilder + self.reportLineInfo(parentKey, subKey, subDictionary[subKey], total)
-
-		return strBuilder
-
-	def printHmmFormat(self):
-		strBuilder = ''
-
-		strBuilder = strBuilder + 'state_num=' + str(self.state_num()) + '\n'
-		strBuilder = strBuilder + 'sym_num=' + str(self.sym_num()) + '\n'
-		strBuilder = strBuilder + 'init_line_num=' + str(self.init_line_num()) + '\n'
-		strBuilder = strBuilder + 'trans_line_num=' + str(self.trans_line_num()) + '\n'
-		strBuilder = strBuilder + 'emiss_line_num=' + str(self.emiss_line_num()) + '\n'
-
-		# init
-		strBuilder = strBuilder + '\init\n'
-
-		# init is different, so we'll just do here
-		strBuilder = strBuilder + self.reportSubDictionaryValues('', self.initDictionary)
-		strBuilder = strBuilder + '\n'
-
-		# transition
-		strBuilder = strBuilder + '\\transition\n'
-		strBuilder = strBuilder + self.reportDictionaryValues(self.transitionDictionary)
-		strBuilder = strBuilder + '\n'
-
-		# emissions
-		strBuilder = strBuilder + '\emissions\n'
-		strBuilder = strBuilder + self.reportDictionaryValues(self.emissionDictionary)
-
-		return strBuilder

@@ -4,18 +4,18 @@ import hiddenMarkovBigram
 class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 	def __init__(self):
 		hiddenMarkovBigram.HiddenMarkovBigram.__init__(self)
-		self.unigrams = { }
-		self.transitionTrigram = { } 
+		self.unigramTransitionDictionary = { }
+		self.trigramTransitionDictionary = { } 
 
 	def addUnigram(self, pos):
-		if(self.unigrams.has_key(pos)):
-			self.unigrams[pos] = self.unigrams[pos] + 1
+		if(self.unigramTransitionDictionary.has_key(pos)):
+			self.unigramTransitionDictionary[pos] = self.unigramTransitionDictionary[pos] + 1
 		else:
-			self.unigrams[pos] = 1
+			self.unigramTransitionDictionary[pos] = 1
 
 	def getUnigramProb(self, pos):
-		if(self.unigrams.has_key(pos)):
-			return self.unigrams[pos] / float(len(self.unigrams))
+		if(self.unigramTransitionDictionary.has_key(pos)):
+			return self.unigramTransitionDictionary[pos] / float(len(self.unigramTransitionDictionary))
 
 	def addParsedLine(self, parsedTuples):
 		# given in the format of [ wordTuple, wordTuple, wordTuple ]
@@ -46,7 +46,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 				self.addTransition(secondTuple.pos, firstTuple.pos)
 
 				# add in the trigram
-				self.addTransitionTrigram(thirdTuple.pos, firstTuple.pos, secondTuple.pos)
+				self.addtrigramTransitionDictionary(thirdTuple.pos, firstTuple.pos, secondTuple.pos)
 
 				# only add emissions for first, we'll add in last one at the end...
 				self.addEmission(firstTuple.word, firstTuple.pos)
@@ -55,7 +55,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			secondToLastTuple = parsedTuples[parseTuplesLen - 1][1]
 			lastTuple = parsedTuples[parseTuplesLen - 1][2]
 
-			# add in the unigrams
+			# add in the unigramTransitionDictionary
 			self.addUnigram(secondToLastTuple.pos)
 			self.addUnigram(lastTuple.pos)
 
@@ -66,14 +66,14 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			self.addEmission(secondToLastTuple.word, secondToLastTuple.pos)
 			self.addEmission(lastTuple.word, lastTuple.pos)
 
-	def addTransitionTrigram(self, to_state, from_state1, from_state2):
+	def addtrigramTransitionDictionary(self, to_state, from_state1, from_state2):
 		from_state_key = from_state1 + "~" + from_state2
-		self.addToDict(from_state_key, to_state, self.transitionTrigram)
+		self.addToDict(from_state_key, to_state, self.trigramTransitionDictionary)
 
 	def getTransitionsTrigram(self, from_state1, from_state2):
 		key = from_state1 + "~" + from_state2
-		return self.getDicts(key, self.transitionTrigram)
+		return self.getDicts(key, self.trigramTransitionDictionary)
 
-	def getTransitionTrigram(self, from_state1, from_state2, to_state):
+	def gettrigramTransitionDictionary(self, from_state1, from_state2, to_state):
 		key = from_state1 + "~" + from_state2
-		return self.getDict(key, to_state, self.transitionTrigram)
+		return self.getDict(key, to_state, self.trigramTransitionDictionary)

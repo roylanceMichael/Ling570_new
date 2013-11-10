@@ -2,6 +2,17 @@ import math
 import hiddenMarkov
 
 class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
+	def __init__(self):
+		hiddenMarkov.HiddenMarkov.__init__(self)
+		self.bigramTransitionDictionary = {}
+
+	def state_num(self):
+		return len(self.bigramTransitionDictionary)
+
+	def trans_line_num(self):
+		# calculating this the hard way for the time being...
+		return self.getDictLineCount(self.bigramTransitionDictionary)
+
 	def addParsedLine(self, parsedTuples):
 		# given in the format of [ wordTuple, wordTuple ]
 		if(len(parsedTuples) > 0):
@@ -33,7 +44,7 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 
 
 	def addTransition(self, to_state, from_state):
-		self.addToDict(from_state, to_state, self.transitionDictionary)
+		self.addToDict(from_state, to_state, self.bigramTransitionDictionary)
 
 	def getEmissionTotal(self, symbol):
 		symbolDict = self.getDicts(symbol, self.emissionDictionary)
@@ -48,18 +59,18 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 		return float(symbol_total) / state_total
 
 	def getTransitions(self, from_state):
-		return self.getDicts(from_state, self.transitionDictionary)
+		return self.getDicts(from_state, self.bigramTransitionDictionary)
 
 	def getTransition(self, from_state, to_state):
-		return self.getDict(from_state, to_state, self.transitionDictionary)
+		return self.getDict(from_state, to_state, self.bigramTransitionDictionary)
 
 	def getTransitionTotal(self, from_state):
-		from_dict = self.getDicts(from_state, self.transitionDictionary)
+		from_dict = self.getDicts(from_state, self.bigramTransitionDictionary)
 
 		return self.getDictTotal(from_dict)
 
 	def getTransitionProbability(self, from_state, to_state):
-		from_dict = self.getDicts(from_state, self.transitionDictionary)
+		from_dict = self.getDicts(from_state, self.bigramTransitionDictionary)
 		from_total = self.getDictTotal(from_dict)
 		to_total = from_dict[to_state]
 
@@ -105,7 +116,7 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 
 		# transition
 		strBuilder = strBuilder + '\\transition\n'
-		strBuilder = strBuilder + self.reportDictionaryValues(self.transitionDictionary)
+		strBuilder = strBuilder + self.reportDictionaryValues(self.bigramTransitionDictionary)
 		strBuilder = strBuilder + '\n'
 
 		# emissions

@@ -84,17 +84,31 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         hmm.addParsedLine(sentence)
 
         # assert - make sure that items exist in the proper dictionaries
-        self.assertTrue(hmm.unigrams["NNP"] == 2)
-        self.assertTrue(hmm.unigrams[","] == 1)
-        self.assertTrue(hmm.unigrams["CD"] == 1)
-        self.assertTrue(hmm.unigrams["NNS"] == 1)
-        self.assertTrue(hmm.unigrams["JJ"] == 1)
+        self.assertTrue(hmm.unigramTransitionDictionary["NNP"] == 2)
+        self.assertTrue(hmm.unigramTransitionDictionary[","] == 1)
+        self.assertTrue(hmm.unigramTransitionDictionary["CD"] == 1)
+        self.assertTrue(hmm.unigramTransitionDictionary["NNS"] == 1)
+        self.assertTrue(hmm.unigramTransitionDictionary["JJ"] == 1)
 
         self.assertTrue(hmm.getUnigramProb("NNP") == 2 / float(6))
         self.assertTrue(hmm.getUnigramProb(",") == 1 / float(6))
         self.assertTrue(hmm.getUnigramProb("CD") == 1 / float(6))
         self.assertTrue(hmm.getUnigramProb("NNS") == 1 / float(6))
         self.assertTrue(hmm.getUnigramProb("JJ") == 1 / float(6))
+
+    def test_bigramExistsWithCorrectProbabilities(self):
+        # arrange
+        utils = utilities.Utilities()
+        rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
+        sentence = utils.createTrigramTuplesFromStr(rawSent)
+
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+
+        # act
+        hmm.addParsedLine(sentence)
+
+        # assert
+        
 
 class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):
