@@ -34,7 +34,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		return float(to_total) / from_total
 
 	def addParsedLine(self, parsedTuples):
-		# given in the format of [ wordTuple, wordTuple, wordTuple ]
+		# given in the format of [[ wordTuple, wordTuple, wordTuple ]]
 		if(len(parsedTuples) > 0):
 			initFirstTuple = parsedTuples[0][0]
 			initSecondTuple = parsedTuples[0][1]
@@ -46,8 +46,8 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			else:
 				self.initDictionary[initFirstKey] = 1
 
-			# not including EOS here for now...
-			parseTuplesLen = len(parsedTuples) - 1
+			# including EOS here for now...
+			parseTuplesLen = len(parsedTuples)
 
 			for i in range(0, parseTuplesLen):
 				# add transitions for both
@@ -106,6 +106,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		return lambda3 * trigramProbability + lambda2 * bigramProbability + lambda1	* unigramProbability
 
 	def reportTrigramTransitions(self, lambda1, lambda2, lambda3):
+		# TODO: make sure that we're accounting for the bigram smoothing probabily, see HW5
 		strBuilder = ''
 
 		for key in self.trigramTransitionDictionary:

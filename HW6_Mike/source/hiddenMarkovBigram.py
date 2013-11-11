@@ -17,7 +17,7 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 		return self.getTransitionProbability(from_state, to_state)
 
 	def addParsedLine(self, parsedTuples):
-		# given in the format of [ wordTuple, wordTuple ]
+		# given in the format of [[ wordTuple, wordTuple ]]
 		if(len(parsedTuples) > 0):
 			initTuple = parsedTuples[0][0]
 

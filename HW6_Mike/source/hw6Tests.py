@@ -88,7 +88,7 @@ class UtilitiesTest(unittest.TestCase):
         self.assertTrue(result[3][1].word == "</s>")
 
 class HiddenMarkovTrigramModelTest(unittest.TestCase):
-    def test_unigramExistWithCorrectProbabilities(self):
+    def test_unigramsExistWithCorrectProbabilities(self):
         # arrange
         utils = utilities.Utilities()
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
@@ -188,8 +188,6 @@ class HiddenMarkovBigramModelTest(unittest.TestCase):
         hmm.addParsedLine(sentence1)
 
         # assert 
-        print hmm.bigramTransitionDictionary
-        print hmm.printHmmFormat()
         nnpNovProb = hmm.getEmissionProbability("NNP", "Nov.")
         self.assertTrue(nnpNovProb == float(1) / 3)
 
@@ -225,7 +223,6 @@ class HiddenMarkovBigramModelTest(unittest.TestCase):
 
         # assert transitions
 
-
     def test_dictReportingCorrectResultWithSingleBigram(self):
         hmm = hiddenMarkovBigram.HiddenMarkovBigram()
 
@@ -252,7 +249,7 @@ class HiddenMarkovBigramModelTest(unittest.TestCase):
         self.assertTrue(hmm.emiss_line_num() == 3)
         self.assertTrue(hmm.trans_line_num() == 3)
         self.assertTrue(hmm.state_num() == 3, str(hmm.state_num()))
-        self.assertTrue(hmm.sym_num() == 2)
+        self.assertTrue(hmm.sym_num() == 3, str(hmm.sym_num()))
 
     def test_printOutFeature(self):
         # arrange
@@ -269,17 +266,20 @@ class HiddenMarkovBigramModelTest(unittest.TestCase):
 
         # assert
         expectedResult = """state_num=3
-sym_num=2
+sym_num=3
 init_line_num=1
 trans_line_num=3
 emiss_line_num=3
+
 \init
 BOS\t1.0\t0.0
 
 \\transition
 V\tN\t1.0\t0.0
 BOS\tN\t1.0\t0.0
-N\tV\t1.0\t0.0
+N\tV\t0.5\t-0.301029995664
+
+
 
 \emissions
 V\tlikes\t1.0\t0.0
