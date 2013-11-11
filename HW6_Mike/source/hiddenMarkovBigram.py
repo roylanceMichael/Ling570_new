@@ -28,8 +28,8 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 
 			self.addEmission(initTuple.word, initTuple.pos)
 
-			# not including EOS here for now...
-			parseTuplesLen = len(parsedTuples) - 1
+			# including EOS...
+			parseTuplesLen = len(parsedTuples)
 			
 			for i in range(0, parseTuplesLen):
 				# add transitions for both
@@ -97,6 +97,10 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 
 		strBuilder = ''
 		for subKey in subDictionary:
+			
+			if subKey == 'EOS':
+				continue
+
 			strBuilder = strBuilder + self.reportLineInfo(parentKey, subKey, subDictionary[subKey], total)
 
 		return strBuilder

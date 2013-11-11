@@ -2,7 +2,6 @@ from __future__ import division
 import re
 import wordTuple
 
-
 class Utilities:
 	def __init__(self):
 		self.POS_Word_Count_Dict = {}

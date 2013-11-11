@@ -2,11 +2,12 @@ import math
 
 class HiddenMarkov:
 	def __init__(self):
+		self.symbolCount = {}
 		self.emissionDictionary = {}
 		self.initDictionary = {}
 
 	def sym_num(self):
-		return len(self.emissionDictionary)
+		return len(self.symbolCount)
 
 	def init_line_num(self):
 		return len(self.initDictionary)
@@ -61,6 +62,9 @@ class HiddenMarkov:
 			return
 
 		self.addToDict(state, symbol, self.emissionDictionary)
+		
+		if(not self.symbolCount.has_key(symbol)):
+			self.symbolCount[symbol] = 1
 
 	def getEmissions(self, symbol):
 		return self.getDicts(symbol, self.emissionDictionary)

@@ -188,7 +188,8 @@ class HiddenMarkovBigramModelTest(unittest.TestCase):
         hmm.addParsedLine(sentence1)
 
         # assert 
-        # print hmm.printHmmFormat()
+        print hmm.bigramTransitionDictionary
+        print hmm.printHmmFormat()
         nnpNovProb = hmm.getEmissionProbability("NNP", "Nov.")
         self.assertTrue(nnpNovProb == float(1) / 3)
 
