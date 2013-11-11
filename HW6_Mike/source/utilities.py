@@ -18,6 +18,22 @@ class Utilities:
 	def BOS_EOS_pos(self, line):
 		return "<s>/BOS " + line + " </s>/EOS" 
 
+	def createUnkProbDict(self, strVal):
+		splitLines = strVal.strip().split('\n')
+
+		unkProbDict = { }
+
+		for i in range(0, len(splitLines)):
+			splitVals = re.split("\s+", splitLines[i].strip())
+
+			if(len(splitVals) == 2):
+				pos = splitVals[0]
+				prob = float(splitVals[1])
+
+				unkProbDict[pos] = prob
+
+		return unkProbDict
+
 	def createTrigramTuplesFromStr(self, strVal):
 		# let's always append <s>/BOS and </s>/EOS to the end
 		newStrVal = self.BOS_EOS_pos(strVal)

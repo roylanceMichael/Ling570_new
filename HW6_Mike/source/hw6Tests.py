@@ -4,6 +4,22 @@ import hiddenMarkovBigram
 import hiddenMarkovTrigram
 
 class UtilitiesTest(unittest.TestCase):
+    def test_createsUnkDict(self):
+        # arrange
+        testStr = """
+        NNP 0.555
+        TR 0.222
+        """
+        utils = utilities.Utilities()
+
+        # act
+        testDict = utils.createUnkProbDict(testStr)
+
+        # assert
+        self.assertTrue(testDict["NNP"] == 0.555)
+        self.assertTrue(testDict["TR"] == 0.222)
+
+
     def test_createsTrigramTuplesFromStr(self):
         testSent = "John/N likes/V Mary/N"
 
@@ -118,7 +134,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         self.assertTrue(hmm.getBigramProb("NNS", "JJ") == 1)
 
     def test_trigramExistsWithCorrectProbabilities(self):
-        # arranage
+        # arrange
         utils = utilities.Utilities()
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
         sentence = utils.createTrigramTuplesFromStr(rawSent)
@@ -136,6 +152,29 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         self.assertTrue(hmm.getTrigramProb(",", "CD", "NNS") == 1)
 
         self.assertTrue(hmm.getTrigramProb("CD", "NNS", "JJ") == 1)
+
+    def test_correctProbabilitiesWithLambdas(self):
+        # arrange
+        utils = utilities.Utilities()
+        rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ something/NNP cool/NNP here/VB"
+        sentence = utils.createTrigramTuplesFromStr(rawSent)
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+        hmm.addParsedLine(sentence)
+        lambda1 = 0.05
+        lambda2 = 0.8
+        lambda3 = 0.15
+
+        # act
+        result = hmm.getSmoothedTrigramProbability("NNP", "NNP", ",", lambda1, lambda2, lambda3)
+
+        # assert
+        trigramProb = hmm.getTrigramProb("NNP", "NNP", ",")
+        bigramProb = hmm.getBigramProb("NNP", ",")
+        unigramProb = hmm.getUnigramProb(",")
+
+        expectedResult = lambda3 * trigramProb + lambda2 * bigramProb + lambda1 * unigramProb
+
+        self.assertTrue(result == expectedResult, str(result) + " " + str(expectedResult))
 
 class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):

@@ -7,6 +7,13 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		self.unigramTransitionDictionary = { }
 		self.trigramTransitionDictionary = { } 
 
+	def state_num(self):
+		return len(self.trigramTransitionDictionary)
+
+	def trans_line_num(self):
+		# calculating this the hard way for the time being...
+		return self.getDictLineCount(self.trigramTransitionDictionary)
+
 	def addUnigram(self, pos):
 		if(self.unigramTransitionDictionary.has_key(pos)):
 			self.unigramTransitionDictionary[pos] = self.unigramTransitionDictionary[pos] + 1
@@ -86,3 +93,59 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 	def getTrigramTransitionDictionary(self, from_state1, from_state2, to_state):
 		key = from_state1 + "~" + from_state2
 		return self.getDict(key, to_state, self.trigramTransitionDictionary)
+
+	# get smoothed interpolated probability
+	# p(t3 | t1, t2) = lambda3 * P(t3 | t1, t2) + lambda2 * P(t3 | t2) + lambda1 * P(t3)
+	def getSmoothedTrigramProbability(self, from_state1, from_state2, to_state, lambda1, lambda2, lambda3):
+		trigramProbability = self.getTrigramProb(from_state1, from_state2, to_state)
+
+		bigramProbability = self.getBigramProb(from_state2, to_state)
+
+		unigramProbability = self.getUnigramProb(to_state)
+
+		return lambda3 * trigramProbability + lambda2 * bigramProbability + lambda1	* unigramProbability
+
+	def reportTrigramTransitions(self, lambda1, lambda2, lambda3):
+		strBuilder = ''
+
+		for key in self.trigramTransitionDictionary:
+
+			fromStates = key.split("~")
+			from_state1 = fromStates[0]
+			from_state2 = fromStates[1]
+
+			subDict = self.trigramTransitionDictionary[key]
+
+			for to_state in subDict:
+				prob = self.getSmoothedTrigramProbability(from_state1, from_state2, to_state, lambda1, lambda2, lambda3)
+				strBuilder = strBuilder + key + "\t" + to_state + "\t" + str(prob) + "\t" + str(math.log10(prob)) + "\n"
+
+		return strBuilder
+
+	def printHmmFormat(self, lambda1, lambda2, lambda3):
+		strBuilder = ''
+
+		strBuilder = strBuilder + 'state_num=' + str(self.state_num()) + '\n'
+		strBuilder = strBuilder + 'sym_num=' + str(self.sym_num()) + '\n'
+		strBuilder = strBuilder + 'init_line_num=' + str(self.init_line_num()) + '\n'
+		strBuilder = strBuilder + 'trans_line_num=' + str(self.trans_line_num()) + '\n'
+		strBuilder = strBuilder + 'emiss_line_num=' + str(self.emiss_line_num()) + '\n'
+
+		# init
+		strBuilder = strBuilder + '\init\n'
+
+		# init is different, so we'll just do here
+		strBuilder = strBuilder + self.reportSubDictionaryValues('', self.initDictionary)
+		strBuilder = strBuilder + '\n'
+
+		# todo: implement probabilities for transitions
+		strBuilder = strBuilder +  '\\transitions\n'
+		strBuilder = strBuilder + self.reportTrigramTransitions(lambda1, lambda2, lambda3)
+		strBuilder = strBuilder + '\n'
+
+		# emissions
+		strBuilder = strBuilder + '\emissions\n'
+		strBuilder = strBuilder + self.reportDictionaryValues(self.emissionDictionary)
+
+		return strBuilder
+
