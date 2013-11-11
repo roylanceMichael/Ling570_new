@@ -12,6 +12,9 @@ class HiddenMarkov:
 	def init_line_num(self):
 		return len(self.initDictionary)
 
+	def emiss_line_num(self):
+		return self.getDictLineCount(self.emissionDictionary)
+
 	def getDictTotal(self, dictionary):
 		total = 0
 		for key in dictionary:
@@ -25,12 +28,12 @@ class HiddenMarkov:
 			subDict = dictionary[key]
 
 			for subKey in subDict:
-				totalCount = totalCount + subDict[subKey]
+				if subKey == "EOS":
+					continue
+
+				totalCount = totalCount + 1
 
 		return totalCount
-
-	def emiss_line_num(self):
-		return self.getDictLineCount(self.emissionDictionary)
 
 	def addToDict(self, parent, child, dictionary):
 		if(dictionary.has_key(parent)):

@@ -113,6 +113,7 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 		strBuilder = strBuilder + 'init_line_num=' + str(self.init_line_num()) + '\n'
 		strBuilder = strBuilder + 'trans_line_num=' + str(self.trans_line_num()) + '\n'
 		strBuilder = strBuilder + 'emiss_line_num=' + str(self.emiss_line_num()) + '\n'
+		strBuilder = strBuilder + '\n'
 
 		# init
 		strBuilder = strBuilder + '\init\n'
@@ -124,6 +125,8 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 		# transition
 		strBuilder = strBuilder + '\\transition\n'
 		strBuilder = strBuilder + self.reportDictionaryValues(self.bigramTransitionDictionary)
+		strBuilder = strBuilder + '\n'
+		strBuilder = strBuilder + '\n'
 		strBuilder = strBuilder + '\n'
 
 		# emissions

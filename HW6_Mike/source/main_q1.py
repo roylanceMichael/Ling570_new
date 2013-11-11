@@ -4,20 +4,12 @@ import utilities
 import sys
 
 def main():
-  input_file = sys.argv[1]
-  input_t = open(input_file)
-
   utils = utilities.Utilities()
-  t = input_t.readline()
-
   hmm = hiddenMarkovBigram.HiddenMarkovBigram()
 
-  while t:
-    tr = utils.createBigramTuplesFromStr(t)
+  for line in sys.stdin:
+    tr = utils.createBigramTuplesFromStr(line)
     hmm.addParsedLine(tr)
-    t = input_t.readline()
-
-  input_t.close()
 
   print hmm.printHmmFormat()
 
