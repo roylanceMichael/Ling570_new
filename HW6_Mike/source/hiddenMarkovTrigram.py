@@ -139,23 +139,23 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 
 		return strBuilder
 
-	def reportSubDictionaryValues(self, tag, subDictionary):
-		total = self.getDictTotal(subDictionary)
+	def reportSubDictionaryValues(self, tag, symbolDictionary):
+		total = self.getDictTotal(symbolDictionary)
 
 		strBuilder = ''
-		for symbol in subDictionary:
+
+		for symbol in symbolDictionary:
 			
 			if symbol == '</s>':
 				continue
 
 			unknownProb = self.getUnknownProb(tag)
 
-			strBuilder = strBuilder + self.reportLineInfoSmoothing(tag, symbol, subDictionary[symbol], total, unknownProb)
+			strBuilder = strBuilder + self.reportLineInfoSmoothing(tag, symbol, symbolDictionary[symbol], total, unknownProb)
 
 		return strBuilder
 
 	def getUnknownProb(self, tag):
-		print tag
 		if(self.unknownDictionary.has_key(tag)):
 			return self.unknownDictionary[tag]
 		return 0
@@ -170,6 +170,9 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 ### else: Psmooth(w | tag) = P(<unk> | tag)
 
 		prob = self.calculateEmissionProb(numerator, denominator, unknownProb)
+
+		if(prob == 0):
+			return (firstLabel + '\t' + secondLabel + '\t0\t0 - warning! 0 probability detected').strip() + '\n'	
 		return (firstLabel + '\t' + secondLabel + '\t' + str(prob) + '\t' + str(math.log10(prob))).strip() + '\n'
 
 	def printHmmFormat(self, lambda1, lambda2, lambda3):
@@ -180,16 +183,18 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		strBuilder = strBuilder + 'init_line_num=' + str(self.init_line_num()) + '\n'
 		strBuilder = strBuilder + 'trans_line_num=' + str(self.trans_line_num()) + '\n'
 		strBuilder = strBuilder + 'emiss_line_num=' + str(self.emiss_line_num()) + '\n'
-
+		strBuilder = strBuilder + '\n'
 		# init
 		strBuilder = strBuilder + '\init\n'
 
 		# init is different, so we'll just do here
 		strBuilder = strBuilder + self.reportSubDictionaryValues('', self.initDictionary)
 		strBuilder = strBuilder + '\n'
+		strBuilder = strBuilder + '\n'
+		strBuilder = strBuilder + '\n'
 
 		# todo: implement probabilities for transitions
-		strBuilder = strBuilder +  '\\transitions\n'
+		strBuilder = strBuilder + '\\transitions\n'
 		strBuilder = strBuilder + self.reportTrigramTransitions(lambda1, lambda2, lambda3)
 		strBuilder = strBuilder + '\n'
 

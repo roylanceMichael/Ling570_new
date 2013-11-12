@@ -1,5 +1,6 @@
 import unittest
 import utilities
+import hiddenMarkovFactory
 import hiddenMarkovBigram
 import hiddenMarkovTrigram
 
@@ -30,6 +31,58 @@ WRB 0.0227272727272727
 FW 1
 RBS 0.0526315789473684
 NNPS 1""")
+
+class HiddenMarkovFactoryTest(unittest.TestCase):
+    def test_addFirstSixLinesToDictionary(self):
+        # arrange
+        hmmInput = """state_num=6
+sym_num=11
+init_line_num=2
+trans_line_num=13
+emiss_line_num=11""".split("\n")
+        
+        hmmFactory = hiddenMarkovFactory.HiddenMarkovFactory()
+
+        # act
+        hmmFactory.readInput(hmmInput[0])
+        hmmFactory.readInput(hmmInput[1])
+        hmmFactory.readInput(hmmInput[2])
+        hmmFactory.readInput(hmmInput[3])
+        hmmFactory.readInput(hmmInput[4])
+
+        # assert
+        self.assertTrue(hmmFactory.current_state_num == 6, str(hmmFactory.current_state_num))
+        self.assertTrue(hmmFactory.current_sym_num == 11)
+        self.assertTrue(hmmFactory.current_init_line == 2)
+        self.assertTrue(hmmFactory.current_trans_line_num == 13)
+        self.assertTrue(hmmFactory.current_emiss_line_num == 11)
+
+    def test_addInitToDictionary(self):
+        # arrange
+        hmmInput = """state_num=6
+sym_num=11
+init_line_num=2
+trans_line_num=13
+emiss_line_num=11
+
+\init
+BOS     1.0 """.split("\n")
+        
+        hmmFactory = hiddenMarkovFactory.HiddenMarkovFactory()
+
+        # act
+        hmmFactory.readInput(hmmInput[0])
+        hmmFactory.readInput(hmmInput[1])
+        hmmFactory.readInput(hmmInput[2])
+        hmmFactory.readInput(hmmInput[3])
+        hmmFactory.readInput(hmmInput[4])
+
+        # assert
+        self.assertTrue(hmmFactory.current_state_num == 6, str(hmmFactory.current_state_num))
+        self.assertTrue(hmmFactory.current_sym_num == 11)
+        self.assertTrue(hmmFactory.current_init_line == 2)
+        self.assertTrue(hmmFactory.current_trans_line_num == 13)
+        self.assertTrue(hmmFactory.current_emiss_line_num == 11)
 
 class UtilitiesTest(unittest.TestCase):
     def test_createsUnkDict(self):
@@ -196,7 +249,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         result = hmm.getSmoothedTrigramProbability("NNP", "NNP", ",", lambda1, lambda2, lambda3)
 
         # assert
-        print hmm.printHmmFormat(lambda1, lambda2, lambda3)
+        # print hmm.printHmmFormat(lambda1, lambda2, lambda3)
 
         trigramProb = hmm.getTrigramProb("NNP", "NNP", ",")
         bigramProb = hmm.getBigramProb("NNP", ",")
