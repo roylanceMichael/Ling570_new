@@ -2,10 +2,11 @@ import math
 import hiddenMarkovBigram
 
 class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
-	def __init__(self):
+	def __init__(self, unknownDictionary):
 		hiddenMarkovBigram.HiddenMarkovBigram.__init__(self)
 		self.unigramTransitionDictionary = { }
 		self.trigramTransitionDictionary = { } 
+		self.unknownDictionary = unknownDictionary
 
 	def state_num(self):
 		return len(self.trigramTransitionDictionary)
@@ -130,6 +131,47 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 
 		return strBuilder
 
+	def reportEmissionValuesWithUnknownWords(self, dictionary):
+		strBuilder = ''
+
+		for parentKey in dictionary:
+			strBuilder = strBuilder + self.reportSubDictionaryValues(parentKey, dictionary[parentKey])
+
+		return strBuilder
+
+	def reportSubDictionaryValues(self, tag, subDictionary):
+		total = self.getDictTotal(subDictionary)
+
+		strBuilder = ''
+		for symbol in subDictionary:
+			
+			if symbol == '</s>':
+				continue
+
+			unknownProb = self.getUnknownProb(tag)
+
+			strBuilder = strBuilder + self.reportLineInfoSmoothing(tag, symbol, subDictionary[symbol], total, unknownProb)
+
+		return strBuilder
+
+	def getUnknownProb(self, tag):
+		print tag
+		if(self.unknownDictionary.has_key(tag)):
+			return self.unknownDictionary[tag]
+		return 0
+
+	def calculateEmissionProb(self, numerator, denominator, unknownProb):
+		if(numerator == 0 or denominator == 0):
+			return unknownProb
+		return (float(numerator) / denominator) * (1 - unknownProb)
+
+	def reportLineInfoSmoothing(self, firstLabel, secondLabel, numerator, denominator, unknownProb):
+### if known: Psmooth(w | tag) = P(w | tag) * (1 - P(<unk> | tag))
+### else: Psmooth(w | tag) = P(<unk> | tag)
+
+		prob = self.calculateEmissionProb(numerator, denominator, unknownProb)
+		return (firstLabel + '\t' + secondLabel + '\t' + str(prob) + '\t' + str(math.log10(prob))).strip() + '\n'
+
 	def printHmmFormat(self, lambda1, lambda2, lambda3):
 		strBuilder = ''
 
@@ -153,7 +195,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 
 		# emissions
 		strBuilder = strBuilder + '\emissions\n'
-		strBuilder = strBuilder + self.reportDictionaryValues(self.emissionDictionary)
+		strBuilder = strBuilder + self.reportEmissionValuesWithUnknownWords(self.emissionDictionary)
 
 		return strBuilder
 

@@ -3,6 +3,34 @@ import utilities
 import hiddenMarkovBigram
 import hiddenMarkovTrigram
 
+utils = utilities.Utilities()
+unknownProbFile = utils.createUnkProbDict("""NNP 0.378926539698244
+NN 0.158602620087336
+JJ 0.263349514563107
+CD 0.313821138211382
+NNS 0.220447284345048
+VBN 0.228235294117647
+VB 0.196337741607325
+VBD 0.112023460410557
+VBG 0.316326530612245
+RB 0.0856269113149847
+VBZ 0.099290780141844
+VBP 0.0645161290322581
+IN 0.00422255340288127
+JJR 0.0833333333333333
+JJS 0.114942528735632
+PRP$ 0.0173611111111111
+UH 1
+RP 0.0234375
+MD 0.00872093023255814
+PRP 0.00490196078431373
+WDT 0.0165745856353591
+CC 0.002
+WRB 0.0227272727272727
+FW 1
+RBS 0.0526315789473684
+NNPS 1""")
+
 class UtilitiesTest(unittest.TestCase):
     def test_createsUnkDict(self):
         # arrange
@@ -94,7 +122,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
         sentence = utils.createTrigramTuplesFromStr(rawSent)
 
-        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram({})
 
         # act
         hmm.addParsedLine(sentence)
@@ -106,11 +134,11 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         self.assertTrue(hmm.unigramTransitionDictionary["NNS"] == 1)
         self.assertTrue(hmm.unigramTransitionDictionary["JJ"] == 1)
 
-        self.assertTrue(hmm.getUnigramProb("NNP") == 2 / float(6))
-        self.assertTrue(hmm.getUnigramProb(",") == 1 / float(6))
-        self.assertTrue(hmm.getUnigramProb("CD") == 1 / float(6))
-        self.assertTrue(hmm.getUnigramProb("NNS") == 1 / float(6))
-        self.assertTrue(hmm.getUnigramProb("JJ") == 1 / float(6))
+        self.assertTrue(hmm.getUnigramProb("NNP") == 2 / float(7))
+        self.assertTrue(hmm.getUnigramProb(",") == 1 / float(7))
+        self.assertTrue(hmm.getUnigramProb("CD") == 1 / float(7))
+        self.assertTrue(hmm.getUnigramProb("NNS") == 1 / float(7))
+        self.assertTrue(hmm.getUnigramProb("JJ") == 1 / float(7))
 
     def test_bigramExistsWithCorrectProbabilities(self):
         # arrange
@@ -118,7 +146,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
         sentence = utils.createTrigramTuplesFromStr(rawSent)
 
-        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram({})
 
         # act
         hmm.addParsedLine(sentence)
@@ -139,7 +167,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ"
         sentence = utils.createTrigramTuplesFromStr(rawSent)
 
-        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram({})
 
         # act
         hmm.addParsedLine(sentence)
@@ -158,7 +186,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         utils = utilities.Utilities()
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ something/NNP cool/NNP here/VB"
         sentence = utils.createTrigramTuplesFromStr(rawSent)
-        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram()
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram(unknownProbFile)
         hmm.addParsedLine(sentence)
         lambda1 = 0.05
         lambda2 = 0.8
@@ -177,6 +205,28 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         expectedResult = lambda3 * trigramProb + lambda2 * bigramProb + lambda1 * unigramProb
 
         self.assertTrue(result == expectedResult, str(result) + " " + str(expectedResult))
+
+    def test_correctEmissionProbabilityWhenNotZero(self):
+        # arrange
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram({})
+
+        # act
+        result = hmm.calculateEmissionProb(5, 10, .3)
+
+        # assert
+        expectedResult = (float(5) / 10) * (1 - .3)
+        self.assertTrue(result == expectedResult)
+
+    def test_correctEmissionProbabilityWhenZero(self):
+        # arrange
+        hmm = hiddenMarkovTrigram.HiddenMarkovTrigram({})
+
+        # act
+        result = hmm.calculateEmissionProb(0, 10, .3)
+
+        # assert
+        expectedResult = .3
+        self.assertTrue(result == expectedResult)
 
 class HiddenMarkovBigramModelTest(unittest.TestCase):
     def test_firstSentence(self):
