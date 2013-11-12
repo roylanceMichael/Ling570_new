@@ -153,7 +153,7 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
 
         self.assertTrue(hmm.getTrigramProb("CD", "NNS", "JJ") == 1)
 
-    def test_correctProbabilitiesWithLambdas(self):
+    def test_correctProbabilitiesWithLambdas1(self):
         # arrange
         utils = utilities.Utilities()
         rawSent = "Pierre/NNP Vinken/NNP ,/, 61/CD years/NNS old/JJ something/NNP cool/NNP here/VB"
@@ -168,6 +168,8 @@ class HiddenMarkovTrigramModelTest(unittest.TestCase):
         result = hmm.getSmoothedTrigramProbability("NNP", "NNP", ",", lambda1, lambda2, lambda3)
 
         # assert
+        print hmm.printHmmFormat(lambda1, lambda2, lambda3)
+
         trigramProb = hmm.getTrigramProb("NNP", "NNP", ",")
         bigramProb = hmm.getBigramProb("NNP", ",")
         unigramProb = hmm.getUnigramProb(",")

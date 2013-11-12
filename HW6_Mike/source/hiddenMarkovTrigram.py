@@ -83,6 +83,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			self.addEmission(lastTuple.word, lastTuple.pos)
 
 	def addTrigramTransitionDictionary(self, to_state, from_state1, from_state2):
+### P(to_state | from_state1 from_state2)
 		from_state_key = from_state1 + "~" + from_state2
 		self.addToDict(from_state_key, to_state, self.trigramTransitionDictionary)
 
@@ -98,15 +99,17 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 	# p(t3 | t1, t2) = lambda3 * P(t3 | t1, t2) + lambda2 * P(t3 | t2) + lambda1 * P(t3)
 	def getSmoothedTrigramProbability(self, from_state1, from_state2, to_state, lambda1, lambda2, lambda3):
 		trigramProbability = self.getTrigramProb(from_state1, from_state2, to_state)
-
 		bigramProbability = self.getBigramProb(from_state2, to_state)
-
 		unigramProbability = self.getUnigramProb(to_state)
-
 		return lambda3 * trigramProbability + lambda2 * bigramProbability + lambda1	* unigramProbability
 
+	def getSmoothedBigramProbability(self, from_state, to_state, lambda1, lambda2, lambda3):
+		bigramProbability = self.getBigramProb(from_state, to_state)
+		unigramProbability = self.getUnigramProb(to_state)
+		return (lambda3 + lambda2) * bigramProbability + lambda1 * unigramProbability
+
 	def reportTrigramTransitions(self, lambda1, lambda2, lambda3):
-		# TODO: make sure that we're accounting for the bigram smoothing probabily, see HW5
+		# TODO: make sure that we're accounting for the bigram smoothing probability, see HW5
 		strBuilder = ''
 
 		for key in self.trigramTransitionDictionary:
@@ -114,6 +117,10 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			fromStates = key.split("~")
 			from_state1 = fromStates[0]
 			from_state2 = fromStates[1]
+
+			if(from_state1 == "BOS"):
+				prob = self.getSmoothedBigramProbability(from_state1, from_state2, lambda1, lambda2, lambda3)
+				strBuilder = strBuilder + from_state1 + "~" + from_state1 + "\t" + from_state2 + "\t" + str(prob) + "\t" + str(math.log10(prob)) + "\n"
 
 			subDict = self.trigramTransitionDictionary[key]
 
