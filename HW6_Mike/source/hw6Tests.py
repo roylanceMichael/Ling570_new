@@ -149,7 +149,7 @@ N D 0.5""".split("\n")
         self.assertTrue(hmmFactory.current_trans_dict["N"]["V"] == 0.5)
         self.assertTrue(hmmFactory.current_trans_dict["N"]["D"] == 0.5)
 
-    def test_movesToEmissVals(self):
+    def test_movesToEmissVals1(self):
         # arrange
         hmmInput = """state_num=6
 sym_num=11
@@ -199,6 +199,8 @@ N   a   1.0""".split("\n")
         self.assertTrue(hmmFactory.getActualEmissLineNum() == 3, str(hmmFactory.getActualEmissLineNum()))
         self.assertTrue(hmmFactory.getActualStateNum() == 1)
         self.assertTrue(hmmFactory.getActualSymNum() == 2)
+
+        print hmmFactory.reportLineNumberDifference()
 
 class UtilitiesTest(unittest.TestCase):
     def test_createsUnkDict(self):

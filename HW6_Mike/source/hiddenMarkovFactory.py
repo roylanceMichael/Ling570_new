@@ -2,7 +2,6 @@ import re
 
 class HiddenMarkovFactory:
 	def __init__(self):
-		self.current_line_total = 0
 		self.current_state_num = 0
 		self.current_sym_num = 0
 		self.current_init_line = 0
@@ -49,6 +48,34 @@ class HiddenMarkovFactory:
 			for to_state in self.current_emiss_dict[from_state]:
 				totalSymbols += 1
 		return totalSymbols
+
+	def buildWarningStr(self, lineLabel, claimed, real):
+		return 'warning: different numbers of ' + lineLabel + ': claimed=' + str(claimed) + ', real=' + str(real) + '\n'
+
+	def reportLineNumberDifference(self):
+		strBuilder = ''
+		realStateNum = self.getActualStateNum()
+
+		if(self.current_state_num != realStateNum):
+			strBuilder = strBuilder + self.buildWarningStr('state_num', self.current_state_num, realStateNum)
+
+		realSymNum = self.getActualSymNum()
+		if(self.current_sym_num != realSymNum):
+			strBuilder = strBuilder + self.buildWarningStr('sym_num', self.current_sym_num, realSymNum)
+
+		realInitNum = self.getActualInitLineNum()
+		if(self.current_init_line != realInitNum):
+			strBuilder = strBuilder + self.buildWarningStr('init_line_num', self.current_init_line, realInitNum)		
+
+		realTransNum = self.getActualTransLineNum()
+		if(self.current_trans_line_num != realTransNum):
+			strBuilder = strBuilder + self.buildWarningStr('trans_line_num', self.current_trans_line_num, realTransNum)		
+
+		realEmissNum = self.getActualEmissLineNum()
+		if(self.current_emiss_line_num != realEmissNum):
+			strBuilder = strBuilder + self.buildWarningStr('emiss_line_num', self.current_emiss_line_num, realEmissNum)		
+
+		return strBuilder
 
 	# meant to be used as private...
 	def readInput(self, hmmInputLine):
