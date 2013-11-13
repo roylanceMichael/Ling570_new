@@ -101,6 +101,13 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 	def getSmoothedTrigramProbability(self, from_state1, from_state2, to_state, lambda1, lambda2, lambda3):
 		trigramProbability = self.getTrigramProb(from_state1, from_state2, to_state)
 		bigramProbability = self.getBigramProb(from_state2, to_state)
+
+		# https://catalyst.uw.edu/gopost/conversation/fxia/820083
+		# For this hw, if (x, y) is an unseen bigram, you can simply set P(z | x, y) to be zero.
+		# In that case, \sum_z P_smooth (z | x, y) will not add up to one, and that is fine.
+		if(bigramProbability == 0):
+			return 0
+
 		unigramProbability = self.getUnigramProb(to_state)
 		return lambda3 * trigramProbability + lambda2 * bigramProbability + lambda1	* unigramProbability
 
