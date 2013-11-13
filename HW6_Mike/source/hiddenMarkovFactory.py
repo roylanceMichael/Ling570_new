@@ -2,6 +2,7 @@ import re
 
 class HiddenMarkovFactory:
 	def __init__(self):
+		self.current_line_total = 0
 		self.current_state_num = 0
 		self.current_sym_num = 0
 		self.current_init_line = 0
@@ -10,6 +11,8 @@ class HiddenMarkovFactory:
 		self.current_init_dict = {}
 		self.current_trans_dict = {}
 		self.current_emiss_dict = {}
+
+		self.current_sym_dict = {}
 
 		self.state_num_state = "state_num"
 		self.sym_num_state = "sym_num"
@@ -23,6 +26,29 @@ class HiddenMarkovFactory:
 		self.currentState = self.state_num_state
 
 		self.numberRegex = "[0-9]+$"
+
+	def getActualInitLineNum(self):
+		return len(self.current_init_dict)
+
+	def getActualStateNum(self):
+		return len(self.current_trans_dict)
+
+	def getActualSymNum(self):
+		return len(self.current_sym_dict)
+
+	def getActualTransLineNum(self):
+		totalToStates = 0
+		for from_state in self.current_trans_dict:
+			for to_state in self.current_trans_dict[from_state]:
+				totalToStates += 1
+		return totalToStates
+
+	def getActualEmissLineNum(self):
+		totalSymbols = 0
+		for from_state in self.current_emiss_dict:
+			for to_state in self.current_emiss_dict[from_state]:
+				totalSymbols += 1
+		return totalSymbols
 
 	# meant to be used as private...
 	def readInput(self, hmmInputLine):
@@ -106,3 +132,5 @@ class HiddenMarkovFactory:
 						self.current_emiss_dict[firstItem][symbol] = prob
 					else:
 						self.current_emiss_dict[firstItem] = { symbol: prob }
+
+					self.current_sym_dict[symbol] = 1

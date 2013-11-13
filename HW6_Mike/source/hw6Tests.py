@@ -164,9 +164,10 @@ BOS     1.0
 N V 0.5
 N D 0.5
 
-\\emission
+\emission
 DT  the 0.7
-DT  a   0.3""".split("\n")
+DT  a   0.3
+N   a   1.0""".split("\n")
         
         hmmFactory = hiddenMarkovFactory.HiddenMarkovFactory()
 
@@ -187,11 +188,17 @@ DT  a   0.3""".split("\n")
         hmmFactory.readInput(hmmInput[13])
         hmmFactory.readInput(hmmInput[14])
         hmmFactory.readInput(hmmInput[15])
+        hmmFactory.readInput(hmmInput[16])
 
         # assert
         self.assertTrue(hmmFactory.currentState == hmmFactory.emiss_state, hmmFactory.currentState)
         self.assertTrue(hmmFactory.current_emiss_dict["DT"]["the"] == 0.7)
         self.assertTrue(hmmFactory.current_emiss_dict["DT"]["a"] == 0.3)
+        self.assertTrue(hmmFactory.getActualInitLineNum() == 1)
+        self.assertTrue(hmmFactory.getActualTransLineNum() == 2)
+        self.assertTrue(hmmFactory.getActualEmissLineNum() == 3, str(hmmFactory.getActualEmissLineNum()))
+        self.assertTrue(hmmFactory.getActualStateNum() == 1)
+        self.assertTrue(hmmFactory.getActualSymNum() == 2)
 
 class UtilitiesTest(unittest.TestCase):
     def test_createsUnkDict(self):
