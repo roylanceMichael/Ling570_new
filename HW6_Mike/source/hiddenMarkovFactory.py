@@ -1,4 +1,5 @@
 import re
+import math
 
 class HiddenMarkovFactory:
 	def __init__(self):
@@ -44,16 +45,19 @@ class HiddenMarkovFactory:
 
 	def getActualEmissLineNum(self):
 		totalSymbols = 0
+		internalDictionary = {}
+
 		for from_state in self.current_emiss_dict:
-			internalDictionary = {}
+			
 			for to_state in self.current_emiss_dict[from_state]:
-				splitValues = from_state.split("~")
-				actualFromState = splitValues[0]
-					
-				if(not internalDictionary.has_key(actualFromState)):
+				splitValues = to_state.split("~")
+				key = from_state + "~" + to_state
+				
+				if(not internalDictionary.has_key(key)):
 					totalSymbols += 1
 
-				internalDictionary[actualFromState] = 1
+				internalDictionary[from_state + "~" + to_state] = 1
+					
 
 		return totalSymbols
 
@@ -98,12 +102,15 @@ class HiddenMarkovFactory:
 	def buildWarningStrForDict(self, lineLabel, key, prob):
 		return 'warning: the ' + lineLabel + '_prob_sum for state ' + key + ' is ' + str(prob) + '\n'
 
+	def float_eq(a, b, epsilon=0.00000001):
+		return abs(a - b) < epsilon
+
 	def reportInitialProbabilities(self):
 		total = 0.0
 		for initKey in self.current_init_dict:
 			total += self.current_init_dict[initKey]
-
-		if(total != 1.0):
+		
+		if(not (abs(float(total) - float(1.0) < 0.00000001))):
 			return 'warning: the init_prob_sum is ' + str(total) + '\n'
 
 		return ''
@@ -175,19 +182,19 @@ class HiddenMarkovFactory:
 
 		elif(self.currentState == self.init_state):
 			lineContents = re.split("\s+", hmmInputLine.strip())
-
+			print lineContents
 			# assuming that 1st is from_state(s), 2rd is prob
 			if(len(lineContents) > 0):
 				firstItem = lineContents[0]
 				if(firstItem == '\\transition'):
+					print '~~~~~~~~~~'
 					self.currentState = self.trans_state
 				elif(len(lineContents) > 1):
 					# build up init dictionary
-					
 					self.current_init_dict[firstItem] = float(lineContents[1])
 		elif(self.currentState == self.trans_state):
 			lineContents = re.split("\s+", hmmInputLine.strip())
-
+			
 			# assuming that 1st is from_state(s), 2rd is prob
 			if(len(lineContents) > 0):
 				firstItem = lineContents[0]
@@ -205,9 +212,15 @@ class HiddenMarkovFactory:
 		elif(self.currentState == self.emiss_state):
 			lineContents = re.split("\s+", hmmInputLine.strip())
 
-			# assuming that 1st is from_state(s), 2rd is prob
+			# assuming that 1st is from_state(s), 2nd is prob
 			if(len(lineContents) > 0):
-				firstItem = lineContents[0].split("~")[0]
+				firstItem = lineContents[0].split("~")
+
+				if(len(firstItem) == 2):
+					firstItem = firstItem[1]
+				else:
+					firstItem = firstItem[0]
+
 				if(len(lineContents) > 2):
 					symbol = lineContents[1]
 					prob = float(lineContents[2])

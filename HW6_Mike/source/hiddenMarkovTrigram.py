@@ -200,6 +200,18 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			return unknownProb
 		return (float(numerator) / denominator) * (1 - unknownProb)
 
+	def reportSubDictionaryValuesNoSmoothing(self, parentKey, subDictionary):
+		total = self.getDictTotal(subDictionary)
+
+		strBuilder = ''
+		for subKey in subDictionary:
+			
+			if subKey == 'EOS':
+				continue
+
+			strBuilder = strBuilder + self.reportLineInfo(parentKey, subKey, subDictionary[subKey], total)
+		return strBuilder
+
 	def reportLineInfoSmoothing(self, firstLabel, secondLabel, numerator, denominator, unknownProb):
 ### if known: Psmooth(w | tag) = P(w | tag) * (1 - P(<unk> | tag))
 ### else: Psmooth(w | tag) = P(<unk> | tag)
@@ -210,20 +222,36 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			return (firstLabel + '\t' + secondLabel + '\t0\t0 - warning! 0 probability detected').strip() + '\n'	
 		return (firstLabel + '\t' + secondLabel + '\t' + str(prob) + '\t' + str(math.log10(prob))).strip() + '\n'
 
+	def getTransDictCount(self):
+		totalCount = 0
+		for key in self.trigramTransitionDictionary:
+			subDict = self.trigramTransitionDictionary[key]
+			fromStates = key.split("~")
+			from_state1 = fromStates[0]
+			from_state2 = fromStates[1]
+
+			if(from_state1 == "BOS"):
+				totalCount = totalCount + 1
+
+			for subKey in subDict:
+				totalCount = totalCount + 1
+
+		return totalCount
+
 	def printHmmFormat(self, lambda1, lambda2, lambda3):
 		strBuilder = ''
 
 		strBuilder = strBuilder + 'state_num=' + str(self.state_num()) + '\n'
 		strBuilder = strBuilder + 'sym_num=' + str(self.sym_num()) + '\n'
 		strBuilder = strBuilder + 'init_line_num=' + str(self.init_line_num()) + '\n'
-		strBuilder = strBuilder + 'trans_line_num=' + str(self.trans_line_num()) + '\n'
+		strBuilder = strBuilder + 'trans_line_num=' + str(self.getTransDictCount()) + '\n'
 		strBuilder = strBuilder + 'emiss_line_num=' + str(self.emiss_line_num()) + '\n'
 		strBuilder = strBuilder + '\n'
 		# init
 		strBuilder = strBuilder + '\init\n'
 
 		# init is different, so we'll just do here
-		strBuilder = strBuilder + self.reportSubDictionaryValues('', self.initDictionary)
+		strBuilder = strBuilder + self.reportSubDictionaryValuesNoSmoothing('', self.initDictionary)
 		strBuilder = strBuilder + '\n'
 		strBuilder = strBuilder + '\n'
 		strBuilder = strBuilder + '\n'

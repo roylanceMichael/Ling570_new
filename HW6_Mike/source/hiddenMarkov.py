@@ -28,9 +28,6 @@ class HiddenMarkov:
 			subDict = dictionary[key]
 
 			for subKey in subDict:
-				if subKey == "EOS":
-					continue
-
 				totalCount = totalCount + 1
 
 		return totalCount
