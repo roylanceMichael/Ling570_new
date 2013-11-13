@@ -1,7 +1,7 @@
 state_num=46
 sym_num=7903
 init_line_num=1
-trans_line_num=878
+trans_line_num=886
 emiss_line_num=8736
 
 \init
@@ -889,7 +889,7 @@ UH	IN	1.0	0.0
 
 
 
-\emissions
+\emission
 PRP$	his	0.131188118812	-0.88210549551
 PRP$	your	0.029702970297	-1.52720011906
 PRP$	Her	0.00990099009901	-2.00432137378

@@ -182,12 +182,12 @@ class HiddenMarkovFactory:
 
 		elif(self.currentState == self.init_state):
 			lineContents = re.split("\s+", hmmInputLine.strip())
-			print lineContents
+
 			# assuming that 1st is from_state(s), 2rd is prob
 			if(len(lineContents) > 0):
 				firstItem = lineContents[0]
 				if(firstItem == '\\transition'):
-					print '~~~~~~~~~~'
+
 					self.currentState = self.trans_state
 				elif(len(lineContents) > 1):
 					# build up init dictionary
