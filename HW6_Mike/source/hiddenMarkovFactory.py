@@ -45,8 +45,16 @@ class HiddenMarkovFactory:
 	def getActualEmissLineNum(self):
 		totalSymbols = 0
 		for from_state in self.current_emiss_dict:
+			internalDictionary = {}
 			for to_state in self.current_emiss_dict[from_state]:
-				totalSymbols += 1
+				splitValues = from_state.split("~")
+				actualFromState = splitValues[0]
+					
+				if(not internalDictionary.has_key(actualFromState)):
+					totalSymbols += 1
+
+				internalDictionary[actualFromState] = 1
+
 		return totalSymbols
 
 	def buildWarningStr(self, lineLabel, claimed, real):
@@ -175,6 +183,7 @@ class HiddenMarkovFactory:
 					self.currentState = self.trans_state
 				elif(len(lineContents) > 1):
 					# build up init dictionary
+					
 					self.current_init_dict[firstItem] = float(lineContents[1])
 		elif(self.currentState == self.trans_state):
 			lineContents = re.split("\s+", hmmInputLine.strip())
@@ -198,7 +207,7 @@ class HiddenMarkovFactory:
 
 			# assuming that 1st is from_state(s), 2rd is prob
 			if(len(lineContents) > 0):
-				firstItem = lineContents[0]
+				firstItem = lineContents[0].split("~")[0]
 				if(len(lineContents) > 2):
 					symbol = lineContents[1]
 					prob = float(lineContents[2])

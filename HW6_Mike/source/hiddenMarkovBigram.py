@@ -130,7 +130,7 @@ class HiddenMarkovBigram(hiddenMarkov.HiddenMarkov):
 		strBuilder = strBuilder + '\n'
 
 		# emissions
-		strBuilder = strBuilder + '\emissions\n'
+		strBuilder = strBuilder + '\emission\n'
 		strBuilder = strBuilder + self.reportDictionaryValues(self.emissionDictionary)
 
 		return strBuilder

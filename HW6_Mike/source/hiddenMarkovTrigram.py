@@ -5,7 +5,9 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 	def __init__(self, unknownDictionary):
 		hiddenMarkovBigram.HiddenMarkovBigram.__init__(self)
 		self.unigramTransitionDictionary = { }
-		self.trigramTransitionDictionary = { } 
+		self.trigramTransitionDictionary = { }
+		self.emissionKeyDictionary = { } 
+		self.unigramTotalWords = 0
 		self.unknownDictionary = unknownDictionary
 
 	def state_num(self):
@@ -22,13 +24,14 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			self.unigramTransitionDictionary[pos] = 1
 
 	def getUnigramProb(self, pos):
-		if(self.unigramTransitionDictionary.has_key(pos)):
-			return self.unigramTransitionDictionary[pos] / float(len(self.unigramTransitionDictionary))
+		uni_total = self.getDictTotal(self.unigramTransitionDictionary)
+		return self.unigramTransitionDictionary[pos] / float(self.unigramTotalWords)
+
 
 	def getTrigramProb(self, from_state1, from_state2, to_state):
-		key = from_state1 + "~" + from_state2
+		from_state_key = from_state1 + "~" + from_state2
 
-		from_dict = self.getDicts(key, self.trigramTransitionDictionary)
+		from_dict = self.getDicts(from_state_key, self.trigramTransitionDictionary)
 		from_total = self.getDictTotal(from_dict)
 		to_total = from_dict[to_state]
 
@@ -51,6 +54,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			parseTuplesLen = len(parsedTuples)
 
 			for i in range(0, parseTuplesLen):
+				self.unigramTotalWords += 1
 				# add transitions for both
 				firstTuple = parsedTuples[i][0]
 				secondTuple = parsedTuples[i][1]
@@ -65,10 +69,14 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 				# add in the trigram
 				self.addTrigramTransitionDictionary(thirdTuple.pos, firstTuple.pos, secondTuple.pos)
 
-				# only add emissions for first, we'll add in last one at the end...
 				self.addEmission(firstTuple.word, firstTuple.pos)
 
+				wordPosTuple = secondTuple.pos + "~" + secondTuple.word
+				self.addToEmissionKeyDictionary(wordPosTuple, firstTuple.pos)
+				
+
 			# account for last tuples...
+			thirdToLastTuple = parsedTuples[parseTuplesLen - 1][0]
 			secondToLastTuple = parsedTuples[parseTuplesLen - 1][1]
 			lastTuple = parsedTuples[parseTuplesLen - 1][2]
 
@@ -83,24 +91,39 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 			self.addEmission(secondToLastTuple.word, secondToLastTuple.pos)
 			self.addEmission(lastTuple.word, lastTuple.pos)
 
+			self.addToEmissionKeyDictionary(secondToLastTuple.pos + "~" + secondToLastTuple.word, thirdToLastTuple.pos)
+			self.addToEmissionKeyDictionary(lastTuple.pos + "~" + lastTuple.word, secondToLastTuple.pos)
+
+			self.unigramTotalWords += 1
+
+	def addToEmissionKeyDictionary(self, posTuple, previousPos):
+		if(self.emissionKeyDictionary.has_key(posTuple)):
+			self.emissionKeyDictionary[posTuple][previousPos] = 1
+		else:
+			self.emissionKeyDictionary[posTuple] = { previousPos: 1 } 
+
 	def addTrigramTransitionDictionary(self, to_state, from_state1, from_state2):
 ### P(to_state | from_state1 from_state2)
 		from_state_key = from_state1 + "~" + from_state2
-		self.addToDict(from_state_key, to_state, self.trigramTransitionDictionary)
+		to_state_key = from_state2 + "~" + to_state
+		self.addToDict(from_state_key, to_state_key, self.trigramTransitionDictionary)
 
 	def getTransitionsTrigram(self, from_state1, from_state2):
 		key = from_state1 + "~" + from_state2
 		return self.getDicts(key, self.trigramTransitionDictionary)
 
 	def getTrigramTransitionDictionary(self, from_state1, from_state2, to_state):
-		key = from_state1 + "~" + from_state2
-		return self.getDict(key, to_state, self.trigramTransitionDictionary)
+		from_state_key = from_state1 + "~" + from_state2
+		to_state_key = from_state2 + "~" + to_state
+		return self.getDict(from_state_key, to_state_key, self.trigramTransitionDictionary)
 
 	# get smoothed interpolated probability
 	# p(t3 | t1, t2) = lambda3 * P(t3 | t1, t2) + lambda2 * P(t3 | t2) + lambda1 * P(t3)
 	def getSmoothedTrigramProbability(self, from_state1, from_state2, to_state, lambda1, lambda2, lambda3):
 		trigramProbability = self.getTrigramProb(from_state1, from_state2, to_state)
-		bigramProbability = self.getBigramProb(from_state2, to_state)
+
+		bigramToState = to_state.split("~")[1]
+		bigramProbability = self.getBigramProb(from_state2, bigramToState)
 
 		# https://catalyst.uw.edu/gopost/conversation/fxia/820083
 		# For this hw, if (x, y) is an unseen bigram, you can simply set P(z | x, y) to be zero.
@@ -108,7 +131,8 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		if(bigramProbability == 0):
 			return 0
 
-		unigramProbability = self.getUnigramProb(to_state)
+		unigramProbability = self.getUnigramProb(bigramToState)
+
 		return lambda3 * trigramProbability + lambda2 * bigramProbability + lambda1	* unigramProbability
 
 	def getSmoothedBigramProbability(self, from_state, to_state, lambda1, lambda2, lambda3):
@@ -157,9 +181,13 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 				continue
 
 			unknownProb = self.getUnknownProb(tag)
-
-			strBuilder = strBuilder + self.reportLineInfoSmoothing(tag, symbol, symbolDictionary[symbol], total, unknownProb)
-
+			
+			tagWordKey = tag + "~" + symbol
+			if(self.emissionKeyDictionary.has_key(tagWordKey)):
+				for previousTag in self.emissionKeyDictionary[tagWordKey]:
+					state = previousTag + "~" + tag
+					strBuilder = strBuilder + self.reportLineInfoSmoothing(state, symbol, symbolDictionary[symbol], total, unknownProb)
+		
 		return strBuilder
 
 	def getUnknownProb(self, tag):
@@ -201,12 +229,12 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 		strBuilder = strBuilder + '\n'
 
 		# todo: implement probabilities for transitions
-		strBuilder = strBuilder + '\\transitions\n'
+		strBuilder = strBuilder + '\\transition\n'
 		strBuilder = strBuilder + self.reportTrigramTransitions(lambda1, lambda2, lambda3)
 		strBuilder = strBuilder + '\n'
 
 		# emissions
-		strBuilder = strBuilder + '\emissions\n'
+		strBuilder = strBuilder + '\emission\n'
 		strBuilder = strBuilder + self.reportEmissionValuesWithUnknownWords(self.emissionDictionary)
 
 		return strBuilder
