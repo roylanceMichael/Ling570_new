@@ -58,24 +58,72 @@ class HiddenMarkovFactory:
 
 		if(self.current_state_num != realStateNum):
 			strBuilder = strBuilder + self.buildWarningStr('state_num', self.current_state_num, realStateNum)
+		else:
+			strBuilder = strBuilder + 'state_num=' + str(self.current_state_num) + '\n'
 
 		realSymNum = self.getActualSymNum()
 		if(self.current_sym_num != realSymNum):
 			strBuilder = strBuilder + self.buildWarningStr('sym_num', self.current_sym_num, realSymNum)
+		else:
+			strBuilder = strBuilder + 'sym_num=' + str(self.current_sym_num) + '\n'			
 
 		realInitNum = self.getActualInitLineNum()
 		if(self.current_init_line != realInitNum):
 			strBuilder = strBuilder + self.buildWarningStr('init_line_num', self.current_init_line, realInitNum)		
+		else:
+			strBuilder = strBuilder + 'init_line_num=' + str(self.current_init_line) + '\n'
 
 		realTransNum = self.getActualTransLineNum()
 		if(self.current_trans_line_num != realTransNum):
 			strBuilder = strBuilder + self.buildWarningStr('trans_line_num', self.current_trans_line_num, realTransNum)		
+		else:
+			strBuilder = strBuilder + 'trans_line_num=' + str(self.current_trans_line_num) + '\n'
 
 		realEmissNum = self.getActualEmissLineNum()
 		if(self.current_emiss_line_num != realEmissNum):
 			strBuilder = strBuilder + self.buildWarningStr('emiss_line_num', self.current_emiss_line_num, realEmissNum)		
+		else:
+			strBuilder = strBuilder + 'emiss_line_num=' + str(self.current_emiss_line_num) + '\n'
 
 		return strBuilder
+
+	def buildWarningStrForDict(self, lineLabel, key, prob):
+		return 'warning: the ' + lineLabel + '_prob_sum for state ' + key + ' is ' + str(prob) + '\n'
+
+	def reportInitialProbabilities(self):
+		total = 0.0
+		for initKey in self.current_init_dict:
+			total += self.current_init_dict[initKey]
+
+		if(total != 1.0):
+			return 'warning: the init_prob_sum is ' + str(total) + '\n'
+
+		return ''
+
+	def reportTransProbabilities(self):
+		strBuilder = ''
+		for from_state in self.current_trans_dict:
+			total = 0.0
+			for to_state in self.current_trans_dict[from_state]:
+				total += self.current_trans_dict[from_state][to_state]
+
+			if(total != 1.0):
+				strBuilder = strBuilder +  self.buildWarningStrForDict('trans', from_state, total)
+
+		return strBuilder.strip()
+
+	def reportEmissProbabilities(self):
+		strBuilder = ''
+		for state in self.current_emiss_dict:
+			total = 0.0
+			for symbol in self.current_emiss_dict[state]:
+				total += self.current_emiss_dict[state][symbol]
+
+			if(total != 1.0):
+				strBuilder = strBuilder +  self.buildWarningStrForDict('emiss', state, total)
+
+		return strBuilder.strip()
+
 
 	# meant to be used as private...
 	def readInput(self, hmmInputLine):
