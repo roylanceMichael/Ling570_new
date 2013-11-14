@@ -5,6 +5,7 @@ class Utilities:
                 self.current_init_dict = {}
                 self.current_trans_dict = {}
                 self.current_emiss_dict = {}
+		self.current_symb_dict = {}
 
                 self.init_state = "init_state"
                 self.trans_state = "trans_state"
@@ -12,6 +13,10 @@ class Utilities:
 
                 self.currentState = self.init_state
 
+
+	def ReadObsStr(self, StrVal):
+		splitVals = re.split("\s+", StrVal)
+		return splitVals
 
 
 	def readInput(self, hmmInputLine):
@@ -73,5 +78,11 @@ class Utilities:
                                                 self.current_emiss_dict[firstItem][symbol] = prob
                                         else:
                                                 self.current_emiss_dict[firstItem] = { symbol: prob }
+
+					if (self.current_symb_dict.has_key(symbol)):
+						self.current_symb_dict[symbol][firstItem] = prob
+					else:
+						self.current_symb_dict[symbol] = {firstItem : prob}
+
 
 

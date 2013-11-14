@@ -45,10 +45,12 @@ N   a   1.0""".split("\n")
         hmmFactory.readInput(hmmInput[16])
 
         # assert
-        self.assertTrue(hmmFactory.currentState == hmmFactory.emiss_state, hmmFactory.currentState)
-        self.assertTrue(hmmFactory.current_emiss_dict["DT"]["the"] == 0.7)
-        self.assertTrue(hmmFactory.current_emiss_dict["DT"]["a"] == 0.1)
+#        self.assertTrue(hmmFactory.currentState == hmmFactory.emiss_state, hmmFactory.currentState)
+#        self.assertTrue(hmmFactory.current_emiss_dict["DT"]["the"] == 0.7)
+#        self.assertTrue(hmmFactory.current_emiss_dict["DT"]["a"] == 0.1)
                                                                                                                     
+        self.assertTrue(hmmFactory.current_symb_dict["the"]["DT"] == 0.7)
+        self.assertTrue(hmmFactory.current_symb_dict["a"]["DT"] == 0.1)
 
 
 def main():
