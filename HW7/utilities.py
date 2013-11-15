@@ -3,9 +3,9 @@ import re
 class Utilities:
         def __init__(self):
                 self.current_init_dict = {}
-                self.current_trans_dict = {}
+                self.current_trans_dict = {}    # {'BOS': {'N': 1.0}, 'N': {'D': 0.5, 'V': 0.4}}   # {}
                 self.current_emiss_dict = {}
-		self.current_symb_dict = {}
+		self.current_symb_dict = {}   # {'a': {'DT': 0.1, 'N': 1.0}, 'the': {'DT': 0.7}}   # {}
 
                 self.init_state = "init_state"
                 self.trans_state = "trans_state"
@@ -84,5 +84,8 @@ class Utilities:
 					else:
 						self.current_symb_dict[symbol] = {firstItem : prob}
 
+#			print self.current_trans_dict
+#			print self.current_emiss_dict
+#			print self.current_symb_dict
 
 
