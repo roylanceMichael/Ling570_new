@@ -7,9 +7,31 @@ class ViterbiTest(unittest.TestCase):
 	def test_getPrevPathState(self):
 		# arrange
 		VitInput = 'a'
+
+       		hmm = """state_num=6
+sym_num=11
+init_line_num=2
+trans_line_num=13
+emiss_line_num=11
+
+\init
+BOS     0.9 
+
+\\transition
+BOS N 1.0
+N V 0.4
+N D 0.5
+
+\emission
+DT  the 0.7
+DT  a   0.1
+N   a   1.0""".split("\n")
+
+
 		VitTest = viterbi.Viterbi()
-#		VitDict = utilities.Utilities()
-#		VitDict.current_symb_dict = {'a': {'DT': 0.1, 'N': 1.0}, 'the': {'DT': 0.7}}
+		for i in range(0, len(hmm)):
+			line = hmm[i]
+			VitTest.readInput(line)
 
 		# act
 		actualResult = VitTest.GetPrevPathState(VitInput)
@@ -19,36 +41,42 @@ class ViterbiTest(unittest.TestCase):
 		self.assertTrue(actualResult == ['DT', 'N'])
 
 
-        def test_getPrevPathProb(self):
+        def test_getPrevPathWithHighestProb(self):
                 # arrange
                 VitInput = ['DT', 'N']
+
+                hmm = """state_num=6
+sym_num=11
+init_line_num=2
+trans_line_num=13
+emiss_line_num=11
+
+\init
+BOS     0.9 
+
+\\transition
+BOS N 1.0
+N V 0.4
+N D 0.5
+
+\emission
+DT  the 0.7
+DT  a   0.1
+N   a   1.0""".split("\n")
+
                 VitTest = viterbi.Viterbi()
-#                VitDict = utilities.Utilities()
- #               VitDict.current_trans_dict = {'BOS': {'N': 1.0}, 'N': {'D': 0.5, 'V': 0.4}}
+                for i in range(0, len(hmm)):
+                        line = hmm[i]
+                        VitTest.readInput(line)
 
                 # act
-                actualResult = VitTest.GetPrevPathProb(VitInput)
-#                print actualResult
+		
+                actualResult = VitTest.GetPrevPathWithHighestProb(VitInput, 'BOS')
+#		print VitTest.current_trans_dict
+                print actualResult
 
                 # assert
-                self.assertTrue(actualResult == 1.0)
-
-
-        def test_getMaxProbEmittingState(self):
-                # arrange
-                VitProb = 1.0
-                VitTest = viterbi.Viterbi()
-#                VitDict = utilities.Utilities()
-#                VitDict.current_trans_dict = {'BOS': {'N': 1.0}, 'N': {'D': 0.5, 'V': 0.4}}
-
-                # act
-                actualResult = VitTest.GetPrevPathProb(VitProb)
-#                print actualResult
-
-                # assert
-                self.assertTrue(actualResult == 'N')
-
-
+                self.assertTrue(actualResult == ('N', 1.0))
 
 
 
@@ -96,9 +124,6 @@ N   a   1.0""".split("\n")
         hmmFactory.readInput(hmmInput[16])
 
         # assert
-#        self.assertTrue(hmmFactory.currentState == hmmFactory.emiss_state, hmmFactory.currentState)
-#        self.assertTrue(hmmFactory.current_emiss_dict["DT"]["the"] == 0.7)
-#        self.assertTrue(hmmFactory.current_emiss_dict["DT"]["a"] == 0.1)
                                                                                                                     
         self.assertTrue(hmmFactory.current_symb_dict["the"]["DT"] == 0.7)
         self.assertTrue(hmmFactory.current_symb_dict["a"]["DT"] == 0.1)

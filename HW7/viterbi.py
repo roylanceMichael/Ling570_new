@@ -1,4 +1,5 @@
 import utilities
+import postuple
 
 
 #class State:
@@ -21,23 +22,20 @@ class Viterbi(utilities.Utilities):
 		return emittingStates
 
 
-	def GetPrevPathProb(self, emittingStates):
+	def GetPrevPathWithHighestProb(self, emittingStates, prev_state):
 	# find maximum of the probabilities of BOS -> [emittingStates]
-		transitionProbs = []
+		highestProbState = ''
+		highestProb = 0.0
 #		print emittingStates
 		for state in emittingStates:
 #			print state
-#			print self.current_trans_dict['BOS']
-			if self.current_trans_dict['BOS'].has_key(state):
-				transitionProbs.append(self.current_trans_dict['BOS'][state])
-		maxprob = max(transitionProbs)
+			if self.current_trans_dict[prev_state].has_key(state):
+				probability = self.current_trans_dict[prev_state][state]
+				if probability > highestProb:
+					highestProb = probability
+					highestProbState = state
 
-		return maxprob
+		return highestProbState, highestProb
 
 
-	def GetMaxProbEmittingState(self, maxprob):
-	# find a key by float value?
-		for key, value in self.current_trans_dict['BOS']:
-			if value == maxprob:
-				return key
 		
