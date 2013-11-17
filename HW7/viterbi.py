@@ -96,36 +96,33 @@ class Viterbi(utilities.Utilities):
 			V.append({})
 			newPath = {}
 
-			for pos in self.current_trans_dict:
+			for toState in self.current_trans_dict:
 
 				# manually do the max function here...
 				highestProb = -2000
 				highestProbState = ""
-				for innerPos in self.current_trans_dict:
 
-					if(self.current_trans_dict[innerPos].has_key(pos) and
-						self.current_emiss_dict.has_key(pos) and
-						self.current_emiss_dict[pos].has_key(words[i])):
+				for fromState in self.current_trans_dict:
 
-						print 'got this far...'
-						# we have the previousProb, the transitionProb and the emissProb
-						print V
-						previousProb = V[i-1][innerPos]
-						transitionProb = self.current_trans_dict[innerPos][pos]
-						emissProb = self.current_emiss_dict[pos][words[i]]
+					if(self.current_trans_dict[fromState].has_key(toState) and
+						self.current_emiss_dict.has_key(toState) and
+						self.current_emiss_dict[toState].has_key(words[i])):
+
+						previousProb = V[i-1][fromState]
+						transitionProb = self.current_trans_dict[fromState][toState]
+						emissProb = self.current_emiss_dict[toState][words[i]]
 
 						tempCalc = math.log10(transitionProb * emissProb) + previousProb
 
 						if(highestProb < tempCalc):
 							highestProb = tempCalc
-							highestProbState = innerPos
-				
+							highestProbState = fromState
+
 				if(len(highestProbState) == 0):
 					continue
 
-				V[i][pos] = highestProb
-				newPath[highestProbState] = path[highestProbState] + [pos]
-				print newPath
+				V[i][toState] = highestProb
+				newPath[toState] = path[highestProbState] + [toState]
 
 			path = newPath
 

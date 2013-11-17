@@ -45,7 +45,9 @@ V   walk 1.0""".split("\n")
         result = vitTest.processLine(sentence)
 
         # assert
-        print result
+        expectedProbability = math.log10(.4) + math.log10(.5) + math.log10(.4)
+        self.assertTrue(result[0] == expectedProbability)
+        self.assertTrue(result[1] == ['N', 'V'])
 
 def main():
     unittest.main()
