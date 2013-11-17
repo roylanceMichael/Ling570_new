@@ -83,7 +83,6 @@ class Viterbi(utilities.Utilities):
 		for pos in self.current_trans_dict:
 
 			# do we exist in the current transition dictionary?
-			
 			if(self.current_trans_dict[beginningState].has_key(pos) and
 				self.current_emiss_dict.has_key(pos) and
 				self.current_emiss_dict[pos].has_key(words[0])):
@@ -125,14 +124,22 @@ class Viterbi(utilities.Utilities):
 					continue
 
 				V[i][pos] = highestProb
-				print str(path) + " " + highestProbState
-				newPath[pos] = path[highestProbState] + [pos]
+				newPath[highestProbState] = path[highestProbState] + [pos]
+				print newPath
 
 			path = newPath
 
-		print 'final result ' + str(i)
-		print path
-		print V
+		bestState = ""
+		bestProb = -2000
+
+		for pos in self.current_trans_dict:
+			if(V[i].has_key(pos) and
+				V[i][pos] > bestProb and
+				path.has_key(pos)):
+				bestProb = V[i][pos]
+				bestState = pos
+
+		return bestProb, path[bestState]
 
 	def processLineForwards(self, line):
 		words = re.split("\s+", line.strip())

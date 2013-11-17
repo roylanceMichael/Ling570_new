@@ -45,6 +45,7 @@ V   walk 1.0""".split("\n")
         result = vitTest.processLine(sentence)
 
         # assert
+        print result
 
 def main():
     unittest.main()
