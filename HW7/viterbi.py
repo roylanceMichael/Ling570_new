@@ -8,6 +8,7 @@ import transitionHistory
 class Viterbi(utilities.Utilities):
 	def __init__(self):
 		utilities.Utilities.__init__(self)
+		self.unknownEmissProb = math.log10(.15)
 
 	def getUnknownState(self):
 		return "N"
@@ -94,13 +95,11 @@ class Viterbi(utilities.Utilities):
 
 		# check to see if first word is unknown
 		if(len(V[0]) == 0):
-			# hard coding in the emission prob
-			emitProb = math.log10(.15)
 
 			# getting let's just set all transitions, let the best one win
 			for toState in self.current_trans_dict[beginningState]:
 				transProb = math.log10(self.current_trans_dict[beginningState][toState])
-				V[0][toState] = transProb + emitProb
+				V[0][toState] = transProb + self.unknownEmissProb
 				path[toState] = [toState] 
 
 		# process as normal
@@ -108,6 +107,8 @@ class Viterbi(utilities.Utilities):
 		for i in range(1, len(words)):
 			V.append({})
 			newPath = {}
+
+			statesToUseIfUnknownWord = { }
 
 			for toState in self.current_trans_dict:
 
@@ -118,9 +119,15 @@ class Viterbi(utilities.Utilities):
 				for fromState in self.current_trans_dict:
 
 					if(self.current_trans_dict[fromState].has_key(toState) and
-						self.current_emiss_dict.has_key(toState) and
-						self.current_emiss_dict[toState].has_key(words[i])):
+						self.current_emiss_dict.has_key(toState)):
 
+						# representing like this for the time being, will use a
+						# more sophisticated heuristic in the future
+						statesToUseIfUnknownWord["fromState"] = fromState
+						statesToUseIfUnknownWord["toState"] = toState
+
+						if(not self.current_emiss_dict[toState].has_key(words[i])):
+							continue
 
 						previousProb = V[i-1][fromState]
 						transitionProb = self.current_trans_dict[fromState][toState]
@@ -138,7 +145,17 @@ class Viterbi(utilities.Utilities):
 				V[i][toState] = highestProb
 				newPath[toState] = path[highestProbState] + [toState]
 
-			# did we fill
+			# handle if words[i] is unknown
+			if(len(V[i]) == 0):
+				toState = statesToUseIfUnknownWord["toState"]
+				fromState = statesToUseIfUnknownWord["fromState"]
+
+				previousProb = V[i-1][fromState]
+				transitionProb = self.current_trans_dict[fromState][toState]
+
+				# set the state and path
+				V[i][toState] = previousProb + math.log10(transitionProb) + self.unknownEmissProb
+				newPath[toState] = path[fromState] + [toState]
 
 			path = newPath
 

@@ -134,7 +134,7 @@ V   walk 1.0""".split("\n")
 
         # assert
         expectedProb = math.log10(.3) + math.log10(.5) + math.log10(.15) + math.log10(.6)
-        self.assertTrue(expectedProb == result[0])
+        self.assertTrue(str(expectedProb) == str(result[0]), str(expectedProb) + " " + str(result[0]))
         self.assertTrue(["DT", "N"] == result[1])
 
 def main():
