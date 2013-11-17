@@ -4,17 +4,15 @@ import math
 class TransitionHistory:
 	def __init__(self):
 		self.transitions = []
+		self.lastTransitionCurrentPos = ""
 
 	def canAddTransition(self, transition):
-		# get the last transition and make sure that we can add to our history
-		lastTran = self.getLastTransition()
-
 		# if no transitions exist yet, we can add
-		if(lastTran == None):
+		if(self.lastTransitionCurrentPos == ""):
 			return True
 
 		# print 'comparing ' + lastTran.printSelf() + ' ' + transition.printSelf()
-		if(lastTran.currentPos == transition.previousPos):
+		if(self.lastTransitionCurrentPos == transition.previousPos):
 			return True
 
 		return False
@@ -77,6 +75,7 @@ class TransitionHistory:
 
 	def addTransition(self, transition):
 		self.transitions.append(transition)
+		self.lastTransitionCurrentPos = transition.currentPos
 
 	def printSelf(self):
 		strBuilder = ''
