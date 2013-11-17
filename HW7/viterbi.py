@@ -145,7 +145,11 @@ class Viterbi(utilities.Utilities):
 
 			# handle if words[i] is unknown
 			if(len(V[i]) == 0):
+				
 				self.handleUnknownWord(V, i, path, newPath)
+
+				if(len(V[i]) == 0):
+					return "No transitions possible"
 
 			path = newPath
 
@@ -160,4 +164,7 @@ class Viterbi(utilities.Utilities):
 				bestState = pos
 
 		# just adding in beginning state to the first of the path
+		if(not path.has_key(bestState)):
+			return "No transitions possible"
+
 		return bestProb, [beginningState] + path[bestState]

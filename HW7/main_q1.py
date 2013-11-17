@@ -18,18 +18,24 @@ def main():
 
 	testFile = sys.argv[2]
 	input_t = open(testFile)
-	t = input_t.readline()
+	t = input_t.readline().strip()
 
 	while t:
 		result = vit.processLine(t)
+
+		# didn't process correctly, will return an error
+		if(type(result) is str):
+			print str(t + " => " + result).strip()
+
+		# did process correctly
+		else:
+			strBuilder = " => "
+			for word in result[1]:
+				strBuilder = strBuilder + " " + word
+			
+			print str(t + strBuilder.strip() + " " + str(result[0])).strip()
 		
-		strBuilder = " => "
-		for word in result[1]:
-			strBuilder = strBuilder + " " + word
-		
-		print t + strBuilder + " " + str(result[0])
-		
-		t = input_t.readline()
+		t = input_t.readline().strip()
 
 if __name__ == '__main__':
 	main()
