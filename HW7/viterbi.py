@@ -10,9 +10,6 @@ class Viterbi(utilities.Utilities):
 		utilities.Utilities.__init__(self)
 		self.unknownEmissProb = math.log10(.15)
 
-	def getUnknownState(self):
-		return "N"
-
 	def findBeginningState(self):
 		# we want to find a state that exists in fromState but not toState
 		for outerFromState in self.current_trans_dict:
@@ -32,44 +29,84 @@ class Viterbi(utilities.Utilities):
 
 		return None
 
-	def buildStatesToProcess(self, statesToProcess):
-		# we need to do something with the states now...
-		newStatesToProcess = {}
+	def buildBeginningStateProbabilities(self, beginningState, word, incrementalStateProbs, path):
+		# first, let's see if our states have been build...
+		if(len(self.flattenedStates) == 0):
+			self.buildFlattenedStates()
 
-		# go through all the states and treat them like from states
-		for newFromState in statesToProcess:
-			for fromState in self.current_trans_dict:
-				if(newFromState != fromState):
-					continue
+		for toState in self.flattenedStates:
 
-				# we need to go through all the new toStates and add them in the dictionary to process next
-				for toState in self.current_trans_dict[fromState]:
-					if(newStatesToProcess.has_key(toState)):
-						newStatesToProcess[toState][fromState] = self.current_trans_dict[fromState][toState]
-					else:
-						newStatesToProcess[toState] = { fromState: self.current_trans_dict[fromState][toState] }
+			# do we exist in the current transition dictionary?
+			if(self.current_trans_dict[beginningState].has_key(toState) and
+				self.current_emiss_dict.has_key(toState) and
+				self.current_emiss_dict[toState].has_key(word)):
 
-		return newStatesToProcess
+				transitionProb = math.log10(self.current_trans_dict[beginningState][toState])
+				emitProb = math.log10(self.current_emiss_dict[toState][word])
+				incrementalStateProbs[0][toState] = transitionProb + emitProb
+				path[toState] = [toState]
 
-	def reportBestPath(self, transHistories):
-		highestProb = -20000
-		highestProbTrans = ""
 
-		for i in range(0, len(transHistories)):
-			prob = transHistories[i].getProbability()
+		# check to see if first word is unknown
+		if(len(incrementalStateProbs[0]) == 0):
+			
+			# getting let's just set all transitions, let the best one win
+			for toState in self.current_trans_dict[beginningState]:
+				transProb = math.log10(self.current_trans_dict[beginningState][toState])
+				incrementalStateProbs[0][toState] = transProb + self.unknownEmissProb
+				path[toState] = [toState] 
 
-			if(prob > highestProb):
-				highestProb = prob
-				highestProbTrans = transHistories[i].reportTransitions()
+	def getHighestProb(self, toState, word, incrementalStateProbs, i):
+		highestProb = -2000
+		highestProbState = ""
+		
+		for fromState in self.current_trans_dict:
 
-		bestPath = highestProbTrans + " " + str(highestProb)
-		return bestPath.strip()
+			if(self.current_trans_dict[fromState].has_key(toState) and
+				self.current_emiss_dict.has_key(toState) and
+				incrementalStateProbs[i-1].has_key(fromState) and 
+				self.current_emiss_dict[toState].has_key(word)):
+
+				previousProb = incrementalStateProbs[i-1][fromState]
+				transitionProb = self.current_trans_dict[fromState][toState]
+				emissProb = self.current_emiss_dict[toState][word]
+
+				tempCalc = math.log10(transitionProb * emissProb) + previousProb
+
+				if(highestProb < tempCalc):
+					highestProb = tempCalc
+					highestProbState = fromState
+
+		return (highestProb, highestProbState)
+
+	def handleUnknownWord(self, incrementalStateProbs, i, path, newPath):
+		# we're going to find the first acceptable transition here and add it in...
+		# later, we'll randomize it a bit better
+
+		for acceptableFromState in incrementalStateProbs[i-1]:
+
+			# sanity check
+			if(self.current_trans_dict.has_key(acceptableFromState)):
+
+				# let's grab first key...
+				for firstToState in self.current_trans_dict[acceptableFromState]:
+					
+					previousProb = incrementalStateProbs[i-1][acceptableFromState]
+					transitionProb = self.current_trans_dict[acceptableFromState][firstToState]
+					
+					# set the state and path
+					incrementalStateProbs[i][firstToState] = previousProb + math.log10(transitionProb) + self.unknownEmissProb
+					newPath[firstToState] = path[acceptableFromState] + [firstToState]
+
+					return
+
+		# nothing to do here, we'll return on the first successful fromState/toState pair
 
 	def processLine(self, line):
 		words = re.split("\s+", line.strip())
 
-		if(len(words) == 0):
-			return []
+		if(len(words) < 1):
+			return "No observations given..."
 
 		# testing this out
 		V = [{}]
@@ -81,195 +118,46 @@ class Viterbi(utilities.Utilities):
 		if(beginningState == None):
 			return "No beginning state found..."
 
-		for toState in self.current_trans_dict:
-
-			# do we exist in the current transition dictionary?
-			if(self.current_trans_dict[beginningState].has_key(toState) and
-				self.current_emiss_dict.has_key(toState) and
-				self.current_emiss_dict[toState].has_key(words[0])):
-
-				transitionProb = math.log10(self.current_trans_dict[beginningState][toState])
-				emitProb = math.log10(self.current_emiss_dict[toState][words[0]])
-				V[0][toState] = transitionProb + emitProb
-				path[toState] = [toState]
-
-		# check to see if first word is unknown
-		if(len(V[0]) == 0):
-
-			# getting let's just set all transitions, let the best one win
-			for toState in self.current_trans_dict[beginningState]:
-				transProb = math.log10(self.current_trans_dict[beginningState][toState])
-				V[0][toState] = transProb + self.unknownEmissProb
-				path[toState] = [toState] 
+		# also handles unknown words
+		self.buildBeginningStateProbabilities(beginningState, words[0], V, path)
 
 		# process as normal
-
+		# case where we have just one word, used later...
+		i = 0
 		for i in range(1, len(words)):
+			# create a new dictionary at the end of the array
 			V.append({})
-			newPath = {}
 
-			statesToUseIfUnknownWord = { }
+			# temporary path that we build with existing states
+			newPath = {}
 
 			for toState in self.current_trans_dict:
 
 				# manually do the max function here...
-				highestProb = -2000
-				highestProbState = ""
+				(highestProb, highestProbState) = self.getHighestProb(toState, words[i], V, i)
 
-				for fromState in self.current_trans_dict:
-
-					if(self.current_trans_dict[fromState].has_key(toState) and
-						self.current_emiss_dict.has_key(toState)):
-
-						# representing like this for the time being, will use a
-						# more sophisticated heuristic in the future
-						statesToUseIfUnknownWord["fromState"] = fromState
-						statesToUseIfUnknownWord["toState"] = toState
-
-						if(not self.current_emiss_dict[toState].has_key(words[i])):
-							continue
-
-						previousProb = V[i-1][fromState]
-						transitionProb = self.current_trans_dict[fromState][toState]
-						emissProb = self.current_emiss_dict[toState][words[i]]
-
-						tempCalc = math.log10(transitionProb * emissProb) + previousProb
-
-						if(highestProb < tempCalc):
-							highestProb = tempCalc
-							highestProbState = fromState
-
-				if(len(highestProbState) == 0):
-					continue
+				# if we didn't find any, we need to skip. we will handle unknown prob later
+				if(not path.has_key(highestProbState)):
+					continue 
 
 				V[i][toState] = highestProb
 				newPath[toState] = path[highestProbState] + [toState]
 
 			# handle if words[i] is unknown
 			if(len(V[i]) == 0):
-				toState = statesToUseIfUnknownWord["toState"]
-				fromState = statesToUseIfUnknownWord["fromState"]
-
-				previousProb = V[i-1][fromState]
-				transitionProb = self.current_trans_dict[fromState][toState]
-
-				# set the state and path
-				V[i][toState] = previousProb + math.log10(transitionProb) + self.unknownEmissProb
-				newPath[toState] = path[fromState] + [toState]
+				self.handleUnknownWord(V, i, path, newPath)
 
 			path = newPath
 
-		bestState = ""
 		bestProb = -2000
-
-		for pos in self.current_trans_dict:
+		bestState = ""
+		
+		for pos in self.flattenedStates:
 			if(V[i].has_key(pos) and
 				V[i][pos] > bestProb and
 				path.has_key(pos)):
 				bestProb = V[i][pos]
 				bestState = pos
 
-		return bestProb, path[bestState]
-
-	def processLineForwards(self, line):
-		words = re.split("\s+", line.strip())
-
-		beginningState = self.findBeginningState()
-
-		if(beginningState == None):
-			return "No beginning state found..."
-
-		# start at the beginning, get all the bos states
-		statesToProcess = self.buildStatesToProcess({ beginningState:0 })
-
-		tranHistories = []
-
-		# we have our beginning states to look at, let's cycle through our words
-		for i in range(0, len(words)):
-			word = words[i]
-
-			tempTranHistories = []
-
-			print 'working on ' + word + ' with ' + str(len(tranHistories))
-
-			# I need to find the parts of speech that belong to this word
-			for partOfSpeech in self.current_emiss_dict:
-
-				# if this doesn't contain our key, let's leave
-				if(not statesToProcess.has_key(partOfSpeech)):
-					continue
-				
-				# handle the symbols
-				foundSymbol = False
-				for symbol in self.current_emiss_dict[partOfSpeech]:
-
-					if(symbol != word):
-						continue
-
-					foundSymbol = True
-
-					highestProb = -2000
-					highestProbTrans = None 
-
-					for fromState in statesToProcess[partOfSpeech]:
-						# calculate the probabilities
-
-						transProb = math.log10(statesToProcess[partOfSpeech][fromState] * self.current_emiss_dict[partOfSpeech][symbol])
-						toState = partOfSpeech
-
-						trans = transition.Transition(toState, fromState, word, transProb)
-
-						# if this is the beginning, then we need to add the appropriate histories
-
-						if(i == 0):
-							tranHistory = transitionHistory.TransitionHistory()
-							tranHistory.addTransition(trans)
-							tempTranHistories.append(tranHistory)
-
-						else:
-							# find the transition history to append to
-							for j in range(0, len(tranHistories)):
-								
-								# if we can add to an existing one
-								if(tranHistories[j].canAddTransition(trans)):
-									# clone it and add the new path
-									newTranHistory = tranHistories[j].cloneHistoryAndAddTransition(trans)
-									tempTranHistories.append(newTranHistory)
-
-				if(not foundSymbol):
-					if(len(statesToProcess) == 0):
-						break
-
-					fromState = ''
-
-					for fromStateKey in statesToProcess[partOfSpeech]:
-						fromState = fromStateKey
-						break
-
-					unknownWord = "<unk>"
-					unknownStateProb = .234
-					transProb = statesToProcess[partOfSpeech][fromState] * unknownStateProb
-					trans = transition.Transition(partOfSpeech, fromState, word, transProb)
-
-					if(i == 0):
-						tranHistory = transitionHistory.TransitionHistory()
-						tranHistory.addTransition(trans)
-						tempTranHistories.append(tranHistory)
-					else:
-						# find the transition history to append to
-						for j in range(0, len(tranHistories)):
-							
-							# if we can add to an existing one
-							if(tranHistories[j].canAddTransition(trans)):
-								# clone it and add the new path
-								newTranHistory = tranHistories[j].cloneHistoryAndAddTransition(trans)
-								tempTranHistories.append(newTranHistory)
-
-			# get rid of old histories with new cloned ones
-			# this also gids rid of the transitions that don't continue
-			tranHistories = tempTranHistories
-
-			# build the new states to process
-			statesToProcess = self.buildStatesToProcess(statesToProcess)
-
-		return tranHistories
+		# just adding in beginning state to the first of the path
+		return bestProb, [beginningState] + path[bestState]

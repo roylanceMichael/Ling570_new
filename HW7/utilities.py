@@ -5,13 +5,25 @@ class Utilities:
                 self.current_init_dict = {}
                 self.current_trans_dict = {}  
                 self.current_emiss_dict = {}
-		self.current_symb_dict = {}  
+		self.current_symb_dict = {} 
+                self.flattenedStates = {} 
 
                 self.init_state = "init_state"
                 self.trans_state = "trans_state"
                 self.emiss_state = "emiss_state"
 
                 self.currentState = self.init_state
+
+        def buildFlattenedStates(self):
+                self.flattenedStates = {}
+                for fromState in self.current_trans_dict:
+
+                        if(not self.flattenedStates.has_key(fromState)):
+                                self.flattenedStates[fromState] = None
+
+                        for toState in self.current_trans_dict[fromState]:
+                                if(not self.flattenedStates.has_key(toState)):
+                                        self.flattenedStates[toState] = None
 
 
 	def ReadObsStr(self, StrVal):
@@ -41,10 +53,11 @@ class Utilities:
                                 elif(len(lineContents) > 1):
                                         # build up init dictionary
                                         self.current_init_dict[firstItem] = float(lineContents[1])
+                
                 elif(self.currentState == self.trans_state):
                         lineContents = re.split("\s+", hmmInputLine.strip())
 
-                        # assuming that 1st is from_state(s), 2rd is prob
+                        # assuming that 1st is from_state(s), 2nd is prob
                         if(len(lineContents) > 0):
                                 firstItem = lineContents[0]
                                 if(firstItem == '\\emission'):
@@ -83,9 +96,3 @@ class Utilities:
 						self.current_symb_dict[symbol][firstItem] = prob
 					else:
 						self.current_symb_dict[symbol] = {firstItem : prob}
-
-#			print self.current_trans_dict
-#			print self.current_emiss_dict
-#			print self.current_symb_dict
-
-

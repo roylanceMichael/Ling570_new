@@ -21,8 +21,14 @@ def main():
 	t = input_t.readline()
 
 	while t:
-		result = vit.processLineForwards(t)
-		print t + " => " + vit.reportBestPath(result)
+		result = vit.processLine(t)
+		
+		strBuilder = " => "
+		for word in result[1]:
+			strBuilder = strBuilder + " " + word
+		
+		print t + strBuilder + " " + str(result[0])
+		
 		t = input_t.readline()
 
 if __name__ == '__main__':
