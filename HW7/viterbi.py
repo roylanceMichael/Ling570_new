@@ -80,17 +80,30 @@ class Viterbi(utilities.Utilities):
 		if(beginningState == None):
 			return "No beginning state found..."
 
-		for pos in self.current_trans_dict:
+		for toState in self.current_trans_dict:
 
 			# do we exist in the current transition dictionary?
-			if(self.current_trans_dict[beginningState].has_key(pos) and
-				self.current_emiss_dict.has_key(pos) and
-				self.current_emiss_dict[pos].has_key(words[0])):
+			if(self.current_trans_dict[beginningState].has_key(toState) and
+				self.current_emiss_dict.has_key(toState) and
+				self.current_emiss_dict[toState].has_key(words[0])):
 
-				transitionProb = math.log10(self.current_trans_dict[beginningState][pos])
-				emitProb = math.log10(self.current_emiss_dict[pos][words[0]])
-				V[0][pos] = transitionProb + emitProb
-				path[pos] = [pos]
+				transitionProb = math.log10(self.current_trans_dict[beginningState][toState])
+				emitProb = math.log10(self.current_emiss_dict[toState][words[0]])
+				V[0][toState] = transitionProb + emitProb
+				path[toState] = [toState]
+
+		# check to see if first word is unknown
+		if(len(V[0]) == 0):
+			# hard coding in the emission prob
+			emitProb = math.log10(.15)
+
+			# getting let's just set all transitions, let the best one win
+			for toState in self.current_trans_dict[beginningState]:
+				transProb = math.log10(self.current_trans_dict[beginningState][toState])
+				V[0][toState] = transProb + emitProb
+				path[toState] = [toState] 
+
+		# process as normal
 
 		for i in range(1, len(words)):
 			V.append({})
@@ -108,6 +121,7 @@ class Viterbi(utilities.Utilities):
 						self.current_emiss_dict.has_key(toState) and
 						self.current_emiss_dict[toState].has_key(words[i])):
 
+
 						previousProb = V[i-1][fromState]
 						transitionProb = self.current_trans_dict[fromState][toState]
 						emissProb = self.current_emiss_dict[toState][words[i]]
@@ -123,6 +137,8 @@ class Viterbi(utilities.Utilities):
 
 				V[i][toState] = highestProb
 				newPath[toState] = path[highestProbState] + [toState]
+
+			# did we fill
 
 			path = newPath
 
