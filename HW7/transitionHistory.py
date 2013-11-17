@@ -1,4 +1,5 @@
 import re
+import math
 
 class TransitionHistory:
 	def __init__(self):
@@ -44,12 +45,27 @@ class TransitionHistory:
 		return True
 
 	def getProbability(self):
-		prob = 1
+		prob = 0
 
 		for i in range(0, len(self.transitions)):
-			prob = prob * self.transitions[i].probability
+			prob = prob + math.log10(self.transitions[i].probability)
 
 		return prob
+
+	def reportTransitions(self):
+		strBuilder = ""
+
+		if(len(self.transitions) == 0):
+			return strBuilder
+
+		transitionLength = len(self.transitions)
+
+		for i in range(0, transitionLength):
+			strBuilder = strBuilder + " " + self.transitions[i].previousPos
+
+		strBuilder = strBuilder + " " + self.transitions[transitionLength - 1].currentPos
+
+		return strBuilder
 
 	def getLastTransition(self):
 		tranLen = len(self.transitions)

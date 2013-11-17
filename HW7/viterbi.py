@@ -46,6 +46,20 @@ class Viterbi(utilities.Utilities):
 
 		return newStatesToProcess
 
+	def reportBestPath(self, transHistories):
+		highestProb = -20000
+		highestProbTrans = ""
+
+		for i in range(0, len(transHistories)):
+			prob = transHistories[i].getProbability()
+
+			if(prob > highestProb):
+				highestProb = prob
+				highestProbTrans = transHistories[i].reportTransitions()
+
+		bestPath = highestProbTrans + " " + str(highestProb)
+		return bestPath.strip()
+
 	def processLineForwards(self, line):
 		words = re.split("\s+", line.strip())
 
@@ -79,6 +93,7 @@ class Viterbi(utilities.Utilities):
 						continue
 
 					for fromState in statesToProcess[partOfSpeech]:
+						# calculate the probabilities
 						transProb = statesToProcess[partOfSpeech][fromState] * self.current_emiss_dict[partOfSpeech][symbol]
 						toState = partOfSpeech
 
@@ -86,7 +101,6 @@ class Viterbi(utilities.Utilities):
 
 						# if this is the beginning, then we need to add the appropriate histories
 						if(i == 0):
-							# print 'adding a new tranHistory'
 							tranHistory = transitionHistory.TransitionHistory()
 							tranHistory.addTransition(trans)
 							tempTranHistories.append(tranHistory)
@@ -94,7 +108,10 @@ class Viterbi(utilities.Utilities):
 						else:
 							# find the transition history to append to
 							for j in range(0, len(tranHistories)):
+								
+								# if we can add to an existing one
 								if(tranHistories[j].canAddTransition(trans)):
+									# clone it and add the new path
 									newTranHistory = tranHistories[j].cloneHistoryAndAddTransition(trans)
 									tempTranHistories.append(newTranHistory)
 
@@ -106,5 +123,3 @@ class Viterbi(utilities.Utilities):
 			statesToProcess = self.buildStatesToProcess(statesToProcess)
 
 		return tranHistories
-
-		

@@ -3,6 +3,7 @@ import utilities
 import viterbi
 import transition
 import transitionHistory
+import math
 
 class ViterbiTest(unittest.TestCase):
     def test_moreComplexTransition(self):
@@ -50,7 +51,7 @@ V   walk 1.0""".split("\n")
         self.assertTrue(True == result[0].representsSentence(sentence))
 
         # P(walk | V) * P(V | N) * P(a | N) * P(N | BOS)
-        expectedProb = 1.0 * 0.4 * 0.4 * 0.5
+        expectedProb = math.log10(1.0 * 0.4 * 0.4 * 0.5)
         self.assertTrue(expectedProb == result[0].getProbability())
 
         self.assertTrue("BOS" == result[0].transitions[0].previousPos)
@@ -62,6 +63,9 @@ V   walk 1.0""".split("\n")
         self.assertTrue("V" == result[0].transitions[1].currentPos)
         self.assertTrue("walk" == result[0].transitions[1].symbol)
         self.assertTrue(0.4 == result[0].transitions[1].probability)
+
+        bestPath = vitTest.reportBestPath(result)
+        self.assertTrue("BOS N V -1.09691001301" == bestPath, bestPath)
 
     def test_slightlyMoreComplexTransition(self):
         # arrange
