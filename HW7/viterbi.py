@@ -27,23 +27,35 @@ class Viterbi(utilities.Utilities):
 
 		return None
 
+	def buildStatesToProcess(self, statesToProcess):
+		# we need to do something with the states now...
+		newStatesToProcess = {}
+
+		# go through all the states and treat them like from states
+		for newFromState in statesToProcess:
+			for fromState in self.current_trans_dict:
+				if(newFromState != fromState):
+					continue
+
+				# we need to go through all the new toStates and add them in the dictionary to process next
+				for toState in self.current_trans_dict[fromState]:
+					if(newStatesToProcess.has_key(toState)):
+						newStatesToProcess[toState][fromState] = self.current_trans_dict[fromState][toState]
+					else:
+						newStatesToProcess[toState] = { fromState: self.current_trans_dict[fromState][toState] }
+
+		return newStatesToProcess
+
 	def processLineForwards(self, line):
 		words = re.split("\s+", line.strip())
-
-		# start at the beginning, get all the bos states
-		statesToProcess = { }
 
 		beginningState = self.findBeginningState()
 
 		if(beginningState == None):
 			return "No beginning state found..."
 
-		for fromState in self.current_trans_dict:
-			if(fromState != beginningState):
-				continue
-			
-			for toState in self.current_trans_dict[fromState]:
-				statesToProcess[toState] = { fromState: self.current_trans_dict[fromState][toState] }
+		# start at the beginning, get all the bos states
+		statesToProcess = self.buildStatesToProcess({ beginningState:0 })
 
 		tranHistories = []
 
@@ -51,7 +63,6 @@ class Viterbi(utilities.Utilities):
 		for i in range(0, len(words)):
 			word = words[i]
 
-			# print statesToProcess
 			tempTranHistories = []
 			
 			# I need to find the parts of speech that belong to this word
@@ -61,15 +72,11 @@ class Viterbi(utilities.Utilities):
 				if(not statesToProcess.has_key(partOfSpeech)):
 					continue
 
-				# print 'pos is ' + partOfSpeech
-
 				# handle the symbols
 				for symbol in self.current_emiss_dict[partOfSpeech]:
 
 					if(symbol != word):
 						continue
-
-					# print 'word is ' + word
 
 					for fromState in statesToProcess[partOfSpeech]:
 						transProb = statesToProcess[partOfSpeech][fromState] * self.current_emiss_dict[partOfSpeech][symbol]
@@ -91,29 +98,14 @@ class Viterbi(utilities.Utilities):
 									newTranHistory = tranHistories[j].cloneHistoryAndAddTransition(trans)
 									tempTranHistories.append(newTranHistory)
 
+			# get rid of old histories with new cloned ones
+			# this also gids rid of the transitions that don't continue
 			tranHistories = tempTranHistories
 
-			# we need to do something with the states now...
-			newStatesToProcess = {}
-
-			# go through all the states and treat them like from states
-			for newFromState in statesToProcess:
-				for fromState in self.current_trans_dict:
-					if(newFromState != fromState):
-						continue
-
-					# we need to go through all the new toStates and add them in the dictionary to process next
-					for toState in self.current_trans_dict[fromState]:
-						if(newStatesToProcess.has_key(toState)):
-							newStatesToProcess[toState][fromState] = self.current_trans_dict[fromState][toState]
-						else:
-							newStatesToProcess[toState] = { fromState: self.current_trans_dict[fromState][toState] }
-
-			statesToProcess = newStatesToProcess
-
+			# build the new states to process
+			statesToProcess = self.buildStatesToProcess(statesToProcess)
 
 		return tranHistories
-
 
 	def processLine(self, line):
 		words = re.split("\s+", line.strip())
