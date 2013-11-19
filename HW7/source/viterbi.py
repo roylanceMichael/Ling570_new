@@ -11,23 +11,16 @@ class Viterbi(utilities.Utilities):
 		self.unknownEmissProb = math.log10(.15)
 
 	def findBeginningState(self):
-		# we want to find a state that exists in fromState but not toState
-		for outerFromState in self.current_trans_dict:
-			existsInToState = False
-			
-			for fromState in self.current_trans_dict:
-				for toState in self.current_trans_dict[fromState]:
-					if(toState == outerFromState):
-						existsInToState = True
-						break
+		# get first key from current_trans_dict
+		for state in self.current_trans_dict:
+			break
 
-				if(existsInToState):
-					break
+		tags = state.split("~")
 
-			if(not existsInToState):
-				return outerFromState
-
-		return None
+		if(len(tags) > 1):
+			return "BOS~BOS"
+		else:
+			return "BOS"
 
 	def buildBeginningStateProbabilities(self, beginningState, word, incrementalStateProbs, path):
 		# first, let's see if our states have been build...
@@ -46,7 +39,6 @@ class Viterbi(utilities.Utilities):
 				incrementalStateProbs[0][toState] = transitionProb + emitProb
 				path[toState] = [toState]
 
-
 		# check to see if first word is unknown
 		if(len(incrementalStateProbs[0]) == 0):
 			
@@ -56,22 +48,25 @@ class Viterbi(utilities.Utilities):
 				incrementalStateProbs[0][toState] = transProb + self.unknownEmissProb
 				path[toState] = [toState] 
 
-	def getHighestProb(self, toState, word, incrementalStateProbs, i):
+	def getHighestProb(self, toState, words, incrementalStateProbs, i):
 		highestProb = -2000
 		highestProbState = ""
-		
-		for fromState in self.current_trans_dict:
 
+		for fromState in self.current_trans_dict:
+			
 			if(self.current_trans_dict[fromState].has_key(toState) and
 				self.current_emiss_dict.has_key(toState) and
 				incrementalStateProbs[i-1].has_key(fromState) and 
-				self.current_emiss_dict[toState].has_key(word)):
+				self.current_emiss_dict[toState].has_key(words[i])):
 
 				previousProb = incrementalStateProbs[i-1][fromState]
 				transitionProb = self.current_trans_dict[fromState][toState]
-				emissProb = self.current_emiss_dict[toState][word]
+				emissProb = self.current_emiss_dict[toState][words[i]]
 
-				tempCalc = math.log10(transitionProb * emissProb) + previousProb
+				tempCalc = transitionProb * emissProb
+				
+				if(tempCalc != 0):
+					tempCalc = math.log10(transitionProb * emissProb) + previousProb
 
 				if(highestProb < tempCalc):
 					highestProb = tempCalc
@@ -79,9 +74,26 @@ class Viterbi(utilities.Utilities):
 
 		return (highestProb, highestProbState)
 
-	def handleUnknownWord(self, incrementalStateProbs, i, path, newPath):
+	def handleUnknownWord(self, incrementalStateProbs, i, path, newPath, words):
+		currentWord = words[i]
+		nextWord = ''
+		if(i != len(words) - 1):
+			nextWord = words[i + 1]
+
+		nextStatesWithHighProbability = []
+
+		if(self.current_symb_dict.has_key(nextWord)):
+			# find the list of states
+			for state in self.current_symb_dict[nextWord]:
+				# get potential next toStates
+				nextStatesWithHighProbability.append(state)
+
 		# we're going to find the first acceptable transition here and add it in...
 		# later, we'll randomize it a bit better
+
+		highestProb = -2000
+		highestProbFromState = ''
+		highestProbToState = ''
 
 		for acceptableFromState in incrementalStateProbs[i-1]:
 
@@ -90,17 +102,23 @@ class Viterbi(utilities.Utilities):
 
 				# let's grab first key...
 				for firstToState in self.current_trans_dict[acceptableFromState]:
-					
-					previousProb = incrementalStateProbs[i-1][acceptableFromState]
-					transitionProb = self.current_trans_dict[acceptableFromState][firstToState]
-					
-					# set the state and path
-					incrementalStateProbs[i][firstToState] = previousProb + math.log10(transitionProb) + self.unknownEmissProb
-					newPath[firstToState] = path[acceptableFromState] + [firstToState]
 
-					return
+					if(self.current_trans_dict.has_key(firstToState)):
+						
+						previousProb = incrementalStateProbs[i-1][acceptableFromState]
+						transitionProb = self.current_trans_dict[acceptableFromState][firstToState]
+						
+						probToCalculate = previousProb + math.log10(transitionProb) + self.unknownEmissProb
 
-		# nothing to do here, we'll return on the first successful fromState/toState pair
+						if(highestProb < probToCalculate):
+							highestProb = probToCalculate
+							highestProbToState = firstToState
+							highestProbFromState = acceptableFromState
+
+		if(len(highestProbToState) > 0):
+			# set the state and path
+			incrementalStateProbs[i][highestProbToState] = highestProb
+			newPath[highestProbToState] = path[highestProbFromState] + [highestProbToState]
 
 	def processLine(self, line):
 		words = re.split("\s+", line.strip())
@@ -114,9 +132,6 @@ class Viterbi(utilities.Utilities):
 
 		# initialize
 		beginningState = self.findBeginningState()
-		
-		if(beginningState == None):
-			return "No beginning state found..."
 
 		# also handles unknown words
 		self.buildBeginningStateProbabilities(beginningState, words[0], V, path)
@@ -134,7 +149,7 @@ class Viterbi(utilities.Utilities):
 			for toState in self.current_trans_dict:
 
 				# manually do the max function here...
-				(highestProb, highestProbState) = self.getHighestProb(toState, words[i], V, i)
+				(highestProb, highestProbState) = self.getHighestProb(toState, words, V, i)
 
 				# if we didn't find any, we need to skip. we will handle unknown prob later
 				if(not path.has_key(highestProbState)):
@@ -146,8 +161,7 @@ class Viterbi(utilities.Utilities):
 			# handle if words[i] is unknown
 			if(len(V[i]) == 0):
 				
-				self.handleUnknownWord(V, i, path, newPath)
-
+				self.handleUnknownWord(V, i, path, newPath, words)
 				if(len(V[i]) == 0):
 					return "No transitions possible"
 
@@ -167,4 +181,5 @@ class Viterbi(utilities.Utilities):
 		if(not path.has_key(bestState)):
 			return "No transitions possible"
 
+		# TODO: fix this!..
 		return bestProb, [beginningState] + path[bestState]

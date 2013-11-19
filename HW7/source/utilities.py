@@ -25,11 +25,9 @@ class Utilities:
                                 if(not self.flattenedStates.has_key(toState)):
                                         self.flattenedStates[toState] = None
 
-
 	def ReadObsStr(self, StrVal):
 		splitVals = re.split("\s+", StrVal)
 		return splitVals
-
 
 	def readInput(self, hmmInputLine):
                 if(hmmInputLine.strip() == ""):
@@ -76,12 +74,7 @@ class Utilities:
 
                         # assuming that 1st is from_state(s), 2nd is prob
                         if(len(lineContents) > 0):
-                                firstItem = lineContents[0].split("~")
-
-                                if(len(firstItem) == 2):
-                                        firstItem = firstItem[1]
-                                else:
-                                        firstItem = firstItem[0]
+                                firstItem = lineContents[0]
 
                                 if(len(lineContents) > 2):
                                         symbol = lineContents[1]

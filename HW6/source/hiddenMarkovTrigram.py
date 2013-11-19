@@ -152,7 +152,7 @@ class HiddenMarkovTrigram(hiddenMarkovBigram.HiddenMarkovBigram):
 
 			if(from_state1 == "BOS"):
 				prob = self.getSmoothedBigramProbability(from_state1, from_state2, lambda1, lambda2, lambda3)
-				strBuilder = strBuilder + from_state1 + "~" + from_state1 + "\t" + from_state2 + "\t" + str(prob) + "\t" + str(math.log10(prob)) + "\n"
+				strBuilder = strBuilder + from_state1 + "~" + from_state1 + "\t" + from_state1 + "~" + from_state2 + "\t" + str(prob) + "\t" + str(math.log10(prob)) + "\n"
 
 			subDict = self.trigramTransitionDictionary[key]
 
