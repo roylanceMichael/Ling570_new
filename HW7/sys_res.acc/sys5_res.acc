@@ -1,0 +1,10 @@
+leng mismatch:
+ num=21: +The/DT ads/NNS touted/VBD Fidelity/NNP 's/POS automated/VBN 800-number/NN beneath/IN the/DT huge/JJ headline/NN ,/, ``/`` Fidelity/NNP Is/VBZ Ready/JJ For/IN Your/PRP$ Call/NN ./. ''/''+
+ num=25: +The ads touted Fidelity 's automated 800-number beneath the huge headline , `` Fidelity Is Ready For Your Call . '' => No transitions possible+
+leng mismatch:
+ num=28: +The/DT ad/NN would/MD have/VB run/VBN during/IN the/DT World/NNP Series/NNP tomorrow/NN ,/, replacing/VBG the/DT debut/NN commercial/NN of/IN Shearson/NNP 's/POS new/JJ ad/NN campaign/NN ,/, ``/`` Leadership/NN by/IN Example/NN ./. ''/''+
+ num=32: +The ad would have run during the World Series tomorrow , replacing the debut commercial of Shearson 's new ad campaign , `` Leadership by Example . '' => No transitions possible+
+sent_num: counted_sent=98 untagged=0 (0%), leng_mismatch=2 wrong_format=0
+
+word_num: gold=2449, counted=2400, matched=1577
+accuracy: overall=64.3936300530829%, among_counted=65.7083333333333% untagged=0%

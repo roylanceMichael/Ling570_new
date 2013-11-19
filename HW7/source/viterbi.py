@@ -1,9 +1,6 @@
 import utilities
 import math
 import re
-import postuple
-import transition
-import transitionHistory
 
 class Viterbi(utilities.Utilities):
 	def __init__(self):

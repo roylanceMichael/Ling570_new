@@ -1,0 +1,10 @@
+leng mismatch:
+ num=18: +John/NNP Verret/NNP ,/, the/DT agency/NN 's/POS president/NN and/CC chief/JJ executive/NN ,/, will/MD retain/VB the/DT title/NN of/IN president/NN ./.+
+ num=22: +John Verret , the agency 's president and chief executive , will retain the title of president .  => No transitions possible+
+leng mismatch:
+ num=52: +One/NN might/MD think/VB that/IN the/DT home/NN fans/NNS in/IN this/DT Series/NNP of/IN the/DT Subway/NNP Called/VBN BART/NNP -LRB-/-LRB- that/DT 's/VBZ a/DT better/JJR name/NN for/IN a/DT public/JJ conveyance/NN than/IN ``/`` Desire/NN ,/, ''/'' do/VBP n't/RB you/PRP think/VBP ?/. -RRB-/-RRB- would/MD have/VB been/VBN ecstatic/JJ over/IN the/DT proceedings/NNS ,/, but/CC they/PRP observe/VBP them/PRP in/IN relative/JJ calm/NN ./.+
+ num=56: +One might think that the home fans in this Series of the Subway Called BART -LRB- that 's a better name for a public conveyance than `` Desire , '' do n't you think ? -RRB- would have been ecstatic over the proceedings , but they observe them in relative calm .  => No transitions possible+
+sent_num: counted_sent=98 untagged=0 (0%), leng_mismatch=2 wrong_format=0
+
+word_num: gold=2449, counted=2379, matched=1591
+accuracy: overall=64.9652919559004%, among_counted=66.8768390079865% untagged=0%
