@@ -6,16 +6,24 @@ class Viterbi(utilities.Utilities):
 	def __init__(self):
 		utilities.Utilities.__init__(self)
 		self.unknownEmissProb = math.log10(.15)
+		self.delimiter = "~"
 
 	def findBeginningState(self):
 		# get first key from current_trans_dict
 		for state in self.current_trans_dict:
 			break
 
-		tags = state.split("~")
+		if("_" in state):
+			self.delimiter = "_"
+		elif("~" in state):
+			self.delimiter = "~"
+		elif("-" in state):
+			self.delimiter = "-"
+
+		tags = state.split(self.delimiter)
 
 		if(len(tags) > 1):
-			return "BOS~BOS"
+			return "BOS" + self.delimiter + "BOS"
 		else:
 			return "BOS"
 
@@ -73,49 +81,37 @@ class Viterbi(utilities.Utilities):
 
 	def handleUnknownWord(self, incrementalStateProbs, i, path, newPath, words):
 		currentWord = words[i]
-		nextWord = ''
-		if(i != len(words) - 1):
-			nextWord = words[i + 1]
+		unknownWord = "<unk>"
 
-		nextStatesWithHighProbability = []
-
-		if(self.current_symb_dict.has_key(nextWord)):
-			# find the list of states
-			for state in self.current_symb_dict[nextWord]:
-				# get potential next toStates
-				nextStatesWithHighProbability.append(state)
-
-		# we're going to find the first acceptable transition here and add it in...
-		# later, we'll randomize it a bit better
-
-		highestProb = -2000
-		highestProbFromState = ''
-		highestProbToState = ''
+		highestUnkToState = ''
+		highestUnkFromState = ''
+		highestUnknownProb = -2000
 
 		for acceptableFromState in incrementalStateProbs[i-1]:
 
 			# sanity check
 			if(self.current_trans_dict.has_key(acceptableFromState)):
 
-				# let's grab first key...
-				for firstToState in self.current_trans_dict[acceptableFromState]:
+				for toState in self.current_trans_dict[acceptableFromState]:
 
-					if(self.current_trans_dict.has_key(firstToState)):
-						
+					if(self.current_emiss_dict.has_key(toState) and
+						self.current_emiss_dict[toState].has_key(unknownWord)):
+
 						previousProb = incrementalStateProbs[i-1][acceptableFromState]
-						transitionProb = self.current_trans_dict[acceptableFromState][firstToState]
-						
-						probToCalculate = previousProb + math.log10(transitionProb) + self.unknownEmissProb
+						transitionProb = self.current_trans_dict[acceptableFromState][toState]
+						emissProb = self.current_emiss_dict[toState][unknownWord]
 
-						if(highestProb < probToCalculate):
-							highestProb = probToCalculate
-							highestProbToState = firstToState
-							highestProbFromState = acceptableFromState
+						probToCalculate = previousProb + math.log10(transitionProb) + math.log10(emissProb)
 
-		if(len(highestProbToState) > 0):
+						if(probToCalculate > highestUnknownProb):
+							highestUnknownProb = probToCalculate
+							highestUnkFromState = acceptableFromState
+							highestUnkToState = toState
+
+		if(len(highestUnkFromState) > 0):
 			# set the state and path
-			incrementalStateProbs[i][highestProbToState] = highestProb
-			newPath[highestProbToState] = path[highestProbFromState] + [highestProbToState]
+			incrementalStateProbs[i][highestUnkToState] = highestUnknownProb
+			newPath[highestUnkToState] = path[highestUnkFromState] + [highestUnkToState]
 
 	def processLine(self, line):
 		words = re.split("\s+", line.strip())

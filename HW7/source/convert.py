@@ -24,12 +24,12 @@ class Convert:
 
 	def bigramOrTrigram(self, posList):
 	### check if the POS tags are bigrams or trigrams
-		match = re.search('(.+)~(.+)', posList[0])
+		match = re.search('(.+)[~\-\_](.+)', posList[0])
 		
 		if match:
 			newPosList = []
 			for tag in posList:
-				match = re.search('(.+)~(.+)', tag)
+				match = re.search('(.+)[~\-\_](.+)', tag)
 				newPosList.append(match.group(2))	# if it is a trigram we are only interested in the toState
 
 		else:
