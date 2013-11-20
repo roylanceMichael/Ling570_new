@@ -1,11 +1,14 @@
 import re
+import math
 
 class Utilities:
         def __init__(self):
                 self.current_init_dict = {}
                 self.current_trans_dict = {}  
+                self.current_inverse_trans_dict = {}
                 self.current_emiss_dict = {}
-		self.current_symb_dict = {} 
+		self.current_symb_dict = {}
+
                 self.flattenedStates = {} 
 
                 self.init_state = "init_state"
@@ -63,11 +66,19 @@ class Utilities:
                                 elif(len(lineContents) > 2):
                                         to_state = lineContents[1]
                                         prob = float(lineContents[2])
+                                        
+                                        if(prob == 0):
+                                                prob = math.log10(prob)
 
                                         if(self.current_trans_dict.has_key(firstItem)):
                                                 self.current_trans_dict[firstItem][to_state] = prob
                                         else:
                                                 self.current_trans_dict[firstItem] = { to_state: prob }
+
+                                        if(self.current_inverse_trans_dict.has_key(to_state)):
+                                                self.current_trans_dict[to_state][firstItem] = prob
+                                        else:
+                                                self.current_trans_dict[to_state] = { firstItem: prob }
 
                 elif(self.currentState == self.emiss_state):
                         lineContents = re.split("\s+", hmmInputLine.strip())
@@ -79,6 +90,9 @@ class Utilities:
                                 if(len(lineContents) > 2):
                                         symbol = lineContents[1]
                                         prob = float(lineContents[2])
+
+                                        if(prob != 0):
+                                                prob = math.log10(prob)
 
                                         if(self.current_emiss_dict.has_key(firstItem)):
                                                 self.current_emiss_dict[firstItem][symbol] = prob
