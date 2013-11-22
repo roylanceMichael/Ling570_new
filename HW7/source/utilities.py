@@ -66,8 +66,8 @@ class Utilities:
                                 elif(len(lineContents) > 2):
                                         to_state = lineContents[1]
                                         prob = float(lineContents[2])
-                                        
-                                        if(prob == 0):
+
+                                        if(prob != 0.0):
                                                 prob = math.log10(prob)
 
                                         if(self.current_trans_dict.has_key(firstItem)):
@@ -76,9 +76,9 @@ class Utilities:
                                                 self.current_trans_dict[firstItem] = { to_state: prob }
 
                                         if(self.current_inverse_trans_dict.has_key(to_state)):
-                                                self.current_trans_dict[to_state][firstItem] = prob
+                                                self.current_inverse_trans_dict[to_state][firstItem] = prob
                                         else:
-                                                self.current_trans_dict[to_state] = { firstItem: prob }
+                                                self.current_inverse_trans_dict[to_state] = { firstItem: prob }
 
                 elif(self.currentState == self.emiss_state):
                         lineContents = re.split("\s+", hmmInputLine.strip())
@@ -91,7 +91,7 @@ class Utilities:
                                         symbol = lineContents[1]
                                         prob = float(lineContents[2])
 
-                                        if(prob != 0):
+                                        if(prob != 0.0):
                                                 prob = math.log10(prob)
 
                                         if(self.current_emiss_dict.has_key(firstItem)):
