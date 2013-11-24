@@ -8,7 +8,11 @@ def main():
 
         dirs = sys.argv[4:]
 
-	result = vect.processDir(ratio, dirs)
+	trainFile = sys.argv[1]
+
+	testFile = sys.argv[2]
+	
+	result = vect.processDir(ratio, dirs, trainFile, testFile)
 
 
 
