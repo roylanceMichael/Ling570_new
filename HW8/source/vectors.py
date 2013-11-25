@@ -17,6 +17,7 @@ class CreateVectors:
 		proc = process.ProcessFile()
 		for eachDir in dirs:   # cycle through the list of directories
 			filenames = os.listdir(eachDir)
+			filenames.sort()
 			n = float(len(filenames))
 #			print n
 #			print float(ratio)
