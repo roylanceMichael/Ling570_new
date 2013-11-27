@@ -2,9 +2,7 @@ import trainvoc
 import buildvectors
 import sys
 
-
 def main():
-	procF = trainvoc.TrainVoc()
 	vects = buildvectors.BuildVectors()
 
 	iFile = sys.argv[1]
@@ -17,13 +15,11 @@ def main():
 	text = inputF.read()
 
 	### we'll need to output this into ex_train_voc
-	print procF.sortAndPrint(text)
+	print vects.sortAndPrint(text)
 
-	vects.makeVectors(text, rare_thresh, procF.frequencyDict)
+	vects.collectRareWords(int(rare_thresh))
 
 	inputF.close()
-
-
 
 if __name__ == '__main__':
 	main()

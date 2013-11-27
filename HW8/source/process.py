@@ -8,7 +8,6 @@ class ProcessFile:
 		listall = words.split()
 		return listall
 
-
 	def frequency(self, text):
 		vectorDict = {}
 		for word in self.just_words(text):
@@ -18,7 +17,6 @@ class ProcessFile:
 				vectorDict[word] = 1
 #		print vectorDict
 		return vectorDict
-
 
 	def sortAndPrint(self, text):
 		wordcount = self.frequency(text)
