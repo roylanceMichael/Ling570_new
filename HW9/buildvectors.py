@@ -35,11 +35,9 @@ class BuildVectors(trainvoc.TrainVoc):
 				else:
 					print 'Not in dictionary - what do we do now?'
 
-
-
 	def separateWordFromTag(self, wordAndTag):
 		match = re.search("(.+)/(.+)$", wordAndTag)
-                if match:
+		if match:
 			return match.group(1)
 		else:
 			print 'no word here'                

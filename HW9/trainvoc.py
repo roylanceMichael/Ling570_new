@@ -5,23 +5,23 @@ import re
 class TrainVoc:
 	def __init__(self):
 		self.frequencyDict = {}
-
+		self.posRegex = "/[^/]+$"
 
 	def frequency(self, strVal):
 		# first, let's split by whitespace
 		splitVals = re.split("\s+", strVal)
-		posRegex = "(.+)/(.+)$"
 		
 		### fill the dictionary; count the frequencies
-		for i in splitVals:
-			match = re.search(posRegex, i)
-			if match:
-				if match.group(1) in self.frequencyDict:
-					self.frequencyDict[match.group(1)] += 1
+		for splitVal in splitVals:
+			match = re.search(self.posRegex, splitVal)
+			if match: # do we have a match?
+				word = splitVal[0:match.start()] # get the word from beginning to start
+				if word in self.frequencyDict:
+					self.frequencyDict[word] += 1
 				else:
-					self.frequencyDict[match.group(1)] = 1
+					self.frequencyDict[word] = 1
+		
 		return self.frequencyDict
-
 
 	def sortAndPrint(self, text):
 	### turn dict in a list and sort it in descending order
