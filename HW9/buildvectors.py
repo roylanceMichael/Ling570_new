@@ -9,9 +9,10 @@ class BuildVectors(trainvoc.TrainVoc):
 
 
 	def makeVectors(self, text, rare_thresh, freqDict):
+	### I would like frequencyDict to be inherited globally from trainvoc
+
 		lines = text.split('\n')   # take the text that we read in main and split it into sentences
 		numSent = 0   # sentence counter we'll need for the output
-#		print freqDict
 		
 		for line in lines:   # iterating through sentences
 #			print line
@@ -21,18 +22,15 @@ class BuildVectors(trainvoc.TrainVoc):
 #			print wordsAndTags
 			for wordAndTag in wordsAndTags:	# iterating through words
 				word = self.separateWordFromTag(wordAndTag)
-				print rare_thresh
 				if word in freqDict:
-					print str(word) + ':' + str(freqDict[word])
+#					print str(word) + ':' + str(freqDict[word])
 					if int(freqDict[word]) < int(rare_thresh):
 						# rare word
 						print word + '- rare word!'
 
-
 					else:
 						# normal word
 						print word + '- normal word'
-
 
 				else:
 					print 'Not in dictionary - what do we do now?'
@@ -45,8 +43,4 @@ class BuildVectors(trainvoc.TrainVoc):
 			return match.group(1)
 		else:
 			print 'no word here'                
-
-
-
-        
 

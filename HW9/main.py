@@ -16,7 +16,7 @@ def main():
 	
 	text = inputF.read()
 
-	### here we'll need to output into ex_train_voc
+	### we'll need to output this into ex_train_voc
 	print procF.sortAndPrint(text)
 
 	vects.makeVectors(text, rare_thresh, procF.frequencyDict)
