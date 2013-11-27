@@ -2,6 +2,7 @@ import unittest
 import trainvoc
 import buildvectors
 import utilities
+import feature
 
 class TrainVocTests(unittest.TestCase):
 	def test_frequencyCount(self):
@@ -51,6 +52,63 @@ class BuildVectors(unittest.TestCase):
 		self.assertTrue(len(bv.nonRareWords) == 2)
 		self.assertTrue("something" in bv.nonRareWords)
 		self.assertTrue("sunshine\/test" in bv.nonRareWords)
+
+class FeatureTests(unittest.TestCase):
+	def test_buildsBOSCorrectly(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ
+		something/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		firstFeature = features[0]
+
+		self.assertTrue(firstFeature.prevW == "BOS", firstFeature.prevW)
+		self.assertTrue(firstFeature.prevT == "BOS")
+		self.assertTrue(firstFeature.prev2W == "BOS")
+		self.assertTrue(firstFeature.prev2T == "BOS+BOS")
+
+	def test_buildsEOSCorrectly(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ
+		something/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		lastFeature = features[5]
+
+		self.assertTrue(lastFeature.nextW == "EOS")
+		self.assertTrue(lastFeature.nextT == "EOS")
+		self.assertTrue(lastFeature.next2W == "EOS")
+		self.assertTrue(lastFeature.next2T == "EOS+EOS")
+
+	def test_buildsMiddleTuplesCorrectly(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ something/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		# should be something/PR
+		fourthFeature = features[3]
+
+		self.assertTrue(fourthFeature.prevW == "sunshine\/test", fourthFeature.prevW)
+		self.assertTrue(fourthFeature.prevT == "PZ")
+		self.assertTrue(fourthFeature.prev2W == "somewhere")
+		self.assertTrue(fourthFeature.prev2T == "PN+PZ", fourthFeature.prev2T)
+
+		self.assertTrue(fourthFeature.nextW == "something")
+		self.assertTrue(fourthFeature.nextT == "PZ")
+		self.assertTrue(fourthFeature.next2W == "sunshine\/test")
+		self.assertTrue(fourthFeature.next2T == "PZ+PT", fourthFeature.next2T)
 
 class UtilitiesTests(unittest.TestCase):
 	def test_getWordPosTupleSimple(self):
