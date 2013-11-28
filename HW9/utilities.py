@@ -18,3 +18,12 @@ class Utilities:
 			return (word, pos)
 
 		return None
+
+	def getModifiedWordTagTuple(self, wordTags, index, modifier):
+		modifiedIndex = index + modifier
+		
+		# make sure we're within bounds
+		if len(wordTags) > modifiedIndex and modifiedIndex > -1:
+			return wordTags[modifiedIndex]
+
+		return None

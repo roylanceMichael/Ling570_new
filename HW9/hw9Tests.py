@@ -34,7 +34,7 @@ class TrainVocTests(unittest.TestCase):
 		self.assertTrue(lines[2] == "somewhere\t1")
 
 class BuildVectors(unittest.TestCase):
-	def test_makeVectors(self):
+	def test_collectRareWords(self):
 		# arrange
 		bv = buildvectors.BuildVectors()
 		testStr = """something/PN somewhere/PN sunshine\/test/PZ
@@ -49,13 +49,28 @@ class BuildVectors(unittest.TestCase):
 		self.assertTrue(len(bv.rareWords) == 1)
 		self.assertTrue("somewhere" in bv.rareWords)
 
-		self.assertTrue(len(bv.nonRareWords) == 2)
-		self.assertTrue("something" in bv.nonRareWords)
-		self.assertTrue("sunshine\/test" in bv.nonRareWords)
+	def test_buildInitFeatures(self):
+		# arrange
+		bv = buildvectors.BuildVectors()
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ something/PR something/PZ sunshine\/test/PT"""
+		
+		bv.buildFrequency(testStr)
+		bv.collectRareWords(2)
+
+		# act
+		bv.buildInitFeatures(testStr)
+		
+		# assert
+		# somewhere and sunshine will report this
+		self.assertTrue(bv.initFeatures["prevT=PN"] == 2)
+		self.assertTrue(bv.initFeatures["prevW=something"] == 3)
+		self.assertTrue(bv.initFeatures["prevW=sunshine\/test"] == 1)
+		self.assertTrue(bv.initFeatures["curW=something"] == 3)
 
 class FeatureTests(unittest.TestCase):
 	def test_buildsBOSCorrectly(self):
 		# arrange
+		bv = buildvectors.BuildVectors()
 		testStr = """something/PN somewhere/PN sunshine\/test/PZ
 		something/PR something/PZ sunshine\/test/PT"""
 

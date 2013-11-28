@@ -1,4 +1,5 @@
 from sets import Set
+import feature
 import trainvoc
 import sys
 import re
@@ -9,14 +10,45 @@ class BuildVectors(trainvoc.TrainVoc):
 		trainvoc.TrainVoc.__init__(self)
 		self.utils = utilities.Utilities()
 		self.rareWords = Set()
-		self.nonRareWords = Set()
+		self.initFeatures = {}
 
 	def collectRareWords(self, rare_thresh):
 		for word in self.frequencyDict:
 			if(self.frequencyDict[word] < rare_thresh):
 				self.rareWords.add(word)
-			else:
-				self.nonRareWords.add(word)
+
+	def buildInitFeatures(self, strVal):
+		lines = strVal.split('\n')
+		features = []
+
+		for line in lines:
+			# split into words
+			wordTags = line.split()
+
+			for i in range(0, len(wordTags)):
+
+				# get words
+				prev2WordTag = self.utils.getModifiedWordTagTuple(wordTags, i, -2)
+				prevWordTag = self.utils.getModifiedWordTagTuple(wordTags, i, -1)
+				nextWordTag = self.utils.getModifiedWordTagTuple(wordTags, i, 1)
+				next2WordTag = self.utils.getModifiedWordTagTuple(wordTags, i, 2)
+
+				newFeature = feature.Feature(wordTags[i], prevWordTag, prev2WordTag, nextWordTag, next2WordTag)
+
+				wordTagTuple = self.utils.getWordPosTuple(wordTags[i])
+
+				reportSet = Set()
+
+				if wordTagTuple != None and wordTagTuple[0] in self.rareWords:
+					reportSet = newFeature.reportHashSet(True)
+				else:
+					reportSet = newFeature.reportHashSet(False)
+
+				for feat in reportSet:
+					if feat in self.initFeatures:
+						self.initFeatures[feat] = self.initFeatures[feat] + 1
+					else:
+						self.initFeatures[feat] = 1
 
 	def makeVectors(self, text, rare_thresh):
 	### I would like frequencyDict to be inherited globally from trainvoc

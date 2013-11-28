@@ -1,5 +1,6 @@
 import utilities
 import re
+from sets import Set
 
 class Feature:
 	def __init__(self, wordTag, prevWordTag, prev2WordTag, nextWordTag, next2WordTag):
@@ -89,6 +90,51 @@ class Feature:
 			self.next2T = "EOS+EOS"
 			self.next2W = "EOS"
 
+	def reportRareWordHashSet(self):
+		returnSet = Set()
+		for i in range(0, len(self.pref)):
+			returnSet.add("pref=%s" % self.pref[i])
+
+		for i in range(0, len(self.suf)):
+			returnSet.add("suf=%s" % self.suf[i])
+
+		if self.containHyp:
+			returnSet.add("containHyp")
+
+		if self.containCap:
+			returnSet.add("containCap")
+
+		if self.containNum:
+			returnSet.add("containNum")
+
+		self.addHashSetForRareAndNonRare(returnSet)
+
+		return returnSet
+
+	def reportNonRareWordHashSet(self):
+		set = Set()
+		set.add("curW=%s" % self.curW)
+
+		self.addHashSetForRareAndNonRare(set)
+
+		return set
+
+	def addHashSetForRareAndNonRare(self, set):
+# taken off slide 11 on November 21st lecture
+		set.add("prevT=%s" % self.prevT)
+		set.add("prev2T=%s" % self.prev2T)
+
+		set.add("prevW=%s" % self.prevW)
+		set.add("prev2W=%s" % self.prev2W)
+		set.add("nextW=%s" % self.nextW)
+		set.add("next2W=%s" % self.next2W)
+
+	def reportHashSet(self, rareWord):
+		if rareWord:
+			return self.reportRareWordHashSet()
+
+		return self.reportNonRareWordHashSet()
+
 	def printSelf(self):
 		strBuilder = ""
 
@@ -134,6 +180,7 @@ class Feature:
 
 	@staticmethod
 	def buildFeatures(strVal):
+		utils = utilities.Utilities()
 		lines = strVal.split('\n')
 		features = []
 
@@ -144,23 +191,13 @@ class Feature:
 			for i in range(0, len(wordTags)):
 
 				# get words
-				prev2WordTag = Feature.getModifiedWordTagTuple(wordTags, i, -2)
-				prevWordTag = Feature.getModifiedWordTagTuple(wordTags, i, -1)
-				nextWordTag = Feature.getModifiedWordTagTuple(wordTags, i, 1)
-				next2WordTag = Feature.getModifiedWordTagTuple(wordTags, i, 2)
+				prev2WordTag = utils.getModifiedWordTagTuple(wordTags, i, -2)
+				prevWordTag = utils.getModifiedWordTagTuple(wordTags, i, -1)
+				nextWordTag = utils.getModifiedWordTagTuple(wordTags, i, 1)
+				next2WordTag = utils.getModifiedWordTagTuple(wordTags, i, 2)
 
 				newFeature = Feature(wordTags[i], prevWordTag, prev2WordTag, nextWordTag, next2WordTag)
 
 				features.append(newFeature)
 
 		return features
-
-	@staticmethod
-	def getModifiedWordTagTuple(wordTags, index, modifier):
-		modifiedIndex = index + modifier
-		
-		# make sure we're within bounds
-		if len(wordTags) > modifiedIndex and modifiedIndex > -1:
-			return wordTags[modifiedIndex]
-
-		return None
