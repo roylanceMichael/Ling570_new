@@ -1,4 +1,5 @@
 import utilities
+import re
 
 class Feature:
 	def __init__(self, wordTag, prevWordTag, prev2WordTag, nextWordTag, next2WordTag):
@@ -16,8 +17,50 @@ class Feature:
 
 		self.handle2TCases()
 		self.handleEosBosCases()
+		self.handleSufPrefCases()
+		self.handleContainNum()
+		self.handleContainCap()
+		self.handleContainHyp()
 
-		#TODO: tests around hyphens, caps, numbers, suffixes or prefixes...
+	def handleContainNum(self):
+		self.containNum = False
+		numRegex = "[0-9]+"
+
+		match = re.search(numRegex, self.curW)
+
+		if match:
+			self.containNum = True
+
+	def handleContainCap(self):
+		self.containCap = False
+		capRegex = "[A-Z]+"
+
+		match = re.search(capRegex, self.curW)
+
+		if match:
+			self.containCap = True
+
+	def handleContainHyp(self):
+		self.containHyp = False
+		hypRegex = "[-]+"
+
+		match = re.search(hypRegex, self.curW)
+
+		if match:
+			self.containHyp = True
+
+	def handleSufPrefCases(self):
+		self.suf = []
+		self.pref = []
+		
+		curWLen = len(self.curW)
+		if curWLen > 0:
+			self.suf.append(self.curW[curWLen-1])
+			self.pref.append(self.curW[0])
+
+		if curWLen > 1:
+			self.suf.append(self.curW[curWLen-2])
+			self.pref.append(self.curW[1])
 
 	def handle2TCases(self):
 		# rules for handling prev2T and next2T

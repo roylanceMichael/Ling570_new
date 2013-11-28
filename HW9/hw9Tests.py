@@ -110,6 +110,73 @@ class FeatureTests(unittest.TestCase):
 		self.assertTrue(fourthFeature.next2W == "sunshine\/test")
 		self.assertTrue(fourthFeature.next2T == "PZ+PT", fourthFeature.next2T)
 
+	def test_checksMiddleForHyphen(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ someth-ing/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		# should be something/PR
+		fourthFeature = features[3]
+
+		self.assertTrue(fourthFeature.containHyp == True)
+		self.assertTrue(fourthFeature.containCap == False)
+		self.assertTrue(fourthFeature.containNum == False)
+
+	def test_checksMiddleForCap(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ somethAing/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		# should be something/PR
+		fourthFeature = features[3]
+
+		self.assertTrue(fourthFeature.containHyp == False)
+		self.assertTrue(fourthFeature.containCap == True)
+		self.assertTrue(fourthFeature.containNum == False)
+
+	def test_checksMiddleForNum(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ someth9ing/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		# should be something/PR
+		fourthFeature = features[3]
+
+		self.assertTrue(fourthFeature.containHyp == False)
+		self.assertTrue(fourthFeature.containCap == False)
+		self.assertTrue(fourthFeature.containNum == True)
+
+	def test_checksMiddleForPrefSuf(self):
+		# arrange
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ someth9ing/PR something/PZ sunshine\/test/PT"""
+
+		# act
+		features = feature.Feature.buildFeatures(testStr)
+
+		# assert
+		self.assertTrue(len(features) == 6)
+		# should be something/PR
+		fourthFeature = features[3]
+
+		self.assertTrue(len(fourthFeature.pref) == 2)
+		self.assertTrue(len(fourthFeature.suf) == 2)
+		self.assertTrue(fourthFeature.pref[0] == "s")
+		self.assertTrue(fourthFeature.pref[1] == "o")
+		self.assertTrue(fourthFeature.suf[0] == "g")
+		self.assertTrue(fourthFeature.suf[1] == "n")
+
 class UtilitiesTests(unittest.TestCase):
 	def test_getWordPosTupleSimple(self):
 		# arrange
