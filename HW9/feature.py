@@ -161,7 +161,6 @@ class Feature:
 
 		return strBuilder
 
-
 	def setupAttr(self, utils, key, strVal):
 		if(strVal == None):
 			setattr(self, key + "W", None)

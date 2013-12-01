@@ -67,6 +67,24 @@ class BuildVectors(unittest.TestCase):
 		self.assertTrue(bv.initFeatures["prevW=sunshine\/test"] == 1)
 		self.assertTrue(bv.initFeatures["curW=something"] == 3)
 
+	def test_buildKeptFeatures(self):
+		# arrange
+		bv = buildvectors.BuildVectors()
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ something/PR something/PZ sunshine\/test/PT"""
+		
+		bv.buildFrequency(testStr)
+		bv.collectRareWords(2)
+		bv.buildInitFeatures(testStr)
+
+		# act
+		bv.buildKeptFeatures(2)
+		
+		# assert
+		# somewhere and sunshine will report this
+		self.assertTrue(len(bv.keptFeatures) == 2)
+		self.assertTrue(bv.keptFeatures["prevW=something"] == 3)
+		self.assertTrue(bv.keptFeatures["curW=something"] == 3)
+
 class FeatureTests(unittest.TestCase):
 	def test_buildsBOSCorrectly(self):
 		# arrange
