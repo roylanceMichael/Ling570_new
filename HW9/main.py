@@ -27,7 +27,6 @@ def main():
 	vects.collectRareWords(int(rare_thresh))
 	vects.buildInitFeaturesFromTraining(train_file_text)
 	
-	print 'printing init_feats '
 	f2out = open(os.path.join(output_dir, 'init_feats'), 'w')
 	f2out.write(vects.printInitFeats())
 	print 'done printing init_feats'
@@ -38,13 +37,21 @@ def main():
 	print 'done printing kept_feats'
 
 	f4out = open(os.path.join(output_dir, 'final_train.vectors.txt'), 'w')
-	f4out.write(vects.printFeatures())
+	f4out.write(vects.printTrainingFeatures())
 	print 'done printing train vectors'
+
+	test_file_input = open(test_file)
+	test_file_text = test_file_input.read()
+	vects.buildTestFeatures(test_file_text)
+	f5out = open(os.path.join(output_dir, 'final_test.vectors.txt'), 'w')
+	f5out.write(vects.printTestFeatures())
+	print 'done printing test vectors'
 
 	f1out.close()
 	f2out.close()
 	f3out.close()
 	f4out.close()
+	f5out.close()
 
 if __name__ == '__main__':
 	main()
