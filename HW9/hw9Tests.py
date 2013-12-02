@@ -58,7 +58,7 @@ class BuildVectors(unittest.TestCase):
 		bv.collectRareWords(2)
 
 		# act
-		bv.buildInitFeatures(testStr)
+		bv.buildInitFeaturesFromTraining(testStr)
 		
 		# assert
 		# somewhere and sunshine will report this
@@ -74,7 +74,7 @@ class BuildVectors(unittest.TestCase):
 		
 		bv.buildFrequency(testStr)
 		bv.collectRareWords(2)
-		bv.buildInitFeatures(testStr)
+		bv.buildInitFeaturesFromTraining(testStr)
 
 		# act
 		bv.buildKeptFeatures(2)
@@ -84,6 +84,40 @@ class BuildVectors(unittest.TestCase):
 		self.assertTrue(len(bv.keptFeatures) == 2)
 		self.assertTrue(bv.keptFeatures["prevW=something"] == 3)
 		self.assertTrue(bv.keptFeatures["curW=something"] == 3)
+
+	def test_buildKeptFeaturesTestForActualFeatures(self):
+		# arrange
+		bv = buildvectors.BuildVectors()
+		testStr = """something/PN somewhere/PN sunshine\/test/PZ something/PR something/PZ sunshine\/test/PT"""
+		
+		bv.buildFrequency(testStr)
+		bv.collectRareWords(2)
+		bv.buildInitFeaturesFromTraining(testStr)
+
+		# act
+		bv.buildKeptFeatures(2)
+		
+		# assert
+		# somewhere and sunshine will report this
+		self.assertTrue(len(bv.trainFeatureVectors) == 6)
+		
+		self.assertTrue(len(bv.trainFeatureVectors[0].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[0].keptFeatures[0] == "curW=something")
+		
+		self.assertTrue(len(bv.trainFeatureVectors[1].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[1].keptFeatures[0] == "prevW=something")
+
+		self.assertTrue(len(bv.trainFeatureVectors[2].keptFeatures) == 0)
+		
+		self.assertTrue(len(bv.trainFeatureVectors[3].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[3].keptFeatures[0] == "curW=something")
+
+		self.assertTrue(len(bv.trainFeatureVectors[4].keptFeatures) == 2)
+		self.assertTrue(bv.trainFeatureVectors[4].keptFeatures[0] == "prevW=something")
+		self.assertTrue(bv.trainFeatureVectors[4].keptFeatures[1] == "curW=something")
+
+		self.assertTrue(len(bv.trainFeatureVectors[5].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[5].keptFeatures[0] == "prevW=something")
 
 class FeatureTests(unittest.TestCase):
 	def test_buildsBOSCorrectly(self):

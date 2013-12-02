@@ -12,6 +12,7 @@ class BuildVectors(trainvoc.TrainVoc):
 		self.rareWords = Set()
 		self.initFeatures = {}
 		self.keptFeatures = {}
+		self.trainFeatureVectors = []
 
 	def collectRareWords(self, rare_thresh):
 	# run this second
@@ -19,7 +20,7 @@ class BuildVectors(trainvoc.TrainVoc):
 			if(self.frequencyDict[word] < rare_thresh):
 				self.rareWords.add(word)
 
-	def buildInitFeatures(self, strVal):
+	def buildInitFeaturesFromTraining(self, strVal):
 	# run this third
 		lines = strVal.split('\n')
 		features = []
@@ -42,10 +43,13 @@ class BuildVectors(trainvoc.TrainVoc):
 
 				reportSet = Set()
 
+				# set if rareword
 				if wordTagTuple != None and wordTagTuple[0] in self.rareWords:
 					reportSet = newFeature.reportHashSet(True)
 				else:
 					reportSet = newFeature.reportHashSet(False)
+
+				self.trainFeatureVectors.append(newFeature)
 
 				for feat in reportSet:
 					if feat in self.initFeatures:
@@ -57,6 +61,14 @@ class BuildVectors(trainvoc.TrainVoc):
 		for key in self.initFeatures:
 			if self.initFeatures[key] > featFreq:
 				self.keptFeatures[key] = self.initFeatures[key]
+
+		# update features to have just the kept features
+		for trainFeature in self.trainFeatureVectors:
+			trainFeature.setKeptFeatures(self.keptFeatures)
+
+	def printFeatures(self):
+		for feature in self.trainFeatureVectors:
+			print feature.printSelf()
 
 	def makeVectors(self, text, rare_thresh):
 	### I would like frequencyDict to be inherited globally from trainvoc

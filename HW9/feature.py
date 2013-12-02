@@ -6,7 +6,8 @@ class Feature:
 	def __init__(self, wordTag, prevWordTag, prev2WordTag, nextWordTag, next2WordTag):
 		# don't want to keep this around for entire lifetime of model
 		utils = utilities.Utilities()
-		self.featureDict = {}
+		self.isRareWord = False
+		self.keptFeatures = []
 
 		self.wordTag = wordTag
 
@@ -130,34 +131,18 @@ class Feature:
 		set.add("next2W=%s" % self.next2W)
 
 	def reportHashSet(self, rareWord):
+		self.isRareWord = rareWord
+
 		if rareWord:
 			return self.reportRareWordHashSet()
 
 		return self.reportNonRareWordHashSet()
 
 	def printSelf(self):
-		strBuilder = ""
+		strBuilder = self.curW + " " + self.curT + " "
 
-		if(self.curW != None):
-			strBuilder = strBuilder + "curW=" + self.curW + " " 
-		
-		if(self.prevW != None):
-			strBuilder = strBuilder + "prevW=" + self.prevW + " "
-		if(self.prevT != None):
-			strBuilder = strBuilder + "prevT=" + self.prevT + " " 
-		if(self.prev2W != None):
-			strBuilder = strBuilder + "prev2W=" + self.prev2W + " "
-		if(self.prev2T != None):
-			strBuilder = strBuilder + "prev2T=" + self.prev2T + " " 
-		
-		if(self.nextW != None):
-			strBuilder = strBuilder + "nextW=" + self.nextW + " "
-		if(self.nextT != None):
-			strBuilder = strBuilder + "nextT=" + self.nextT + " " 
-		if(self.next2W != None):
-			strBuilder = strBuilder + "next2W=" + self.next2W + " "
-		if(self.next2T != None):
-			strBuilder = strBuilder + "next2T=" + self.next2T + " " 
+		for keptFeature in self.keptFeatures:
+			strBuilder = "%s %s " % (strBuilder, keptFeature)
 
 		return strBuilder
 
@@ -176,6 +161,14 @@ class Feature:
 		
 		setattr(self, key + "W", None)
 		setattr(self, key + "T", None)
+
+	def setKeptFeatures(self, givenKeptFeaturesDict):
+		# we already know if this is rare or not...
+		hashSet = self.reportHashSet(self.isRareWord)
+
+		for keptFeatKey in givenKeptFeaturesDict:
+			if keptFeatKey in hashSet:
+				self.keptFeatures.append(keptFeatKey)
 
 	@staticmethod
 	def buildFeatures(strVal):
