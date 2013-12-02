@@ -24,8 +24,11 @@ class BuildVectors(trainvoc.TrainVoc):
 	# run this third
 		lines = strVal.split('\n')
 		features = []
+		numSent = 0
 
 		for line in lines:
+			numWord = 0
+			numSent += 1
 			# split into words
 			wordTags = line.split()
 
@@ -49,7 +52,7 @@ class BuildVectors(trainvoc.TrainVoc):
 				else:
 					reportSet = newFeature.reportHashSet(False)
 
-				self.trainFeatureVectors.append(newFeature)
+				self.trainFeatureVectors.append((newFeature, numSent, numWord))
 
 				for feat in reportSet:
 					if feat in self.initFeatures:
@@ -57,18 +60,40 @@ class BuildVectors(trainvoc.TrainVoc):
 					else:
 						self.initFeatures[feat] = 1
 
+				numWord += 1
+
 	def buildKeptFeatures(self, featFreq):
 		for key in self.initFeatures:
 			if self.initFeatures[key] > featFreq:
 				self.keptFeatures[key] = self.initFeatures[key]
 
 		# update features to have just the kept features
-		for trainFeature in self.trainFeatureVectors:
-			trainFeature.setKeptFeatures(self.keptFeatures)
+		for trainFeatureTuple in self.trainFeatureVectors:
+			trainFeatureTuple[0].setKeptFeatures(self.keptFeatures)
 
 	def printFeatures(self):
-		for feature in self.trainFeatureVectors:
-			print feature.printSelf()
+		strBuilder = ""
+
+		for featureTuple in self.trainFeatureVectors:
+			strBuilder = "%s %s-%s-%s%s" % (strBuilder, featureTuple[1], featureTuple[2], featureTuple[0].printSelf(), "\n")
+
+		return strBuilder
+
+	def printInitFeats(self):
+		return self.printDict(self.initFeatures)
+
+	def printKeptFeats(self):
+		return self.printDict(self.keptFeatures)
+
+	def printDict(self, dictToPrint):
+		strBuilder = ''
+
+		topSort = sorted(dictToPrint.items(), key=lambda x: -x[1])
+
+		for tup in topSort:
+			strBuilder = "%s %s %s %s" % (strBuilder, tup[0], tup[1], "\n")
+
+		return strBuilder
 
 	def makeVectors(self, text, rare_thresh):
 	### I would like frequencyDict to be inherited globally from trainvoc

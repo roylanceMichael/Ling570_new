@@ -138,13 +138,16 @@ class Feature:
 
 		return self.reportNonRareWordHashSet()
 
+	def replaceComma(self, strVal):
+		return re.sub(",", "comma", strVal)
+
 	def printSelf(self):
-		strBuilder = self.curW + " " + self.curT + " "
+		strBuilder = self.replaceComma(self.curW) + " " + self.replaceComma(self.curT) + " "
 
 		for keptFeature in self.keptFeatures:
-			strBuilder = "%s %s " % (strBuilder, keptFeature)
+			strBuilder = "%s %s 1 " % (strBuilder, self.replaceComma(keptFeature))
 
-		return strBuilder
+		return re.sub("\s+", " ", strBuilder)
 
 	def setupAttr(self, utils, key, strVal):
 		if(strVal == None):
@@ -166,9 +169,9 @@ class Feature:
 		# we already know if this is rare or not...
 		hashSet = self.reportHashSet(self.isRareWord)
 
-		for keptFeatKey in givenKeptFeaturesDict:
-			if keptFeatKey in hashSet:
-				self.keptFeatures.append(keptFeatKey)
+		for feature in hashSet:
+			if feature in givenKeptFeaturesDict:
+				self.keptFeatures.append(feature)
 
 	@staticmethod
 	def buildFeatures(strVal):
