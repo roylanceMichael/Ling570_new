@@ -56,13 +56,22 @@ class Feature:
 		self.pref = []
 		
 		curWLen = len(self.curW)
-		if curWLen > 0:
-			self.suf.append(self.curW[curWLen-1])
-			self.pref.append(self.curW[0])
+		maxPrexLen = 5
 
-		if curWLen > 1:
-			self.suf.append(self.curW[curWLen-2])
-			self.pref.append(self.curW[1])
+		if curWLen <= 4:
+			maxPrexLen = curWLen - 1
+
+		if maxPrexLen == 0:
+			return
+
+		# we want to get all the prefixes that are equal or less than 4
+		for endIdx in range(1, maxPrexLen):
+			self.pref.append(self.curW[:endIdx])
+
+		# 'hello' ello llo lo o
+		for endIdx in range(1, maxPrexLen):
+			backIdx = curWLen - endIdx
+			self.suf.append(self.curW[backIdx:])
 
 	def handle2TCases(self):
 		# rules for handling prev2T and next2T
@@ -103,7 +112,7 @@ class Feature:
 			returnSet.add("containHyp")
 
 		if self.containCap:
-			returnSet.add("containCap")
+			returnSet.add("containUC")
 
 		if self.containNum:
 			returnSet.add("containNum")

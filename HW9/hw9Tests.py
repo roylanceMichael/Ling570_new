@@ -101,23 +101,23 @@ class BuildVectors(unittest.TestCase):
 		# somewhere and sunshine will report this
 		self.assertTrue(len(bv.trainFeatureVectors) == 6)
 		
-		self.assertTrue(len(bv.trainFeatureVectors[0].keptFeatures) == 1)
-		self.assertTrue(bv.trainFeatureVectors[0].keptFeatures[0] == "curW=something")
+		self.assertTrue(len(bv.trainFeatureVectors[0][0].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[0][0].keptFeatures[0] == "curW=something")
 		
-		self.assertTrue(len(bv.trainFeatureVectors[1].keptFeatures) == 1)
-		self.assertTrue(bv.trainFeatureVectors[1].keptFeatures[0] == "prevW=something")
+		self.assertTrue(len(bv.trainFeatureVectors[1][0].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[1][0].keptFeatures[0] == "prevW=something")
 
-		self.assertTrue(len(bv.trainFeatureVectors[2].keptFeatures) == 0)
+		self.assertTrue(len(bv.trainFeatureVectors[2][0].keptFeatures) == 0)
 		
-		self.assertTrue(len(bv.trainFeatureVectors[3].keptFeatures) == 1)
-		self.assertTrue(bv.trainFeatureVectors[3].keptFeatures[0] == "curW=something")
+		self.assertTrue(len(bv.trainFeatureVectors[3][0].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[3][0].keptFeatures[0] == "curW=something")
 
-		self.assertTrue(len(bv.trainFeatureVectors[4].keptFeatures) == 2)
-		self.assertTrue(bv.trainFeatureVectors[4].keptFeatures[0] == "prevW=something")
-		self.assertTrue(bv.trainFeatureVectors[4].keptFeatures[1] == "curW=something")
+		self.assertTrue(len(bv.trainFeatureVectors[4][0].keptFeatures) == 2)
+		self.assertTrue(bv.trainFeatureVectors[4][0].keptFeatures[0] == "prevW=something")
+		self.assertTrue(bv.trainFeatureVectors[4][0].keptFeatures[1] == "curW=something")
 
-		self.assertTrue(len(bv.trainFeatureVectors[5].keptFeatures) == 1)
-		self.assertTrue(bv.trainFeatureVectors[5].keptFeatures[0] == "prevW=something")
+		self.assertTrue(len(bv.trainFeatureVectors[5][0].keptFeatures) == 1)
+		self.assertTrue(bv.trainFeatureVectors[5][0].keptFeatures[0] == "prevW=something")
 
 class FeatureTests(unittest.TestCase):
 	def test_buildsBOSCorrectly(self):
@@ -234,15 +234,19 @@ class FeatureTests(unittest.TestCase):
 
 		# assert
 		self.assertTrue(len(features) == 6)
-		# should be something/PR
+		# should be someth9ing/PR
 		fourthFeature = features[3]
 
-		self.assertTrue(len(fourthFeature.pref) == 2)
-		self.assertTrue(len(fourthFeature.suf) == 2)
+		self.assertTrue(len(fourthFeature.pref) == 4, len(fourthFeature.pref))
+		self.assertTrue(len(fourthFeature.suf) == 4)
 		self.assertTrue(fourthFeature.pref[0] == "s")
-		self.assertTrue(fourthFeature.pref[1] == "o")
+		self.assertTrue(fourthFeature.pref[1] == "so")
+		self.assertTrue(fourthFeature.pref[2] == "som")
+		self.assertTrue(fourthFeature.pref[3] == "some")
 		self.assertTrue(fourthFeature.suf[0] == "g")
-		self.assertTrue(fourthFeature.suf[1] == "n")
+		self.assertTrue(fourthFeature.suf[1] == "ng")
+		self.assertTrue(fourthFeature.suf[2] == "ing")
+		self.assertTrue(fourthFeature.suf[3] == "9ing")
 
 class UtilitiesTests(unittest.TestCase):
 	def test_getWordPosTupleSimple(self):
