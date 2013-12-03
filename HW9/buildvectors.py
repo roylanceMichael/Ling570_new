@@ -115,7 +115,7 @@ class BuildVectors(trainvoc.TrainVoc):
 		strBuilder = ""
 
 		for featureTuple in featureVectors:
-			strBuilder = "%s %s-%s-%s%s" % (strBuilder, featureTuple[1], featureTuple[2], featureTuple[0].printSelf(), "\n")
+			strBuilder = "%s%s-%s-%s%s" % (strBuilder, featureTuple[1], featureTuple[2], featureTuple[0].printSelf(), "\n")
 
 		return strBuilder
 
