@@ -65,7 +65,8 @@ class BuildVectors(trainvoc.TrainVoc):
 
 	def buildKeptFeatures(self, featFreq):
 		for key in self.initFeatures:
-			if self.initFeatures[key] > featFreq:
+			match = re.search("curW=", key)
+			if self.initFeatures[key] >= featFreq or match:
 				self.keptFeatures[key] = self.initFeatures[key]
 
 		# update features to have just the kept features
