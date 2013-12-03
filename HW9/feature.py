@@ -156,7 +156,7 @@ class Feature:
 		for keptFeature in self.keptFeatures:
 			strBuilder = "%s %s 1 " % (strBuilder, self.replaceComma(keptFeature))
 
-		return re.sub("\s+", " ", strBuilder)
+		return re.sub("\s+", " ", strBuilder).strip()
 
 	def setupAttr(self, utils, key, strVal):
 		if(strVal == None):
