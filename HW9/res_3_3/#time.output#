@@ -1,0 +1,10 @@
+done printing init_feats
+done printing kept_feats
+done printing train vectors
+done printing test vectors
+ Rewriting extended pipe from res_3_3/final_train.vectors
+  Instance ID = c22b1566609b2a13:33a80355:142b6bfc53b:-7ff9
+
+real	6m31.543s
+user	3m46.587s
+sys	0m28.360n
