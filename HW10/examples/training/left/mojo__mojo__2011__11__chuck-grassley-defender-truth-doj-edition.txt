@@ -1,0 +1,17 @@
+The Department of Justice has withdrawn its support for a rule that would allow it to lie about the existence of certain sensitive national security records. For the most part. 
+
+Last week, a coalition of civil liberties groups wrote to the Justice Department, raising concerns over the rule. Its basic parameters allow the agency to pretend that select records don't exist if they are requested under the Freedom of Information Act (FOIA). It was first proposed in 1987 by then-Attorney General Edwin Meese, as a way of helping the Justice Department avoid unintentionally acknowledging any ongoing investigations. 
+
+But the Obama administration hoped to codify that regulation into law. In their letter protesting the rule, the American Civil Liberties Union, Citizens for Responsibility and Ethics in Washington, and OpenTheGovernment.org wrote that it would undermine the government's integrity since, well, it makes it okay to lie. The groups weren't even asking for the DOJ to make more records available only that it not pretend that these records don t exist. 
+
+On Monday, Sen. Chuck Grassley (R-Iowa), the top Republican on the Senate Judiciary Committee, wrote a stern letter to Attorney General Eric Holder , arguing that the rule change would lead to an increase in FOIA-related litigation and seriously undermine the public's trust in the government. Grassley also pointed out that the government can already withhold information by invoking things like the Glomar rule , which allows the government to neither confirm nor deny the existence of the records under request. 
+
+Apparently, Grassley, long the scourge of the Justice Department, still has some major pull. In response to his letter , the DOJ asserted kind of passive aggressively that it will axe the rule in question: 
+
+[T]he Department has taken a number of steps to become more transparent in its handling of records that are, by statute, excluded from the FOIA. Having now received a number of comments on the Department's proposed regulations in this area, the Department is actively considering those comments and is reexamining whether there are other approaches to applying exclusions that protect the vital law enforcement and national security concerns that motivated Congress to exclude certain records from the FOIA and do so in the most transparent manner possible. If the proposed regulations can be improved in these respects, we will work to improve them. We believe that Section 16.6(f)(2) of the proposed regulations falls short by those measures, and we will not include that provision when the Department issues final regulations... 
+
+These practices laid out in Attorney General Meese's memo have governed Department practice for more than 20 years. 
+
+While the approach has never involved lying, as some have suggested, the Department believes that past practice could be made more transparent. Accordingly, as part of an effort to update its FOIA regulations and other aspects of its Open Government initiative, the Department took a number of steps designed to bring its handling of exclusions in line with Attorney General Holder's commitment to open government. 
+
+The Justice Department also promised to exclude certain documents from FOIA only when absolutely necessary, to keep track of how often it does so, and, generally, keep the public better informed about these exclusions.
