@@ -1,10 +1,11 @@
 import sys
 import vectors
+import utilities
 
 
 def main():
 
-        vect = vectors.CreateVectors()
+        vect = utilities.Frequencies()   #vectors.CreateVectors()    # utilities.Frequencies()
 	if len(sys.argv) > 1:
 		outputFile = sys.argv[1]
 	        dirs = sys.argv[2:]
