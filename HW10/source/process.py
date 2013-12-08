@@ -1,6 +1,9 @@
 import re
 
 
+### this is an almost exact copy of our code in hw8
+
+
 class ProcessFile:
 	def just_words(self, text):
 		words = re.sub('[^0-9a-zA-Z-]', ' ', text)

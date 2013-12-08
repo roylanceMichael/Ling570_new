@@ -1,25 +1,24 @@
 import sys
-import os
-import process
 import utilities
 
 
-def buildFeatures(strVal):
-	utils = utilities.Utilities()
-	lines = strVal.split('\n')
-	features = []
+### Here we can flesh out the features, if it hasn't been done in other places already
+### This is what I thought the vector may look like:
+### word	F1(word frequency) F2(prevalentL=, prevalentR=), F3(unique=left/right), F4(markedWord=left/right), F5(pref=), F6(prev2W=)
 
-	for line in lines:
-		# split into words
-		wordTags = line.split()
 
-		for i in range(0, len(wordTags)):
+class Features(utilities.CreateDataFiles):
+	def __init__(self):
+		utilities.CreateDataFiles.__init__(self)
 
-			# get words
 
-				newFeature = Feature(wordTags[i], prevWordTag, prev2WordTag, nextWordTag, next2WordTag)
-
-				features.append(newFeature)
-
-		return features
-
+	def checkIfUnique(self, curW):
+	### used in F3; requires filled uniqueLeft and uniqueRight
+		utils = utilities.CreateDataFiles()
+		if curW in utils.uniqueLeft:
+			unique = 'left'
+		elif curW in utils.uniqueRight:
+			unique = 'right'
+		else: 
+			unique = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
+		return unique

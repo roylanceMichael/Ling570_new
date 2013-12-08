@@ -4,13 +4,21 @@ import os
 import process
 
 
+### This file is here solely for the purpose of helping us think about the features. 
+### If run, it creates a directory with different interesting data to look at and draw inspiration from. 
+### To run from command line: python utilities.py ../examples/training/left ../examples/training/right
+### Global dictionaries and a couple methods might be useful in pulling some actual data for the features. Then corresponding methods should be run before main_q3.py
+
+
 class CreateDataFiles:
 ### here we create a bunch of files and dictionaries that we'll need for forming our feature vectors
 	def __init__(self):
 		leftDict = {}
 		rightDict = {}
-		self.leftDifference = {}
-		self.rightDifference = {}
+		leftDifference = {}
+		rightDifference = {}
+		self.uniqueLeft = {}
+		self.uniqueRight = {}
 
 
 	def makeDictFromDir(self, directory):
@@ -69,7 +77,7 @@ class CreateDataFiles:
 	### F3: make dictionaries {word : frequency} for words that belong uniquely to one of the groups
 		uniqueWords = {}
 		for key in dict1:
-			if key not in dict2:
+			if key not in dict2 and dict1[key] > 1:
 				uniqueWords[key] = dict1[key]
 	
 		return uniqueWords
@@ -108,12 +116,14 @@ class CreateDataFiles:
 		f_out.write('LEFT' + '\n' + self.sortAndPrint(self.leftDict) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.rightDict))
 
 		### dictionaries of words that belong uniquely to one of the groups
-		l = self.compareDicts(self.leftDict, self.rightDict)   
-		r = self.compareDicts(self.rightDict, self.leftDict)
+		self.uniqueLeft = self.compareDicts(self.leftDict, self.rightDict)   
+		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
 
 		### dicts sorted according to frequency
-		f3out = open(os.path.join(outputDir, 'unique_words'), 'w')
-                f3out.write('LEFT' + '\n' + self.sortAndPrint(l) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(r))
+		f3outL = open(os.path.join(outputDir, 'unique_words_left'), 'w')
+                f3outL.write(self.sortAndPrint(self.uniqueLeft))
+		f3outR = open(os.path.join(outputDir, 'unique_words_right'), 'w')
+                f3outR.write(self.sortAndPrint(self.uniqueRight))
 
 		k = self.compareSizeOfCorpora(leftDir, rightDir)  
 
