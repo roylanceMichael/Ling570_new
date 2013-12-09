@@ -13,14 +13,13 @@ import process
 class CreateDataFiles:
 ### here we create a bunch of files and dictionaries that we'll need for forming our feature vectors
 	def __init__(self):
-		leftDict = {}
-		rightDict = {}
-		leftDifference = {}
-		rightDifference = {}
+		self.leftDict = {}
+		self.rightDict = {}
+		self.leftDifference = {}
+		self.rightDifference = {}
 		self.uniqueLeft = {}
 		self.uniqueRight = {}
 		self.k = 0
-
 
 	def makeDictFromDir(self, directory):
 	### tool to make a {word : frequency} dict from the input directory
@@ -57,15 +56,16 @@ class CreateDataFiles:
 	        return strBuilder
 
 
-	def wordsThatDifferSignificantlyInFrequency(self, k):
+	def wordsThatDifferSignificantlyInFrequency(self):
 	### F2: list of words that are three times more frequent than in the other
 		for key in self.leftDict:
 			if not key.isdigit():
 				if key in self.rightDict and self.leftDict[key] > 5 and self.rightDict[key] > 5:
-					kvalue = int(int(self.rightDict[key])/k)
+					kvalue = int(int(self.rightDict[key])/self.k)
 					denom = int(self.leftDict[key]) + kvalue
 					if (min(float(int(self.leftDict[key])/denom), float(kvalue/denom)) < 0.25 and
 						key not in self.leftDifference):
+
 						self.leftDifference[key] = self.leftDict[key]
 						self.rightDifference[key] = self.rightDict[key]
 
@@ -110,7 +110,7 @@ class CreateDataFiles:
 		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
 
 		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
-
+		self.wordsThatDifferSignificantlyInFrequency()
 
 	def main(self):
 		leftDir = sys.argv[1]
@@ -137,10 +137,10 @@ class CreateDataFiles:
 		f3outR = open(os.path.join(outputDir, 'unique_words_right'), 'w')
 		f3outR.write(self.sortAndPrint(self.uniqueRight))
 
-		k = self.compareSizeOfCorpora(leftDir, rightDir)  
+		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
 
 		f2out = open(os.path.join(outputDir, 'words_different_frequency'), 'w')
-		f2out.write(self.wordsThatDifferSignificantlyInFrequency(k))
+		f2out.write(self.wordsThatDifferSignificantlyInFrequency())
 
 	#	listLeft = makeListFromFile(wordsLeft)
 	#	listRight = makeListFromFile(wordsRight)

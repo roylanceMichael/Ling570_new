@@ -11,6 +11,20 @@ class Features:
 	def __init__(self, utils):
 		self.utils = utils
 
+	def findPrevalence(self, curW):
+		if(curW in self.utils.leftDifference):
+			leftFrequency = self.utils.leftDifference[curW]
+			rightFrequency = self.utils.rightDifference[curW]
+
+			normalizedRightFrequency = float(rightFrequency) / self.utils.k
+
+			leftPrevalence = leftFrequency / (leftFrequency + normalizedRightFrequency)
+			rightPrevalence = normalizedRightFrequency / (leftFrequency + normalizedRightFrequency)
+
+			return (leftPrevalence, rightPrevalence)
+
+		return None
+
 	def checkIfUnique(self, curW):
 	### used in F3; requires filled uniqueLeft and uniqueRight
 		if curW in self.utils.uniqueLeft:

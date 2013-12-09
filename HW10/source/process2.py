@@ -15,18 +15,20 @@ class Process2(process.ProcessFile):
 	### collecting a list features that are selected for each run
 		usedFeatures = re.findall(r'(F\d+)=1', fs)
                 return usedFeatures
-	
 
 	def getFrequencies(self, text):
 	### {word:frequency} for the file
 		return self.frequency(text)
-
 
 	def F1(self, word):
 	### F1 is the unigram feature - returns very high accuracies
 #		print self.freq[word]
 		return self.freq[word]
 
+	def F2(self, word):
+	### look at the words that are present in both groups, but differ (significantly) in count
+		feat = features.Features(self.utils)
+		return feat.findPrevalence(word)
 	
 	def F3(self, word):
 	### F3 checks if the word is uniquely found in left of right training sets
@@ -34,21 +36,30 @@ class Process2(process.ProcessFile):
 		feat = features.Features(self.utils)
 		return feat.checkIfUnique(word)
 
-
 	def loadVector(self, fs, word):
 	### choosing features that are active and running code for them; return vector - a list of values
 	### can be optimized to avoid running it for each word - need to return a list of functions
 		fList = self.buildFeatureList(fs)
 		vector = []
+
 		if 'F1' in fList:
 			f1 = self.F1(word)
 			vector.append(word + ' ' + str(f1))
+
 		if 'F2' in fList:
 			f2 = self.F2(word)
-			vector.append(f2)
+
+			if f2 != None:
+				vector.append('prevalenceL=%s' % str(f2[0]))
+				vector.append('prevalenceR=%s' % str(f2[1]))
+			else:
+				vector.append('prevalenceL=none')
+				vector.append('prevalenceR=none')
+
 		if 'F3' in fList:
 			f3 = self.F3(word)
 			vector.append('unique=' + str(f3))
+		
 		return vector
 
 
