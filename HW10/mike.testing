@@ -1,71 +1,34 @@
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
-107
 examples/training/left/dem__so.txt left
-president	president 1 prevalenceL=none prevalenceR=none unique=not
-obama	obama 1 prevalenceL=none prevalenceR=none unique=not
-sent	sent 1 prevalenceL=none prevalenceR=none unique=not
-out	out 1 prevalenceL=none prevalenceR=none unique=not
-this	this 1 prevalenceL=none prevalenceR=none unique=not
-message	message 1 prevalenceL=none prevalenceR=none unique=not
-to	to 1 prevalenceL=none prevalenceR=none unique=not
-supporters	supporters 1 prevalenceL=none prevalenceR=none unique=not
-after	after 1 prevalenceL=none prevalenceR=none unique=not
-his	his 1 prevalenceL=none prevalenceR=none unique=not
-speech	speech 1 prevalenceL=none prevalenceR=none unique=not
-tonight	tonight 1 prevalenceL=none prevalenceR=none unique=not
-i	i 3 prevalenceL=none prevalenceR=none unique=not
-just	just 1 prevalenceL=none prevalenceR=none unique=not
-got	got 1 prevalenceL=none prevalenceR=none unique=not
-off	off 1 prevalenceL=none prevalenceR=none unique=not
-stage	stage 1 prevalenceL=none prevalenceR=none unique=not
-in	in 1 prevalenceL=none prevalenceR=none unique=not
-charlotte	charlotte 1 prevalenceL=none prevalenceR=none unique=not
-i	i 3 prevalenceL=none prevalenceR=none unique=not
-hope	hope 1 prevalenceL=none prevalenceR=none unique=not
-i	i 3 prevalenceL=none prevalenceR=none unique=not
-did	did 1 prevalenceL=none prevalenceR=none unique=not
-you	you 1 prevalenceL=none prevalenceR=none unique=not
-proud	proud 1 prevalenceL=none prevalenceR=none unique=not
-let	let 1 prevalenceL=none prevalenceR=none unique=not
-s	s 1 prevalenceL=none prevalenceR=none unique=not
-go	go 1 prevalenceL=none prevalenceR=none unique=not
-win	win 1 prevalenceL=none prevalenceR=none unique=not
-soregasubarashiidayo	soregasubarashiidayo 2 prevalenceL=none prevalenceR=none unique=left
-soregasubarashiidayo	soregasubarashiidayo 2 prevalenceL=none prevalenceR=none unique=left
-amp	amp 1 prevalenceL=0.988171186588 prevalenceR=0.0118288134123 unique=not
-ruling	ruling 1 prevalenceL=0.790991744174 prevalenceR=0.209008255826 unique=not
-barack	barack 1 prevalenceL=none prevalenceR=none unique=not
-donate	donate 1 prevalenceL=none prevalenceR=none unique=not
+president	president 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(president obama)=not
+obama	obama 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(obama sent)=not
+sent	sent 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(sent out)=not
+out	out 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(out this)=not
+this	this 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(this message)=not
+message	message 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(message to)=not
+to	to 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(to supporters)=not
+supporters	supporters 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(supporters after)=left
+after	after 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(after his)=not
+his	his 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(his speech)=not
+speech	speech 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(speech tonight)=left
+tonight	tonight 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(tonight i)=left
+i	i 3 prevalenceL=none prevalenceR=none unique=not unique_bigram(i just)=not
+just	just 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(just got)=left
+got	got 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(got off)=left
+off	off 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(off stage)=left
+stage	stage 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(stage in)=not
+in	in 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(in charlotte)=not
+charlotte	charlotte 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(charlotte i)=left
+i	i 3 prevalenceL=none prevalenceR=none unique=not unique_bigram(i hope)=not
+hope	hope 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(hope i)=left
+i	i 3 prevalenceL=none prevalenceR=none unique=not unique_bigram(i did)=not
+did	did 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(did you)=not
+you	you 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(you proud)=left
+proud	proud 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(proud let)=left
+let	let 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(let s)=not
+s	s 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(s go)=left
+go	go 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(go win)=not
+win	win 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(win soregasubarashiidayo)=not
+soregasubarashiidayo	soregasubarashiidayo 1 prevalenceL=none prevalenceR=none unique=left unique_bigram(soregasubarashiidayo amp)=left
+amp	amp 1 prevalenceL=0.988130563798 prevalenceR=0.0118694362018 unique=not unique_bigram(amp ruling)=left
+ruling	ruling 1 prevalenceL=0.806295399516 prevalenceR=0.193704600484 unique=not unique_bigram(ruling barack)=left
+barack	barack 1 prevalenceL=none prevalenceR=none unique=not unique_bigram(barack donate)=left

@@ -34,3 +34,15 @@ class Features:
 		else: 
 			unique = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
 		return unique
+
+
+        def checkIfUniqueBigram(self, curW):
+        ### used in F3; requires filled uniqueLeft and uniqueRight
+                if curW in self.utils.uniqueBiLeft:
+                        uniqueBi = 'left'
+                elif curW in self.utils.uniqueBiRight:
+                        uniqueBi = 'right'
+                else:
+                        uniqueBi = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
+                return uniqueBi
+

@@ -4,7 +4,7 @@ import os
 import process
 
 
-### This file is here solely for the purpose of helping us think about the features. 
+### This file is here mainly to help us think about the features. 
 ### If run, it creates a directory with different interesting data to look at and draw inspiration from. 
 ### To run from command line: python utilities.py ../examples/training/left ../examples/training/right
 ### Global dictionaries and a couple methods might be useful in pulling some actual data for the features. Then corresponding methods should be run before main_q3.py
@@ -20,6 +20,11 @@ class CreateDataFiles:
 		self.uniqueLeft = {}
 		self.uniqueRight = {}
 		self.k = 0
+		self.bigramLeftDict = {}
+		self.bigramRightDict = {}
+		self.uniqueBiLeft = {}
+		self.uniqueBiRight = {}
+
 
 	def makeDictFromDir(self, directory):
 	### tool to make a {word : frequency} dict from the input directory
@@ -99,18 +104,53 @@ class CreateDataFiles:
 			markedSide = 1
 
 		return markedSide
+
+
+	def bigramFrequency(self, text):
+		bigramDict = {}
+		proc = process.ProcessFile()
+		listAllWords = proc.just_words(text)
+	        for i in range(0, len(listAllWords)-1):
+			bigram = listAllWords[i] + ' ' + listAllWords[i+1]
+                        if bigram in bigramDict:
+                                bigramDict[bigram] += 1
+                        else:
+                                bigramDict[bigram] = 1
+                return bigramDict
+
+
+        def makeBigramDictFromDir(self, directory):
+        ### tool to make a {word : frequency} dict from the input directory
+                filenames = os.listdir(directory)
+                filenames.sort()
+                text = ''
+                proc = process.ProcessFile()
+                for i in range(0, len(filenames)):
+                        inputFOutput = os.path.join(directory, filenames[i])   # create a path for each file
+                        f = open(inputFOutput)
+                        text = text + f.read()
+                        result = self.bigramFrequency(text)
+                return result
 	
 
 	def buildDataStructures(self, leftDir, rightDir):
 		self.leftDict = self.makeDictFromDir(leftDir)
 		self.rightDict = self.makeDictFromDir(rightDir)
 
+		### frequency dictionaries for bigrams
+		self.bigramLeftDict = self.makeBigramDictFromDir(leftDir)
+		self.bigramRightDict = self.makeBigramDictFromDir(rightDir)
+		
 		### dictionaries of words that belong uniquely to one of the groups
 		self.uniqueLeft = self.compareDicts(self.leftDict, self.rightDict)   
 		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
 
+		self.uniqueBiLeft = self.compareDicts(self.bigramLeftDict, self.bigramRightDict)   
+		self.uniqueBiRight = self.compareDicts(self.bigramRightDict, self.bigramLeftDict)
+		
 		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
 		self.wordsThatDifferSignificantlyInFrequency()
+
 
 	def main(self):
 		leftDir = sys.argv[1]
@@ -127,6 +167,13 @@ class CreateDataFiles:
 		f_out = open(os.path.join(outputDir, 'full_frequency_lists'), 'w')
 		f_out.write('LEFT' + '\n' + self.sortAndPrint(self.leftDict) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.rightDict))
 
+		### frequency dictionaries for bigrams
+		self.bigramLeftDict = self.makeBigramDictFromDir(leftDir)
+		self.bigramRightDict = self.makeBigramDictFromDir(rightDir)
+		
+		f4_out = open(os.path.join(outputDir, 'full_frequency_bigram_lists'), 'w')
+		f4_out.write('LEFT' + '\n' + self.sortAndPrint(self.bigramLeftDict) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.bigramRightDict))
+		
 		### dictionaries of words that belong uniquely to one of the groups
 		self.uniqueLeft = self.compareDicts(self.leftDict, self.rightDict)   
 		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
@@ -137,6 +184,16 @@ class CreateDataFiles:
 		f3outR = open(os.path.join(outputDir, 'unique_words_right'), 'w')
 		f3outR.write(self.sortAndPrint(self.uniqueRight))
 
+		### dictionaries of bigrams that belong uniquely to one of the groups
+		self.uniqueBiLeft = self.compareDicts(self.bigramLeftDict, self.bigramRightDict)   
+		self.uniqueBiRight = self.compareDicts(self.bigramRightDict, self.bigramLeftDict)
+		
+		### dicts sorted according to frequency
+		f4outL = open(os.path.join(outputDir, 'unique_bigrams_left'), 'w')
+		f4outL.write(self.sortAndPrint(self.uniqueBiLeft))
+		f4outR = open(os.path.join(outputDir, 'unique_bigrams_right'), 'w')
+		f4outR.write(self.sortAndPrint(self.uniqueBiRight))
+		
 		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
 
 		f2out = open(os.path.join(outputDir, 'words_different_frequency'), 'w')
