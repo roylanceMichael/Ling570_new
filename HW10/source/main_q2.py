@@ -2,17 +2,13 @@ import sys
 import vectors
 import utilities
 
-
 def main():
 
-        vect = utilities.Frequencies()   #vectors.CreateVectors()    # utilities.Frequencies()
+	vect = vectors.CreateVectors()   #vectors.CreateVectors()    # utilities.Frequencies()
 	if len(sys.argv) > 1:
 		outputFile = sys.argv[1]
-	        dirs = sys.argv[2:]
-
+		dirs = sys.argv[2:]
 		vect.processDir(dirs, outputFile)
 
-
-
 if __name__ == '__main__':
-        main()             
+	main()

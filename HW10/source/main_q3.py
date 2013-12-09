@@ -2,11 +2,18 @@ import sys
 import os
 import process
 import process2
+import utilities
 
 
 def main():
-	procF = process.ProcessFile()
-	proc2 = process2.Process2()
+	### hard coding directories for the time being TODO: remove when we submit
+	leftDir = "examples/training/left"
+	rightDir = "examples/training/right"
+
+	utils = utilities.CreateDataFiles()
+	utils.buildDataStructures(leftDir, rightDir)
+
+	proc2 = process2.Process2(utils)
 
 	featureFile = sys.argv[1]
 	featF = open(featureFile)

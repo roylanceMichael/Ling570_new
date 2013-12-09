@@ -6,10 +6,10 @@ import features
 ### Doing many things for q3 here; will have to be expanded with more features
 
 class Process2(process.ProcessFile):
-	def __init__(self):
+	def __init__(self, utils):
 		process.ProcessFile()
+		self.utils = utils
 		freq = {}
-
 
 	def buildFeatureList(self, fs):
 	### collecting a list features that are selected for each run
@@ -31,7 +31,7 @@ class Process2(process.ProcessFile):
 	def F3(self, word):
 	### F3 checks if the word is uniquely found in left of right training sets
 	### does not work properly yet; need to run compareDicts or make sure global dicts in utilities.py are filled
-		feat = features.Features()
+		feat = features.Features(self.utils)
 		return feat.checkIfUnique(word)
 
 

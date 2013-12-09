@@ -19,6 +19,7 @@ class CreateDataFiles:
 		rightDifference = {}
 		self.uniqueLeft = {}
 		self.uniqueRight = {}
+		self.k = 0
 
 
 	def makeDictFromDir(self, directory):
@@ -100,6 +101,17 @@ class CreateDataFiles:
 		return markedSide
 	
 
+	def buildDataStructures(self, leftDir, rightDir):
+		self.leftDict = self.makeDictFromDir(leftDir)
+		self.rightDict = self.makeDictFromDir(rightDir)
+
+		### dictionaries of words that belong uniquely to one of the groups
+		self.uniqueLeft = self.compareDicts(self.leftDict, self.rightDict)   
+		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
+
+		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
+
+
 	def main(self):
 		leftDir = sys.argv[1]
 		rightDir = sys.argv[2]
@@ -121,14 +133,14 @@ class CreateDataFiles:
 
 		### dicts sorted according to frequency
 		f3outL = open(os.path.join(outputDir, 'unique_words_left'), 'w')
-                f3outL.write(self.sortAndPrint(self.uniqueLeft))
+		f3outL.write(self.sortAndPrint(self.uniqueLeft))
 		f3outR = open(os.path.join(outputDir, 'unique_words_right'), 'w')
-                f3outR.write(self.sortAndPrint(self.uniqueRight))
+		f3outR.write(self.sortAndPrint(self.uniqueRight))
 
 		k = self.compareSizeOfCorpora(leftDir, rightDir)  
 
 		f2out = open(os.path.join(outputDir, 'words_different_frequency'), 'w')
-                f2out.write(self.wordsThatDifferSignificantlyInFrequency(k))
+		f2out.write(self.wordsThatDifferSignificantlyInFrequency(k))
 
 	#	listLeft = makeListFromFile(wordsLeft)
 	#	listRight = makeListFromFile(wordsRight)
