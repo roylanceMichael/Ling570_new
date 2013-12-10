@@ -28,6 +28,7 @@ class CreateDataFiles:
 
 	def makeDictFromDir(self, directory):
 	### tool to make a {word : frequency} dict from the input directory
+		print directory
 		filenames = os.listdir(directory)
 	        filenames.sort()
         	text = ''
