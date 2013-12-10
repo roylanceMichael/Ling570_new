@@ -21,11 +21,9 @@ class Process2(process.ProcessFile):
 	### {word:frequency} for the file
 		return self.frequency(text)
 
-#	def getBigram(self, text, word):
 
 	def F1(self, word):
 	### F1 is the unigram feature - returns very high accuracies
-#		print self.freq[word]
 		return self.freq[word]
 
 	def F2(self, word):
@@ -59,11 +57,11 @@ class Process2(process.ProcessFile):
 			f2 = self.F2(word)
 
 			if f2 != None:
-				vector.append('prevalenceL=%s' % str(f2[0]))
-				vector.append('prevalenceR=%s' % str(f2[1]))
+				vector.append('prevalence1=%s' % str(f2[0]))
+				vector.append('prevalence2=%s' % str(f2[1]))
 			else:
-				vector.append('prevalenceL=none')
-				vector.append('prevalenceR=none')
+				vector.append('prevalence1=none')
+				vector.append('prevalence2=none')
 
 		if 'F3' in fList:
 			f3 = self.F3(word)
@@ -84,7 +82,6 @@ class Process2(process.ProcessFile):
 		strBuilder = ''
                 
 		for i in range(0, len(self.just_words(text))-1):
-#		for word in self.just_words(text):
 			word = self.just_words(text)[i]
 			nextWord = self.just_words(text)[i+1]
 			vector = self.loadVector(fs, word, nextWord)

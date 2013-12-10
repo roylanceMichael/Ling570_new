@@ -178,7 +178,7 @@ class CreateDataFiles:
 
 			for otherKey in self.bigramLabelDict:
 				if otherKey != primaryKey:
-					otherDicts.append(self.bigramLabelDict[primaryKey])
+					otherDicts.append(self.bigramLabelDict[otherKey])
 
 			self.uniqueBiLabelDict[primaryKey] = self.compareDictsMultiple(dictForLabel, otherDicts)
 

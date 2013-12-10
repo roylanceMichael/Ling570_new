@@ -58,8 +58,8 @@ class Features:
 		for key in self.utils.labelDifference:
 			keys.append(key)
 
-		firstUnique = self.utils.labelUniques[keys[0]]
-		secondUnique = self.utils.labelUniques[keys[1]]
+		firstUnique = self.utils.uniqueBiLabelDict[keys[0]]
+		secondUnique = self.utils.uniqueBiLabelDict[keys[1]]
 
 		if curW in firstUnique:
 			uniqueBi = 'first'

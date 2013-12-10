@@ -1,0 +1,127 @@
+Las Vegas, Nev. - To arrive at Newt Gingrich's Nevada headquarters, you must first enter the doors of Seale and Beers, a CPA office just off Highway 95, twenty minutes away from the neon lights of the Vegas strip. 
+
+Xeroxed signs with red arrows pointing to the "Newt Gingrich campaign" are taped to the walls, directing visitors around the corner to four non-descript offices, leased soon after the South Carolina primary. 
+
+But there is little evidence of campaign activity as you round the bend, no open piles of Gingrich literature. In fact there were no volunteer staffers present at all Thursday afternoon; they had apparently gone to scout out a potential event site at The Venetian, owned by casino mogul and Gingrich supporter Sheldon Adelson. 
+
+As Gingrich bides his time in Nevada, holding fundraisers beyond the surveillance of the press corp and shoring up the resources he needs to get to Super Tuesday , his Vegas operation continues on a low hum in the run up to the Saturday caucus. 
+
+Mitt Romney won the 2008 caucuses and is positioned to win again in this state, but delegates will be proportionally allocated according to the outcome, and Gingrich's volunteers press on, albeit on a shoestring. 
+
+On Tuesday, a call center was set up at a hotel conference room in the Vegas suburbs but by Thursday - per a pre-arranged agreement - the 25 phones were unplugged for a few hours to accommodate another event. A handful of die-hard volunteers relocated their efforts to a third floor hotel room where they continued their efforts. On this day, calls were being placed to Carson City and a volunteer said she seemed to be contacting mostly Romney supporters. 
+
+But while Gingrich is spending most of his time in Las Vegas, the most densely populated region of the state, it's the rural North that is markedly more conservative and it's there that ground operations are most organized. 
+
+Kim Bacchus chairs Gingrich's Washoe County operations and has designated site coordinators for all fourteen caucus sites to ensure that campaign materials be made available in every classroom. Without any official list of supporters from the Gingrich campaign, Bacchus has lined up over 200 precinct chairs using her own recruiting methods. 
+
+"It doesn't cover all the precincts but I am certain there are people who will speak for Newt," she said, pointing to the standing-room only event she organized for the candidate Wednesday on 20 hours notice. "I am hoping all those folks will feel motivated to stand and speak for the Speaker," she said. 
+
+Whether it was the large pile of campaign t-shirts unclaimed after his fourth place finish in Iowa or the live band that played to a half empty room at his New Hampshire watch party, the road up to Newt Gingrich's win in South Carolina has been littered with evidence of wasted resources. But as the candidate tries to regroup here in Nevada, the hope is that he can store enough up in his reserves to gear up for the long run. 
+
+Meanwhile, South Carolina staffers have arrived in Las Vegas to help with the campaign. Leslie Gaines, the Deputy State Director in South Carolina, as well as Taylor Mason, a former regional field director there, turned up at Gingrich's Hispanic roundtable Thursday. 
+
+amp;amp;amp;amp;amp;amp;amp;lt;!-- 
+
+/* Font Definitions */ 
+
+@font-face 
+
+{font-family:"Cambria Math"; 
+
+panose-1:2 4 5 3 5 4 6 3 2 4; 
+
+mso-font-charset:0; 
+
+mso-generic-font-family:roman; 
+
+mso-font-pitch:variable; 
+
+mso-font-signature:-1610611985 1107304683 0 0 159 0;} 
+
+@font-face 
+
+{font-family:Calibri; 
+
+panose-1:2 15 5 2 2 2 4 3 2 4; 
+
+mso-font-charset:0; 
+
+mso-generic-font-family:swiss; 
+
+mso-font-pitch:variable; 
+
+mso-font-signature:-1610611985 1073750139 0 0 159 0;} 
+
+/* Style Definitions */ 
+
+p.MsoNormal, li.MsoNormal, div.MsoNormal 
+
+{mso-style-unhide:no; 
+
+mso-style-qformat:yes; 
+
+mso-style-parent:""; 
+
+margin:0in; 
+
+margin-bottom:.0001pt; 
+
+mso-pagination:widow-orphan; 
+
+font-size:11.0pt; 
+
+font-family:"Calibri","sans-serif"; 
+
+mso-ascii-font-family:Calibri; 
+
+mso-ascii-theme-font:minor-latin; 
+
+mso-fareast-font-family:Calibri; 
+
+mso-fareast-theme-font:minor-latin; 
+
+mso-hansi-font-family:Calibri; 
+
+mso-hansi-theme-font:minor-latin; 
+
+mso-bidi-font-family:"Times New Roman"; 
+
+mso-bidi-theme-font:minor-bidi;} 
+
+.MsoChpDefault 
+
+{mso-style-type:export-only; 
+
+mso-default-props:yes; 
+
+mso-ascii-font-family:Calibri; 
+
+mso-ascii-theme-font:minor-latin; 
+
+mso-fareast-font-family:Calibri; 
+
+mso-fareast-theme-font:minor-latin; 
+
+mso-hansi-font-family:Calibri; 
+
+mso-hansi-theme-font:minor-latin; 
+
+mso-bidi-font-family:"Times New Roman"; 
+
+mso-bidi-theme-font:minor-bidi;} 
+
+@page WordSection1 
+
+{size:8.5in 11.0in; 
+
+margin:1.0in 1.0in 1.0in 1.0in; 
+
+mso-header-margin:.5in; 
+
+mso-footer-margin:.5in; 
+
+mso-paper-source:0;} 
+
+div.WordSection1 
+
+{page:WordSection1;
