@@ -6,15 +6,6 @@ import utilities
 
 
 def main():
-	### hard coding directories for the time being TODO: remove when we submit
-	leftDir = "examples/training/left"
-	rightDir = "examples/training/right"
-
-	utils = utilities.CreateDataFiles()
-	utils.buildDataStructures(leftDir, rightDir)
-
-	proc2 = process2.Process2(utils)
-
 	if len(sys.argv) > 1:
 
 		featureFile = sys.argv[1]
@@ -26,23 +17,29 @@ def main():
 
 		dirs = sys.argv[3:]
 
+		utils = utilities.CreateDataFiles()
+		utils.buildDataStructures(dirs)
+
+		proc2 = process2.Process2(utils, len(dirs))
+
 		f1 = open(outputFile, 'w')
 
-        	for eachDir in dirs:   # cycle through the list of directories
-	        	filenames = os.listdir(eachDir)
-	                filenames.sort()
-        	        n = len(filenames)
-                	for i in range(0, n):
-        	        	inputFOutput = os.path.join(eachDir, filenames[i])   # create a path for each file
-	                        f = open(inputFOutput)
-	
-        	                text = f.read()
+    	for eachDir in dirs:   # cycle through the list of directories
+			filenames = os.listdir(eachDir)
+			filenames.sort()
+			n = len(filenames)
 
-                	        result = proc2.buildVector(fs, text)
+			for i in range(0, n):
+				inputFOutput = os.path.join(eachDir, filenames[i])   # create a path for each file
+				f = open(inputFOutput)
 
-                        	f1.write("%s %s %s %s" % (inputFOutput, os.path.basename(eachDir), result, "\n"))
+				text = f.read()
 
-	                        f.close()
+				result = proc2.buildVector(fs, text)
+
+				f1.write("%s %s %s %s" % (inputFOutput, os.path.basename(eachDir), result, "\n"))
+
+				f.close()
 
 
 if __name__ == '__main__':

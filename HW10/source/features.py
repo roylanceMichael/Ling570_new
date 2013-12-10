@@ -12,37 +12,61 @@ class Features:
 		self.utils = utils
 
 	def findPrevalence(self, curW):
-		if(curW in self.utils.leftDifference):
-			leftFrequency = self.utils.leftDifference[curW]
-			rightFrequency = self.utils.rightDifference[curW]
 
-			normalizedRightFrequency = float(rightFrequency) / self.utils.k
+		# we know that we have 2 directories
+		keys = []
+		for key in self.utils.labelDifference:
+			keys.append(key)
 
-			leftPrevalence = leftFrequency / (leftFrequency + normalizedRightFrequency)
-			rightPrevalence = normalizedRightFrequency / (leftFrequency + normalizedRightFrequency)
+		firstDifference = self.utils.labelDifference[keys[0]]
+		secondDifference = self.utils.labelDifference[keys[1]]
 
-			return (leftPrevalence, rightPrevalence)
+		if(curW in firstDifference):
+			firstFrequency = firstDifference[curW]
+			secondFrequency = secondDifference[curW]
+
+			normalizedSecondFrequency = float(secondFrequency) / self.utils.k
+
+			firstPrevalence = firstFrequency / (firstFrequency + normalizedSecondFrequency)
+			secondPrevalence = normalizedSecondFrequency / (firstFrequency + normalizedSecondFrequency)
+
+			return (firstPrevalence, secondPrevalence)
 
 		return None
 
 	def checkIfUnique(self, curW):
 	### used in F3; requires filled uniqueLeft and uniqueRight
-		if curW in self.utils.uniqueLeft:
-			unique = 'left'
-		elif curW in self.utils.uniqueRight:
-			unique = 'right'
+		keys = []
+		for key in self.utils.labelDifference:
+			keys.append(key)
+
+		firstUnique = self.utils.labelUniques[keys[0]]
+		secondUnique = self.utils.labelUniques[keys[1]]
+
+		if curW in firstUnique:
+			unique = 'first'
+		elif curW in secondUnique:
+			unique = 'second'
 		else: 
 			unique = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
 		return unique
 
 
-        def checkIfUniqueBigram(self, curW):
-        ### used in F3; requires filled uniqueLeft and uniqueRight
-                if curW in self.utils.uniqueBiLeft:
-                        uniqueBi = 'left'
-                elif curW in self.utils.uniqueBiRight:
-                        uniqueBi = 'right'
-                else:
-                        uniqueBi = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
-                return uniqueBi
+	def checkIfUniqueBigram(self, curW):
+	### used in F3; requires filled uniqueLeft and uniqueRight
+		keys = []
+		for key in self.utils.labelDifference:
+			keys.append(key)
+
+		firstUnique = self.utils.labelUniques[keys[0]]
+		secondUnique = self.utils.labelUniques[keys[1]]
+
+		if curW in firstUnique:
+			uniqueBi = 'first'
+		elif curW in secondUnique:
+			uniqueBi = 'second'
+		else:
+			uniqueBi = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
+
+		return uniqueBi
 

@@ -13,18 +13,15 @@ import process
 class CreateDataFiles:
 ### here we create a bunch of files and dictionaries that we'll need for forming our feature vectors
 	def __init__(self):
-		self.leftDict = {}
-		self.rightDict = {}
-		self.leftDifference = {}
-		self.rightDifference = {}
-		self.uniqueLeft = {}
-		self.uniqueRight = {}
-		self.k = 0
-		self.bigramLeftDict = {}
-		self.bigramRightDict = {}
-		self.uniqueBiLeft = {}
-		self.uniqueBiRight = {}
+		self.labelDict = {}
+		self.labelUniques = {}
+		
+		self.bigramLabelDict = {}
+		self.uniqueBiLabelDict = {}
 
+		self.labelDifference = {}
+
+		self.k = 0
 
 	def makeDictFromDir(self, directory):
 	### tool to make a {word : frequency} dict from the input directory
@@ -32,14 +29,15 @@ class CreateDataFiles:
 		filenames = os.listdir(directory)
 	        filenames.sort()
         	text = ''
+
 		proc = process.ProcessFile()
         	for i in range(0, len(filenames)):
         		inputFOutput = os.path.join(directory, filenames[i])   # create a path for each file
 	                f = open(inputFOutput)
         	        text = text + f.read()
                 	result = proc.frequency(text)
+		
 		return result	
-
 
 	def compareSizeOfCorpora(self, dir1, dir2):
 	### F2: we will need to check by what coefficient one corpus is larger than the other
@@ -62,21 +60,26 @@ class CreateDataFiles:
 	        return strBuilder
 
 
-	def wordsThatDifferSignificantlyInFrequency(self):
+	def wordsThatDifferSignificantlyInFrequency(self, firstKey, secondKey):
 	### F2: list of words that are three times more frequent than in the other
-		for key in self.leftDict:
-			if not key.isdigit():
-				if key in self.rightDict and self.leftDict[key] > 5 and self.rightDict[key] > 5:
-					kvalue = int(int(self.rightDict[key])/self.k)
-					denom = int(self.leftDict[key]) + kvalue
-					if (min(float(int(self.leftDict[key])/denom), float(kvalue/denom)) < 0.25 and
-						key not in self.leftDifference):
+		self.labelDifference[firstKey] = {}
+		self.labelDifference[secondKey] = {}
 
-						self.leftDifference[key] = self.leftDict[key]
-						self.rightDifference[key] = self.rightDict[key]
+		for key in self.labelDict[firstKey]:
+			if not key.isdigit():
+				if key in self.labelDict[secondKey] and self.labelDict[firstKey][key] > 5 and self.labelDict[secondKey][key] > 5:
+
+					kvalue = int(int(self.labelDict[secondKey][key])/self.k)
+					denom = int(self.labelDict[firstKey][key]) + kvalue
+					
+					if (min(float(int(self.labelDict[firstKey][key])/denom), float(kvalue/denom)) < 0.25 and
+						key not in self.labelDifference[firstKey]):
+
+						self.labelDifference[firstKey][key] = self.labelDict[firstKey][key]
+						self.labelDifference[secondKey][key] = self.labelDict[secondKey][key]
 
 		### dicts sorted according to frequency
-		strBuilder = 'LEFT' + '\n' + self.sortAndPrint(self.leftDifference) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.rightDifference)
+		strBuilder = 'LEFT' + '\n' + self.sortAndPrint(self.labelDifference[firstKey]) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.labelDifference[secondKey])
 		return strBuilder
 			
 
@@ -87,6 +90,21 @@ class CreateDataFiles:
 			if key not in dict2 and dict1[key] > 1:
 				uniqueWords[key] = dict1[key]
 	
+		return uniqueWords
+
+	def compareDictsMultiple(self, firstDict, otherDicts):
+		uniqueWords = {}
+		for key in firstDict:
+			uniqueWord = True
+			
+			for otherDict in otherDicts:
+				if key in otherDict:
+					uniqueWord = False
+					break
+
+			if uniqueWord:
+				uniqueWords[key] = firstDict[key]
+
 		return uniqueWords
 
 
@@ -134,24 +152,39 @@ class CreateDataFiles:
                 return result
 	
 
-	def buildDataStructures(self, leftDir, rightDir):
-		self.leftDict = self.makeDictFromDir(leftDir)
-		self.rightDict = self.makeDictFromDir(rightDir)
+	def buildDataStructures(self, dirs):
 
-		### frequency dictionaries for bigrams
-		self.bigramLeftDict = self.makeBigramDictFromDir(leftDir)
-		self.bigramRightDict = self.makeBigramDictFromDir(rightDir)
-		
-		### dictionaries of words that belong uniquely to one of the groups
-		self.uniqueLeft = self.compareDicts(self.leftDict, self.rightDict)   
-		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
+		for labelDir in dirs:
+			self.labelDict[labelDir] = self.makeDictFromDir(labelDir)
+			self.bigramLabelDict[labelDir] = self.makeBigramDictFromDir(labelDir)
 
-		self.uniqueBiLeft = self.compareDicts(self.bigramLeftDict, self.bigramRightDict)   
-		self.uniqueBiRight = self.compareDicts(self.bigramRightDict, self.bigramLeftDict)
-		
-		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
-		self.wordsThatDifferSignificantlyInFrequency()
+		for primaryKey in self.labelDict:
+			dictForLabel = self.labelDict[primaryKey]
+			
+			otherDicts = []
+			
+			for otherKey in self.labelDict:
+				if otherKey != primaryKey:
+					otherDicts.append(self.labelDict[otherKey])
 
+			# { "../examples/training/left": { "testing": 1, "something": 2 }, "../examples/training/right": { "barney": 1, "where": 2}}
+			self.labelUniques[primaryKey] = self.compareDictsMultiple(dictForLabel, otherDicts)
+
+
+		for primaryKey in self.bigramLabelDict:
+			dictForLabel = self.bigramLabelDict[primaryKey]
+
+			otherDicts = []
+
+			for otherKey in self.bigramLabelDict:
+				if otherKey != primaryKey:
+					otherDicts.append(self.bigramLabelDict[primaryKey])
+
+			self.uniqueBiLabelDict[primaryKey] = self.compareDictsMultiple(dictForLabel, otherDicts)
+
+		if len(dirs) == 2:
+			self.k = self.compareSizeOfCorpora(dirs[0], dirs[1])
+			self.wordsThatDifferSignificantlyInFrequency(dirs[0], dirs[1])
 
 	def main(self):
 		leftDir = sys.argv[1]

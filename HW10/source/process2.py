@@ -6,8 +6,9 @@ import features
 ### Doing many things for q3 here; will have to be expanded with more features
 
 class Process2(process.ProcessFile):
-	def __init__(self, utils):
+	def __init__(self, utils, dirNum):
 		process.ProcessFile()
+		self.dirNum = dirNum
 		self.utils = utils
 		freq = {}
 
@@ -54,7 +55,7 @@ class Process2(process.ProcessFile):
 			f1 = self.F1(word)
 			vector.append(word + ' ' + str(f1))
 
-		if 'F2' in fList:
+		if 'F2' in fList and self.dirNum == 2:
 			f2 = self.F2(word)
 
 			if f2 != None:
