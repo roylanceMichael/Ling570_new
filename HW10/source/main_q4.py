@@ -52,12 +52,15 @@ def main():
 
 				result = proc2.buildVector(fs, text)
 
-				f1.write("%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir), result, "\n"))
+				templatedResult = "%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir), result, "\n")
 
-				print 'finished with ' + str(len(result)) + ' file # ' + str(i) + ' out of ' + str(n)
+				f1.write(templatedResult)
+
+				print 'finished with ' + str(len(templatedResult)) + ' file # ' + str(i) + ' out of ' + str(n)
 
 
 		f1.close()
+
 		print 'should have created ' + outputFile	
 
 if __name__ == '__main__':
