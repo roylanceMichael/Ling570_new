@@ -22,6 +22,10 @@ def main():
 
 		allDirs = []
 		for eachDir in dirs:   # cycle through the list of directories
+			# print 'testing ' + str(os.walk(eachDir).next())
+			# print 'and' + os.walk(eachDir).next()
+			# print 'and ' + os.walk(eachDir).next()[1]
+
 			subdirs = os.walk(eachDir).next()[1]
 
 			if len(subdirs) > 0:
@@ -56,7 +60,7 @@ def main():
 
 				f1.write(templatedResult)
 
-				print 'finished with ' + str(len(templatedResult)) + ' file # ' + str(i) + ' out of ' + str(n)
+				print 'finished with ' + str(os.path.basename(eachSubdir).strip()) + ' file # ' + str(i) + ' out of ' + str(n)
 
 
 		f1.close()

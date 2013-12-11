@@ -8,6 +8,6 @@ python2.7 ./source/main_q5.py $1 $2 $3 $4
 
 mallet import-file --input $4/train.vectors.txt --output $4/train.vectors
 
-mallet import-file --input $4/test.vectors.txt --output $4/test.vectors --use-pipe-from $5/train.vectors
+#mallet import-file --input $4/test.vectors.txt --output $4/test.vectors --use-pipe-from $5/train.vectors
 
-vectors2classify --training-file $4/train.vectors --testing-file $4/test.vectors --output-classifier $4/me_model --trainer MaxEnt > $4/me.stdout 2>$4/me.stderr
+#vectors2classify --training-file $4/train.vectors --testing-file $4/test.vectors --output-classifier $4/me_model --trainer MaxEnt > $4/me.stdout 2>$4/me.stderr
