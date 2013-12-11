@@ -20,41 +20,40 @@ def main():
 
 		f1 = open(outputFile, 'w')
 
-	allDirs = []
-    	for eachDir in dirs:   # cycle through the list of directories
-		
-		
-		subdirs = os.walk(eachDir).next()[1]
-	        if len(subdirs) > 0:
-			for subdir in subdirs:
-				allDirs.append(os.path.join(eachDir, subdir))
-		else:
-			allDirs.append(eachDir)
+		allDirs = []
+		for eachDir in dirs:   # cycle through the list of directories
+			subdirs = os.walk(eachDir).next()[1]
 
-#	print 'our list'+ str(allDirs)
+			if len(subdirs) > 0:
+				for subdir in subdirs:
+					allDirs.append(os.path.join(eachDir, subdir))
+			else:
+				allDirs.append(eachDir)
+
+		# print 'our list'+ str(allDirs)
+				
+		utils.buildDataStructures(allDirs)
+
+		proc2 = process2.Process2(utils, len(allDirs))
 			
-	utils.buildDataStructures(allDirs)
+		for eachSubdir in allDirs:
 
-	proc2 = process2.Process2(utils, len(allDirs))
+			filenames = os.listdir(eachSubdir)
+			filenames.sort()
+
+			n = len(filenames)
+
+			for i in range(0, n):
+				inputFOutput = os.path.join(eachSubdir, filenames[i])   # create a path for each file
+				f = open(inputFOutput)
 		
-	for eachSubdir in allDirs:
+				text = f.read()
 
-		filenames = os.listdir(eachSubdir)
-		filenames.sort()
-		n = len(filenames)
+				result = proc2.buildVector(fs, text)
 
-		for i in range(0, n):
-			inputFOutput = os.path.join(eachSubdir, filenames[i])   # create a path for each file
-			f = open(inputFOutput)
-	
-			text = f.read()
+				f1.write("%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir), result, "\n"))
 
-			result = proc2.buildVector(fs, text)
-
-			f1.write("%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir), result, "\n"))
-
-			f.close()
-
+				f.close()
 
 if __name__ == '__main__':
 	main()
