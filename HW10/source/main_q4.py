@@ -44,15 +44,15 @@ def main():
 			n = len(filenames)
 
 			for i in range(0, n):
-				inputFOutput = os.path.join(eachSubdir, filenames[i])   # create a path for each file
+				inputFOutput = os.path.join(eachSubdir, filenames[i]).strip()   # create a path for each file
 				
 				f = open(inputFOutput)
 				text = f.read()
 				f.close()
 
-				result = proc2.buildVector(fs, text)
+				result = proc2.buildVector(fs, text).strip()
 
-				templatedResult = "%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir), result, "\n")
+				templatedResult = "%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir).strip(), result, "\n")
 
 				f1.write(templatedResult)
 
