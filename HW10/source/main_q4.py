@@ -45,6 +45,7 @@ def main():
 
 			for i in range(0, n):
 				inputFOutput = os.path.join(eachSubdir, filenames[i])   # create a path for each file
+				
 				f = open(inputFOutput)
 		
 				text = f.read()
@@ -55,7 +56,9 @@ def main():
 
 				f.close()
 
-				print 'finished with file # ' + str(i) + ' out of ' + str(n)
+				# print 'finished with file # ' + str(i) + ' out of ' + str(n)
+
+			print 'should have created ' + outputFile	
 
 if __name__ == '__main__':
 	main()
