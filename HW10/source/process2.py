@@ -40,6 +40,13 @@ class Process2(process.ProcessFile):
 	### F4 checks if the bigram is uniquely found in left of right training sets
 		return self.feat.checkIfUniqueBigram(bigram)
 
+
+#       def F5(self, bigram):
+#       ### F5 should be the bigram feature - return frequency
+#               print self.utils.frequency(bigram)
+#               return self.utils.frequency[1](bigram)
+
+
 	def generateFeatureFunctions(self, fs):
 		if len(self.functionList) > 0:
 			return
@@ -60,6 +67,9 @@ class Process2(process.ProcessFile):
 		if 'F4' in fList:
 			functionList.append(self.F4Wrapper)
 
+#               if 'F5' in fList:
+#                       functionList.append(self.F5Wrapper)
+
 		self.functionList = functionList
 
 		return self.functionList
@@ -75,17 +85,27 @@ class Process2(process.ProcessFile):
 			vectorArray.append('prevalence1=%s' % str(f2[0]))
 			vectorArray.append('prevalence2=%s' % str(f2[1]))
 		else:
-			vectorArray.append('prevalence1=none')
-			vectorArray.append('prevalence2=none')
+			return
+#			vectorArray.append('prevalence1=none')
+#			vectorArray.append('prevalence2=none')
 
 	def F3Wrapper(self, word, vectorArray, nextWord):
 		f3 = self.F3(word)
-		vectorArray.append('unique=' + str(f3))
+		if str(f3) != 'None':
+			vectorArray.append('unique=' + str(f3))
 
 	def F4Wrapper(self, word, vectorArray, nextWord):
 		bigram = str(word + ' ' + nextWord)
 		f4 = self.F4(bigram)
-		vectorArray.append('unique_bigram(' + bigram + ')=' + str(f4))
+		if str(f4) != 'None':
+			vectorArray.append('unique_bigram(' + bigram + ')=' + str(f4))
+
+
+#       def F5Wrapper(self, word, vectorArray, nextWord):
+#               bigram = str(word + ' ' + nextWord)
+#               f5 = self.F5(bigram)
+#               vectorArray.append(bigram + ' ' + str(f5))
+
 
 	def buildVector(self, fs, text):
 	### building vector for output

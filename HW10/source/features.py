@@ -44,7 +44,8 @@ class Features:
 		elif curW in self.secondUnique:
 			unique = 'second'
 		else: 
-			unique = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
+			unique = None
+#			unique = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
 		return unique
 
 
@@ -55,7 +56,8 @@ class Features:
 		elif curW in self.secondBiUnique:
 			uniqueBi = 'second'
 		else:
-			uniqueBi = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
+			uniqueBi = None
+#			uniqueBi = 'not'   # not sure if this should be output at all; maybe ignore alltogether?
 
 		return uniqueBi
 
