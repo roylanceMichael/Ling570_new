@@ -73,12 +73,19 @@ class CreateDataFiles:
 	def compareSizeOfCorpora(self, dir1, dir2):
 	### F2: we will need to check by what coefficient one corpus is larger than the other
         	filenames1 = os.listdir(dir1)
+	        
 	        n1 = len(filenames1)
+        	
         	filenames2 = os.listdir(dir2)
+	        
 	        n2 = len(filenames2)
 
         	if n2 > n1:
-                	k = float(round(n2 / n1, 3))
+				k = float(round(n2 / n1, 3))
+
+        	else:
+        		k = float(round(n1 / n2, 3))
+
 	        return k
 
 
