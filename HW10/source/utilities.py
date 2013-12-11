@@ -186,56 +186,6 @@ class CreateDataFiles:
 			self.k = self.compareSizeOfCorpora(dirs[0], dirs[1])
 			self.wordsThatDifferSignificantlyInFrequency(dirs[0], dirs[1])
 
-	def main(self):
-		leftDir = sys.argv[1]
-		rightDir = sys.argv[2]
-		outputDir = 'HelpfulDataFiles'
-
-		if not os.path.exists(outputDir):       # create output directory
-			os.makedirs(outputDir)
-
-		### frequency dictionaries for each group
-		self.leftDict = self.makeDictFromDir(leftDir)
-		self.rightDict = self.makeDictFromDir(rightDir)
-
-		f_out = open(os.path.join(outputDir, 'full_frequency_lists'), 'w')
-		f_out.write('LEFT' + '\n' + self.sortAndPrint(self.leftDict) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.rightDict))
-
-		### frequency dictionaries for bigrams
-		self.bigramLeftDict = self.makeBigramDictFromDir(leftDir)
-		self.bigramRightDict = self.makeBigramDictFromDir(rightDir)
-		
-		f4_out = open(os.path.join(outputDir, 'full_frequency_bigram_lists'), 'w')
-		f4_out.write('LEFT' + '\n' + self.sortAndPrint(self.bigramLeftDict) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.bigramRightDict))
-		
-		### dictionaries of words that belong uniquely to one of the groups
-		self.uniqueLeft = self.compareDicts(self.leftDict, self.rightDict)   
-		self.uniqueRight = self.compareDicts(self.rightDict, self.leftDict)
-
-		### dicts sorted according to frequency
-		f3outL = open(os.path.join(outputDir, 'unique_words_left'), 'w')
-		f3outL.write(self.sortAndPrint(self.uniqueLeft))
-		f3outR = open(os.path.join(outputDir, 'unique_words_right'), 'w')
-		f3outR.write(self.sortAndPrint(self.uniqueRight))
-
-		### dictionaries of bigrams that belong uniquely to one of the groups
-		self.uniqueBiLeft = self.compareDicts(self.bigramLeftDict, self.bigramRightDict)   
-		self.uniqueBiRight = self.compareDicts(self.bigramRightDict, self.bigramLeftDict)
-		
-		### dicts sorted according to frequency
-		f4outL = open(os.path.join(outputDir, 'unique_bigrams_left'), 'w')
-		f4outL.write(self.sortAndPrint(self.uniqueBiLeft))
-		f4outR = open(os.path.join(outputDir, 'unique_bigrams_right'), 'w')
-		f4outR.write(self.sortAndPrint(self.uniqueBiRight))
-		
-		self.k = self.compareSizeOfCorpora(leftDir, rightDir)  
-
-		f2out = open(os.path.join(outputDir, 'words_different_frequency'), 'w')
-		f2out.write(self.wordsThatDifferSignificantlyInFrequency())
-
-	#	listLeft = makeListFromFile(wordsLeft)
-	#	listRight = makeListFromFile(wordsRight)
-
 
 	
 if __name__ == '__main__':
