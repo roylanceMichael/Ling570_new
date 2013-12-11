@@ -8,9 +8,10 @@ import features
 class Process2(process.ProcessFile):
 	def __init__(self, utils, dirNum):
 		process.ProcessFile()
+		freq = {}
 		self.dirNum = dirNum
 		self.utils = utils
-		freq = {}
+		self.feature = features.Feature(utils)
 		self.functionList = []
 
 	def buildFeatureList(self, fs):
@@ -22,26 +23,22 @@ class Process2(process.ProcessFile):
 	### {word:frequency} for the file
 		return self.frequency(text)
 
-
 	def F1(self, word):
 	### F1 is the unigram feature - returns very high accuracies
 		return self.freq[word]
 
 	def F2(self, word):
 	### look at the words that are present in both groups, but differ (significantly) in count
-		feat = features.Features(self.utils)
-		return feat.findPrevalence(word)
+		return self.feature.findPrevalence(word)
 	
 	def F3(self, word):
 	### F3 checks if the word is uniquely found in left of right training sets
-		feat = features.Features(self.utils)
-		return feat.checkIfUnique(word)
+		return self.feature.checkIfUnique(word)
 
 
 	def F4(self, bigram):
 	### F4 checks if the bigram is uniquely found in left of right training sets
-		feat = features.Features(self.utils)
-		return feat.checkIfUniqueBigram(bigram)
+		return self.feature.checkIfUniqueBigram(bigram)
 
 	def generateFeatureFunctions(self, fs):
 		if len(self.functionList) > 0:
@@ -93,19 +90,21 @@ class Process2(process.ProcessFile):
 	def buildVector(self, fs, text):
 	### building vector for output
 		self.freq = self.getFrequencies(text)
+		self.generateFeatureFunctions(fs)
+
 	#	print self.freq	
 		strBuilder = ''
 
-		self.generateFeatureFunctions(fs)
+		allWords = self.just_words(text)
 
-		for i in range(0, len(self.just_words(text))-1):
-			word = self.just_words(text)[i]
-			nextWord = self.just_words(text)[i+1]
+		for i in range(0, len(allWords)-1):
+			word = allWords[i]
+			nextWord = allWords[i+1]
 			vectorArray = []
 			
 			for j in range(0, len(self.functionList)):
 				self.functionList[j](word, vectorArray, nextWord)
-
+			
 			strBuilder = strBuilder + '\n' + word + '\t' + ' '.join(vectorArray)
 
 		return strBuilder
