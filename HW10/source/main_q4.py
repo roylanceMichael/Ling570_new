@@ -47,14 +47,12 @@ def main():
 				inputFOutput = os.path.join(eachSubdir, filenames[i])   # create a path for each file
 				
 				f = open(inputFOutput)
-		
 				text = f.read()
+				f.close()
 
 				result = proc2.buildVector(fs, text)
 
 				f1.write("%s %s %s %s" % (inputFOutput, os.path.basename(eachSubdir), result, "\n"))
-
-				f.close()
 
 				print 'finished with ' + str(len(result)) + ' file # ' + str(i) + ' out of ' + str(n)
 
