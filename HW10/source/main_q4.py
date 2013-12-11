@@ -58,7 +58,9 @@ def main():
 
 				# print 'finished with file # ' + str(i) + ' out of ' + str(n)
 
-			print 'should have created ' + outputFile	
+
+		f1.close()
+		print 'should have created ' + outputFile	
 
 if __name__ == '__main__':
 	main()
