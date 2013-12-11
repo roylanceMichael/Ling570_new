@@ -1,0 +1,40 @@
+Training vectors loaded from output_dir/train.vectors
+Testing vectors loaded from output_dir/test.vectors
+Value (labelProb=4463.867842806528 prior=0.0) loglikelihood = -4463.867842806528
+Instance null has infinite value; skipping value and gradient
+Value is infinite after jump 1.0. f=-Infinity, f2=-4463.867842806528. Scaling back step size...
+Instance null has infinite value; skipping value and gradient
+Value is infinite after jump 0.2. f=-Infinity, f2=-Infinity. Scaling back step size...
+Instance null has infinite value; skipping value and gradient
+Value is infinite after jump 0.04000000000000001. f=-Infinity, f2=-Infinity. Scaling back step size...
+Value (labelProb=20286.176833214904 prior=3.1999999999948546E-5) loglikelihood = -20286.176865214904
+Value is infinite after jump 0.008000000000000002. f=-20286.176865214904, f2=-Infinity. Scaling back step size...
+Value (labelProb=6006.6072186929505 prior=1.2800000000015058E-6) loglikelihood = -6006.607219972951Value (labelProb=4913.1168119151 prior=3.200000000003526E-7) loglikelihood = -4913.1168122351      Value (labelProb=4579.558637896274 prior=8.000000000007635E-8) loglikelihood = -4579.558637976274Value (labelProb=4463.867842806528 prior=0.0) loglikelihood = -4463.867842806528                 
+EXITING BACKTRACK: Jump too small (alamin=2.028277631400428E-7). Exiting and using xold. Value=-4463.867842806528
+cc.mallet.optimize.OptimizationException: Line search could not step in the current direction. (This is not necessarily cause for alarm. Sometimes this happens close to the maximum, where the function may be very flat.)
+	at cc.mallet.optimize.LimitedMemoryBFGS.optimize(LimitedMemoryBFGS.java:147)
+	at cc.mallet.classify.MaxEntTrainer.train(MaxEntTrainer.java:252)
+	at cc.mallet.classify.MaxEntTrainer.train(MaxEntTrainer.java:242)
+	at cc.mallet.classify.MaxEntTrainer.train(MaxEntTrainer.java:52)
+	at cc.mallet.classify.tui.Vectors2Classify.main(Vectors2Classify.java:411)
+Catching OptimizationException; saying converged.
+Instance null has infinite value; skipping value and gradient
+Value is infinite after jump 1.0. f=-Infinity, f2=-4463.867842806528. Scaling back step size...
+Instance null has infinite value; skipping value and gradient
+Value is infinite after jump 0.2. f=-Infinity, f2=-Infinity. Scaling back step size...
+Instance null has infinite value; skipping value and gradient
+Value is infinite after jump 0.04000000000000001. f=-Infinity, f2=-Infinity. Scaling back step size...
+Value (labelProb=20286.176833214904 prior=3.1999999999948546E-5) loglikelihood = -20286.176865214904
+Value is infinite after jump 0.008000000000000002. f=-20286.176865214904, f2=-Infinity. Scaling back step size...
+Value (labelProb=6006.6072186929505 prior=1.2800000000015058E-6) loglikelihood = -6006.607219972951Value (labelProb=4913.1168119151 prior=3.200000000003526E-7) loglikelihood = -4913.1168122351      Value (labelProb=4579.558637896274 prior=8.000000000007635E-8) loglikelihood = -4579.558637976274Value (labelProb=4463.867842806528 prior=0.0) loglikelihood = -4463.867842806528                 
+EXITING BACKTRACK: Jump too small (alamin=2.028277631400428E-7). Exiting and using xold. Value=-4463.867842806528
+cc.mallet.optimize.OptimizationException: Line search could not step in the current direction. (This is not necessarily cause for alarm. Sometimes this happens close to the maximum, where the function may be very flat.)
+	at cc.mallet.optimize.LimitedMemoryBFGS.optimize(LimitedMemoryBFGS.java:147)
+	at cc.mallet.optimize.LimitedMemoryBFGS.optimize(LimitedMemoryBFGS.java:93)
+	at cc.mallet.classify.MaxEntTrainer.train(MaxEntTrainer.java:274)
+	at cc.mallet.classify.MaxEntTrainer.train(MaxEntTrainer.java:242)
+	at cc.mallet.classify.MaxEntTrainer.train(MaxEntTrainer.java:52)
+	at cc.mallet.classify.tui.Vectors2Classify.main(Vectors2Classify.java:411)
+Catching OptimizationException; saying converged.
+
+
