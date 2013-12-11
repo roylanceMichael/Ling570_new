@@ -2,6 +2,7 @@ from __future__ import division
 import sys
 import os
 import process
+import re
 
 
 ### This file is here mainly to help us think about the features. 
@@ -27,17 +28,47 @@ class CreateDataFiles:
 	### tool to make a {word : frequency} dict from the input directory
 		print directory
 		filenames = os.listdir(directory)
-	        filenames.sort()
-        	text = ''
+		filenames.sort()
+		text = ''
 
-		proc = process.ProcessFile()
-        	for i in range(0, len(filenames)):
-        		inputFOutput = os.path.join(directory, filenames[i])   # create a path for each file
-	                f = open(inputFOutput)
-        	        text = text + f.read()
-                	result = proc.frequency(text)
-		
+		for i in range(0, len(filenames)):
+			inputFOutput = os.path.join(directory, filenames[i])   # create a path for each file
+			f = open(inputFOutput)
+			text = text + f.read()
+
+		result = self.frequency(text)
 		return result	
+
+	def frequency(self, text):
+		unigramDict = {}
+		bigramDict = {}
+		words = self.just_words(text)
+
+		for i in range(1, len(words)):
+			prevWord = words[i-1]
+			word = words[i]
+
+			# uni first
+			if word in unigramDict:
+				unigramDict[word] += 1
+			else:
+				unigramDict[word] = 1
+
+			bigramKey = prevWord + ' ' + word
+
+			if bigramKey in bigramDict:
+				bigramDict[bigramKey] += 1
+			else:
+				bigramDict[bigramKey] = 1
+
+		return (unigramDict, bigramDict)
+
+
+	def just_words(self, text):
+		words = re.sub('[^0-9a-zA-Z-]', ' ', text)
+		words = words.lower()
+		listall = words.split()
+		return listall
 
 	def compareSizeOfCorpora(self, dir1, dir2):
 	### F2: we will need to check by what coefficient one corpus is larger than the other
@@ -124,39 +155,15 @@ class CreateDataFiles:
 
 		return markedSide
 
-
-	def bigramFrequency(self, text):
-		bigramDict = {}
-		proc = process.ProcessFile()
-		listAllWords = proc.just_words(text)
-	        for i in range(0, len(listAllWords)-1):
-			bigram = listAllWords[i] + ' ' + listAllWords[i+1]
-                        if bigram in bigramDict:
-                                bigramDict[bigram] += 1
-                        else:
-                                bigramDict[bigram] = 1
-                return bigramDict
-
-
-        def makeBigramDictFromDir(self, directory):
-        ### tool to make a {word : frequency} dict from the input directory
-                filenames = os.listdir(directory)
-                filenames.sort()
-                text = ''
-                proc = process.ProcessFile()
-                for i in range(0, len(filenames)):
-                        inputFOutput = os.path.join(directory, filenames[i])   # create a path for each file
-                        f = open(inputFOutput)
-                        text = text + f.read()
-                        result = self.bigramFrequency(text)
-                return result
-	
-
 	def buildDataStructures(self, dirs):
 
 		for labelDir in dirs:
-			self.labelDict[labelDir] = self.makeDictFromDir(labelDir)
-			self.bigramLabelDict[labelDir] = self.makeBigramDictFromDir(labelDir)
+			resultTuple = self.makeDictFromDir(labelDir)
+			self.labelDict[labelDir] = resultTuple[0]
+			self.bigramLabelDict[labelDir] = resultTuple[1]
+
+
+		print 'got done building the two dictionaries' 
 
 		for primaryKey in self.labelDict:
 			dictForLabel = self.labelDict[primaryKey]
@@ -171,6 +178,8 @@ class CreateDataFiles:
 			self.labelUniques[primaryKey] = self.compareDictsMultiple(dictForLabel, otherDicts)
 
 
+		print 'got done building unigram compare dicts'
+
 		for primaryKey in self.bigramLabelDict:
 			dictForLabel = self.bigramLabelDict[primaryKey]
 
@@ -182,11 +191,13 @@ class CreateDataFiles:
 
 			self.uniqueBiLabelDict[primaryKey] = self.compareDictsMultiple(dictForLabel, otherDicts)
 
+		print 'got done building bigram compare dicts'
+
 		if len(dirs) == 2:
 			self.k = self.compareSizeOfCorpora(dirs[0], dirs[1])
 			self.wordsThatDifferSignificantlyInFrequency(dirs[0], dirs[1])
 
-
+		print 'got done building frequency stuff'
 	
 if __name__ == '__main__':
        	CreateDataFiles().main()

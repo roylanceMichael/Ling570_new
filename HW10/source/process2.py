@@ -11,6 +11,7 @@ class Process2(process.ProcessFile):
 		self.dirNum = dirNum
 		self.utils = utils
 		freq = {}
+		self.functionList = []
 
 	def buildFeatureList(self, fs):
 	### collecting a list features that are selected for each run
@@ -42,49 +43,70 @@ class Process2(process.ProcessFile):
 		feat = features.Features(self.utils)
 		return feat.checkIfUniqueBigram(bigram)
 
+	def generateFeatureFunctions(self, fs):
+		if len(self.functionList) > 0:
+			return
 
-	def loadVector(self, fs, word, nextWord):
-	### choosing features that are active and running code for them; return vector - a list of values
-	### can be optimized to avoid running it for each word - need to return a list of functions
 		fList = self.buildFeatureList(fs)
-		vector = []
+
+		functionList = []
 
 		if 'F1' in fList:
-			f1 = self.F1(word)
-			vector.append(word + ' ' + str(f1))
+			functionList.append(self.F1Wrapper)
 
 		if 'F2' in fList and self.dirNum == 2:
-			f2 = self.F2(word)
-
-			if f2 != None:
-				vector.append('prevalence1=%s' % str(f2[0]))
-				vector.append('prevalence2=%s' % str(f2[1]))
-			else:
-				vector.append('prevalence1=none')
-				vector.append('prevalence2=none')
+			functionList.append(self.F2Wrapper)
 
 		if 'F3' in fList:
-			f3 = self.F3(word)
-			vector.append('unique=' + str(f3))
+			functionList.append(self.F3Wrapper)
 
 		if 'F4' in fList:
-			bigram = str(word + ' ' + nextWord)
-			f4 = self.F4(bigram)
-			vector.append('unique_bigram(' + bigram + ')=' + str(f4))
-		
-		return vector
+			functionList.append(self.F4Wrapper)
 
+		self.functionList = functionList
+
+		return self.functionList
+
+	def F1Wrapper(self, word, vectorArray, nextWord):
+		f1 = self.F1(word)
+		vectorArray.append(word + ' ' + str(f1))
+
+	def F2Wrapper(self, word, vectorArray, nextWord):
+		f2 = self.F2(word)
+
+		if f2 != None:
+			vectorArray.append('prevalence1=%s' % str(f2[0]))
+			vectorArray.append('prevalence2=%s' % str(f2[1]))
+		else:
+			vectorArray.append('prevalence1=none')
+			vectorArray.append('prevalence2=none')
+
+	def F3Wrapper(self, word, vectorArray, nextWord):
+		f3 = self.F3(word)
+		vectorArray.append('unique=' + str(f3))
+
+	def F4Wrapper(self, word, vectorArray, nextWord):
+		bigram = str(word + ' ' + nextWord)
+		f4 = self.F4(bigram)
+		vectorArray.append('unique_bigram(' + bigram + ')=' + str(f4))
 
 	def buildVector(self, fs, text):
 	### building vector for output
 		self.freq = self.getFrequencies(text)
-#		print self.freq	
+	#	print self.freq	
 		strBuilder = ''
-                
+
+		self.generateFeatureFunctions(fs)
+
 		for i in range(0, len(self.just_words(text))-1):
 			word = self.just_words(text)[i]
 			nextWord = self.just_words(text)[i+1]
-			vector = self.loadVector(fs, word, nextWord)
-			strBuilder = strBuilder + '\n' + word + '\t' + ' '.join(vector)
+			vectorArray = []
+			
+			for j in range(0, len(self.functionList)):
+				self.functionList[j](word, vectorArray, nextWord)
+
+			strBuilder = strBuilder + '\n' + word + '\t' + ' '.join(vectorArray)
+
 		return strBuilder
 		
