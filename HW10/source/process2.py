@@ -11,7 +11,7 @@ class Process2(process.ProcessFile):
 		freq = {}
 		self.dirNum = dirNum
 		self.utils = utils
-		self.feature = features.Feature(utils)
+		self.feat = features.Features(utils)
 		self.functionList = []
 
 	def buildFeatureList(self, fs):
@@ -29,16 +29,16 @@ class Process2(process.ProcessFile):
 
 	def F2(self, word):
 	### look at the words that are present in both groups, but differ (significantly) in count
-		return self.feature.findPrevalence(word)
+		return self.feat.findPrevalence(word)
 	
 	def F3(self, word):
 	### F3 checks if the word is uniquely found in left of right training sets
-		return self.feature.checkIfUnique(word)
+		return self.feat.checkIfUnique(word)
 
 
 	def F4(self, bigram):
 	### F4 checks if the bigram is uniquely found in left of right training sets
-		return self.feature.checkIfUniqueBigram(bigram)
+		return self.feat.checkIfUniqueBigram(bigram)
 
 	def generateFeatureFunctions(self, fs):
 		if len(self.functionList) > 0:
