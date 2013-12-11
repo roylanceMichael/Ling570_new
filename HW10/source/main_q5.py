@@ -11,7 +11,5 @@ def main():
 	if not os.path.exists(output_dir):       # create output directory
 		os.makedirs(output_dir)
 
-	
-
 if __name__ == '__main__':
 	main()

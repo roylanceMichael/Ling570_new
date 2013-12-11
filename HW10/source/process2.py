@@ -105,7 +105,7 @@ class Process2(process.ProcessFile):
 			for j in range(0, len(self.functionList)):
 				self.functionList[j](word, vectorArray, nextWord)
 			
-			strBuilder = strBuilder + '\n' + word + '\t' + ' '.join(vectorArray)
+			strBuilder = strBuilder + '\t' + word + '\t' + ' '.join(vectorArray)
 
 		return strBuilder
 		
