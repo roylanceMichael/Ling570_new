@@ -56,7 +56,7 @@ def main():
 
 				f.close()
 
-				# print 'finished with file # ' + str(i) + ' out of ' + str(n)
+				print 'finished with ' + str(len(result)) + ' file # ' + str(i) + ' out of ' + str(n)
 
 
 		f1.close()
