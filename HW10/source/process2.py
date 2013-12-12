@@ -125,13 +125,16 @@ class Process2(process.ProcessFile):
 
 		allWords = self.just_words(text)
 
-		totalWordLength = len(allWords[0])
+		totalWordLength = 0
 
 		for i in range(0, len(allWords)-1):
 			word = allWords[i]
 			nextWord = allWords[i+1]
 			
-			totalWordLength += len(allWords[i+1])
+			if(i == 0):
+				totalWordLength += len(word)
+
+			totalWordLength += len(nextWord)
 
 			vectorArray = []
 			
