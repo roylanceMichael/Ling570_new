@@ -142,8 +142,8 @@ class Process2(process.ProcessFile):
 				self.functionList[j](word, vectorArray, nextWord)
 
 			if "F7" in self.fList and word in self.utils.sentimentList:
-				vectorArray.append('positive=' + self.utils.sentimentList[word][0])
-				vectorArray.append('negative=' + self.utils.sentimentList[word][1])
+				vectorArray.append(word + '-positive=' + self.utils.sentimentList[word][0])
+				vectorArray.append(word + '-negative=' + self.utils.sentimentList[word][1])
 
 			if len(vectorArray) > 0:
 				strBuilder = strBuilder + '\t' + word + '\t' + ' '.join(vectorArray)
