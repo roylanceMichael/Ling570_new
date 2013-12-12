@@ -88,7 +88,6 @@ class CreateDataFiles:
 
 	        return k
 
-
 	def sortAndPrint(self, dic):
 	### turn a dict into a tuple and sort by key in descending order
         	top_sort = sorted(dic.items(), key = lambda a: -a[1]) # make into tuple and sort
@@ -118,8 +117,7 @@ class CreateDataFiles:
 
 		### dicts sorted according to frequency
 		strBuilder = 'LEFT' + '\n' + self.sortAndPrint(self.labelDifference[firstKey]) + '\n' + 'RIGHT' + '\n' + self.sortAndPrint(self.labelDifference[secondKey])
-		return strBuilder
-			
+		return strBuilder	
 
 	def compareDicts(self, dict1, dict2):
 	### F3: make dictionaries {word : frequency} for words that belong uniquely to one of the groups
@@ -145,7 +143,6 @@ class CreateDataFiles:
 
 		return uniqueWords
 
-
 	def makeListFromFile(self, filename):
 	### F4: for reading in word lists
 		f = open(filename)
@@ -153,7 +150,6 @@ class CreateDataFiles:
 	        f.close()
 	        listall = text.split()
 	        return result
-
 
 	def checkAgainstTheWordList(self, curW, listW):
 	### F4: see if current word is in word list

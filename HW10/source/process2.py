@@ -11,6 +11,8 @@ class Process2(process.ProcessFile):
 		freq = {}
 		self.dirNum = dirNum
 		self.utils = utils
+		self.flist = []
+
 		self.feat = features.Features(utils)
 		self.functionList = []
 
@@ -107,6 +109,12 @@ class Process2(process.ProcessFile):
 #               vectorArray.append(bigram + ' ' + str(f5))
 
 
+# couple of other thoughts
+# how many times obama appears
+# the average length of each word
+# the average number of words
+# the number of repeating words per file
+
 	def buildVector(self, fs, text):
 	### building vector for output
 		self.freq = self.getFrequencies(text)
@@ -117,15 +125,23 @@ class Process2(process.ProcessFile):
 
 		allWords = self.just_words(text)
 
+		totalWordLength = len(allWords[0])
+
 		for i in range(0, len(allWords)-1):
 			word = allWords[i]
 			nextWord = allWords[i+1]
+			
+			totalWordLength += len[allWords[i+1]]
+
 			vectorArray = []
 			
 			for j in range(0, len(self.functionList)):
 				self.functionList[j](word, vectorArray, nextWord)
 			
 			strBuilder = strBuilder + '\t' + word + '\t' + ' '.join(vectorArray)
+
+		if "F6" in self.flist:
+			strBuilder = strBuilder + '\t avgWordLength=' + str(float(totalWordLength) / len(allWords))
 
 		return strBuilder
 		
