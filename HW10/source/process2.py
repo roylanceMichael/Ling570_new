@@ -11,7 +11,7 @@ class Process2(process.ProcessFile):
 		freq = {}
 		self.dirNum = dirNum
 		self.utils = utils
-		self.flist = []
+		self.fList = []
 
 		self.feat = features.Features(utils)
 		self.functionList = []
@@ -53,23 +53,23 @@ class Process2(process.ProcessFile):
 		if len(self.functionList) > 0:
 			return
 
-		fList = self.buildFeatureList(fs)
+		self.fList = self.buildFeatureList(fs)
 
 		functionList = []
 
-		if 'F1' in fList:
+		if 'F1' in self.fList:
 			functionList.append(self.F1Wrapper)
 
-		if 'F2' in fList and self.dirNum == 2:
+		if 'F2' in self.fList and self.dirNum == 2:
 			functionList.append(self.F2Wrapper)
 
-		if 'F3' in fList:
+		if 'F3' in self.fList:
 			functionList.append(self.F3Wrapper)
 
-		if 'F4' in fList:
+		if 'F4' in self.fList:
 			functionList.append(self.F4Wrapper)
 
-#               if 'F5' in fList:
+#               if 'F5' in self.fList:
 #                       functionList.append(self.F5Wrapper)
 
 		self.functionList = functionList
@@ -141,14 +141,14 @@ class Process2(process.ProcessFile):
 			for j in range(0, len(self.functionList)):
 				self.functionList[j](word, vectorArray, nextWord)
 
-			if "F7" in self.flist and word in self.utils.sentimentList:
+			if "F7" in self.fList and word in self.utils.sentimentList:
 				vectorArray.append(word + "=" + self.utils.sentimentList[word][0])
 				vectorArray.append(word + "=" + self.utils.sentimentList[word][1])
 
 			if len(vectorArray) > 0:
 				strBuilder = strBuilder + '\t' + word + '\t' + ' '.join(vectorArray)
 
-		if "F6" in self.flist:
+		if "F6" in self.fList and allWords > 0 and totalWordLength > 0:
 			strBuilder = strBuilder + '\t avgWordLength=' + str(float(totalWordLength) / len(allWords))
 
 		return strBuilder
