@@ -140,8 +140,13 @@ class Process2(process.ProcessFile):
 			
 			for j in range(0, len(self.functionList)):
 				self.functionList[j](word, vectorArray, nextWord)
-			
-			strBuilder = strBuilder + '\t' + word + '\t' + ' '.join(vectorArray)
+
+			if "F7" in self.flist and word in self.utils.sentimentList:
+				vectorArray.append(word + "=" + self.utils.sentimentList[word][0])
+				vectorArray.append(word + "=" + self.utils.sentimentList[word][1])
+
+			if len(vectorArray) > 0:
+				strBuilder = strBuilder + '\t' + word + '\t' + ' '.join(vectorArray)
 
 		if "F6" in self.flist:
 			strBuilder = strBuilder + '\t avgWordLength=' + str(float(totalWordLength) / len(allWords))

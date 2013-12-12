@@ -22,7 +22,22 @@ class CreateDataFiles:
 
 		self.labelDifference = {}
 
+		self.sentimentList = {}
+
+		self.buildSentimentList()
+
 		self.k = 0
+
+	def buildSentimentList(self):
+		handle = open("source/sentiment.csv")
+		text = handle.read()
+
+		lines = text.split()
+
+		for i in range(0, len(lines)):
+			items = lines[i].split(",")
+
+			self.sentimentList[items[0].strip()] = (items[1].strip(), items[2].strip())	
 
 	def makeDictFromDir(self, directory):
 	### tool to make a {word : frequency} dict from the input directory
