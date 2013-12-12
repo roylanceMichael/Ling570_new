@@ -131,7 +131,7 @@ class Process2(process.ProcessFile):
 			word = allWords[i]
 			nextWord = allWords[i+1]
 			
-			totalWordLength += len[allWords[i+1]]
+			totalWordLength += len(allWords[i+1])
 
 			vectorArray = []
 			
